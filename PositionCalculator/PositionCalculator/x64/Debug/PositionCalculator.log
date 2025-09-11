@@ -1,5 +1,5 @@
 ﻿  PositionCalculator.cpp
-C:\Users\shado\source\repos\PSU-Graviti\PositionCalculator\PositionCalculator\PositionCalculator.cpp(50,99): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\shado\source\repos\PSU-Graviti\PositionCalculator\PositionCalculator\PositionCalculator.cpp(51,99): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\shado\source\repos\PSU-Graviti\PositionCalculator\PositionCalculator\PositionCalculator.cpp(52,99): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\shado\source\repos\PSU-Graviti\PositionCalculator\PositionCalculator\PositionCalculator.cpp(50,103): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\shado\source\repos\PSU-Graviti\PositionCalculator\PositionCalculator\PositionCalculator.cpp(51,103): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\shado\source\repos\PSU-Graviti\PositionCalculator\PositionCalculator\PositionCalculator.cpp(52,103): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
   PositionCalculator.vcxproj -> C:\Users\shado\source\repos\PSU-Graviti\PositionCalculator\x64\Debug\PositionCalculator.exe

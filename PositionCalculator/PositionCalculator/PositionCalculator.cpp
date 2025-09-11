@@ -38,26 +38,26 @@ public:
         steps[0].velocity[1] = 0.0f;
         steps[0].velocity[2] = 0.0f;
 
-        steps[0].acceleration[0] = 0.0f;
-        steps[0].acceleration[1] = 0.0f;
+        steps[0].acceleration[0] = -30.0f;
+        steps[0].acceleration[1] = 1.0f;
         steps[0].acceleration[2] = 0.0f;
         
         steps[0].time = 0.0f;
-        float timestep = 0.1f;
+        float timestep = 1.0f;
 
         for (int i = 1; i < 5; i++) {
             steps[i].time = steps[i - 1].time + steps[0].timestep;
-            steps[i].position[0] = steps[i - 1].position[0] + steps[i - 1].velocity[0] * timestep + 0.5 * steps[i - 1].acceleration[0] * exp(timestep);
-            steps[i].position[1] = steps[i - 1].position[1] + steps[i - 1].velocity[1] * timestep + 0.5 * steps[i - 1].acceleration[1] * exp(timestep);
-            steps[i].position[2] = steps[i - 1].position[2] + steps[i - 1].velocity[2] * timestep + 0.5 * steps[i - 1].acceleration[2] * exp(timestep);
+            steps[i].position[0] = (steps[i - 1].position[0]) + (steps[i - 1].velocity[0] * timestep) + (0.5 * steps[i - 1].acceleration[0] * pow(timestep, 2));
+            steps[i].position[1] = (steps[i - 1].position[1]) + (steps[i - 1].velocity[1] * timestep) + (0.5 * steps[i - 1].acceleration[1] * pow(timestep, 2));
+            steps[i].position[2] = (steps[i - 1].position[2]) + (steps[i - 1].velocity[2] * timestep) + (0.5 * steps[i - 1].acceleration[2] * pow(timestep, 2));
 
-            steps[i].velocity[0] = steps[i - 1].velocity[0] + steps[i - 1].acceleration[0] * timestep;
-            steps[i].velocity[1] = steps[i - 1].velocity[1] + steps[i - 1].acceleration[1] * timestep;
-            steps[i].velocity[2] = steps[i - 1].velocity[2] + steps[i - 1].acceleration[2] * timestep;
+            steps[i].velocity[0] = (steps[i - 1].velocity[0]) + (steps[i - 1].acceleration[0] * timestep);
+            steps[i].velocity[1] = (steps[i - 1].velocity[1]) + (steps[i - 1].acceleration[1] * timestep);
+            steps[i].velocity[2] = (steps[i - 1].velocity[2]) + (steps[i - 1].acceleration[2] * timestep);
 
-            steps[i].acceleration[0] = steps[i - 1].acceleration[0];
-            steps[i].acceleration[1] = steps[i - 1].acceleration[1];
-            steps[i].acceleration[2] = steps[i - 1].acceleration[2];
+            steps[i].acceleration[0] = (steps[i - 1].acceleration[0]);
+            steps[i].acceleration[1] = (steps[i - 1].acceleration[1]);
+            steps[i].acceleration[2] = (steps[i - 1].acceleration[2]);
 
         };
     };
