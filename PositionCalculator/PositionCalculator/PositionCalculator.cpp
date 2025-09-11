@@ -5,6 +5,7 @@
 #include <fstream> // For file handling
 #include <iostream>
 //#include "csvHandler.h"
+#include <cmath> 
 #include <vector>
 #include <string>
 class step {
@@ -19,13 +20,6 @@ public:
         this->position[0] = posx;
         this->position[1] = posy;
         this->position[2] = posz;
-        this->velocity[0] = 30;
-        this->velocity[1] = 0;
-        this->velocity[2] = 0;
-        this->acceleration[0] = 0;
-        this->acceleration[1] = 0;
-        this->acceleration[2] = 0;
-        this->timestep = timestep;
         this->time = time;
     };
 
@@ -39,13 +33,32 @@ public:
         steps[0].position[0] = posx;
         steps[0].position[1] = posy;
         steps[0].position[2] = posz;
+
+        steps[0].velocity[0] = 30.0f;
+        steps[0].velocity[1] = 0.0f;
+        steps[0].velocity[2] = 0.0f;
+
+        steps[0].acceleration[0] = 0.0f;
+        steps[0].acceleration[1] = 0.0f;
+        steps[0].acceleration[2] = 0.0f;
+        
         steps[0].time = 0.0f;
-        steps[0].timestep = 0.1f;
+        float timestep = 0.1f;
 
         for (int i = 1; i < 5; i++) {
-            steps[i].position[0] = steps[i - 1].position[0] + steps[i - 1].velocity[0] * steps[i - 1].timestep;
-            steps[i].position[1] = steps[i - 1].position[1] + steps[i - 1].velocity[1] * steps[i - 1].timestep;
-            steps[i].position[2] = steps[i - 1].position[2] + steps[i - 1].velocity[2] * steps[i - 1].timestep;
+            steps[i].time = steps[i - 1].time + steps[0].timestep;
+            steps[i].position[0] = steps[i - 1].position[0] + steps[i - 1].velocity[0] * timestep + 0.5 * steps[i - 1].acceleration[0] * exp(timestep);
+            steps[i].position[1] = steps[i - 1].position[1] + steps[i - 1].velocity[1] * timestep + 0.5 * steps[i - 1].acceleration[1] * exp(timestep);
+            steps[i].position[2] = steps[i - 1].position[2] + steps[i - 1].velocity[2] * timestep + 0.5 * steps[i - 1].acceleration[2] * exp(timestep);
+
+            steps[i].velocity[0] = steps[i - 1].velocity[0] + steps[i - 1].acceleration[0] * timestep;
+            steps[i].velocity[1] = steps[i - 1].velocity[1] + steps[i - 1].acceleration[1] * timestep;
+            steps[i].velocity[2] = steps[i - 1].velocity[2] + steps[i - 1].acceleration[2] * timestep;
+
+            steps[i].acceleration[0] = steps[i - 1].acceleration[0];
+            steps[i].acceleration[1] = steps[i - 1].acceleration[1];
+            steps[i].acceleration[2] = steps[i - 1].acceleration[2];
+
         };
     };
 
@@ -80,7 +93,7 @@ int main() {
 
     satellite sat(7000.0f, 0.0f, 0.0f); // Initial position in km
 
-    for (int i = 0; i < sizeof(sat.steps->position); i++) {
+    for (int i = 0; i < 5; i++) {
         std::cout << "Position: (" << sat.steps[i].position[0] << ", " << sat.steps[i].position[1] << ", " << sat.steps[i].position[2] << ")\n";
     };
     //planetoid earth(0.0f, 0.0f, 0.0f); // Initial position in km
