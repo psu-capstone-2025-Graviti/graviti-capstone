@@ -1,62 +1,89 @@
 // PositionCalculator.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
 
-#include <iostream>
+
 #include <fstream> // For file handling
+#include <iostream>
+//#include "csvHandler.h"
 #include <vector>
 #include <string>
+class step {
+public:
+    float time;
+    float timestep;
+    float position[3];
+    float velocity[3];
+    float acceleration[3];
+    step(float posx, float posy, float posz, float time, float timestep) {
+        time = 0.0f;
+        this->position[0] = posx;
+        this->position[1] = posy;
+        this->position[2] = posz;
+        this->velocity[0] = 30;
+        this->velocity[1] = 0;
+        this->velocity[2] = 0;
+        this->acceleration[0] = 0;
+        this->acceleration[1] = 0;
+        this->acceleration[2] = 0;
+        this->timestep = timestep;
+        this->time = time;
+    };
 
-int main() {
-    // Create and open a CSV file
-    std::ofstream file("example.csv");
+    step() = default;
+};
+class satellite {
+public:
+    step steps[5];
 
-    // Check if the file is open
-    if (!file.is_open()) {
-        std::cerr << "Error: Could not open the file!" << std::endl;
-        return 1;
-    }
+    satellite(float posx, float posy, float posz) {
+        steps[0].position[0] = posx;
+        steps[0].position[1] = posy;
+        steps[0].position[2] = posz;
+        steps[0].time = 0.0f;
+        steps[0].timestep = 0.1f;
 
-    // Write headers to the CSV file
-    file << "Name,Age,City\n";
-
-    // Write data rows to the CSV file
-    file << "Alice,30,New York\n";
-    file << "Bob,25,Los Angeles\n";
-    file << "Charlie,35,Chicago\n";
-
-    // Close the file
-    file.close();
-
-    std::cout << "CSV file created successfully!" << std::endl;
-
-    return 0;
-}
-
-class Particle {
-    public:
-        float position[3];
-        float velocity[3];
-		float acceleration[3];
-		float nextPosition[3];
-		float prevPosition[3];
-		float timestep = 0.1f;
-        Particle(float posx, float posy, float posz) {
-            position[0] = posx;
-            position[1] = posy;
-            position[2] = posz;
+        for (int i = 1; i < 5; i++) {
+            steps[i].position[0] = steps[i - 1].position[0] + steps[i - 1].velocity[0] * steps[i - 1].timestep;
+            steps[i].position[1] = steps[i - 1].position[1] + steps[i - 1].velocity[1] * steps[i - 1].timestep;
+            steps[i].position[2] = steps[i - 1].position[2] + steps[i - 1].velocity[2] * steps[i - 1].timestep;
         };
-        float position[3] = { 0.0f, 0.0f, 0.0f };
-        float velocity[3] = { 1.0f, 1.0f, 1.0f };
-        float acceleration[3] = { 0.1f, 0.1f, 0.1f };
+    };
 
 };
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
 
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
+//class planetoid {
+//public:
+//    step steps[5];
+//    float position[3];
+//    float velocity[3];
+//    float acceleration[3];
+//    float nextPosition[3];
+//    float prevPosition[3];
+//    float timestep = 0.1f;
+//    float currentTime = 0.0f;
+//	float mass = 1000.0f; // in kg
+//    planetoid(float posx, float posy, float posz, float time, float timestep) {
+//        position[0] = posx;
+//        position[1] = posy;
+//        position[2] = posz;
+//    };
+//
+//
+//};
+
+
+int main() {
+    //csvHandler obj;
+    //writeCSV("example.csv", { {"Time", "PositionX", "PositionY", "PositionZ"} });
+
+
+
+    satellite sat(7000.0f, 0.0f, 0.0f); // Initial position in km
+
+    for (int i = 0; i < sizeof(sat.steps->position); i++) {
+        std::cout << "Position: (" << sat.steps[i].position[0] << ", " << sat.steps[i].position[1] << ", " << sat.steps[i].position[2] << ")\n";
+    };
+    //planetoid earth(0.0f, 0.0f, 0.0f); // Initial position in km
+    //planetoid moon(384400.0f, 0.0f, 0.0f); // Initial position in km
+    return 0;
+}
