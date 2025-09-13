@@ -1,8 +1,0 @@
-﻿  PositionCalculator.cpp
-C:\Users\shado\source\repos\PSU-Graviti\PositionCalculator\PositionCalculator\PositionCalculator.cpp(78,26): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\shado\source\repos\PSU-Graviti\PositionCalculator\PositionCalculator\PositionCalculator.cpp(79,26): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\shado\source\repos\PSU-Graviti\PositionCalculator\PositionCalculator\PositionCalculator.cpp(80,26): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\shado\source\repos\PSU-Graviti\PositionCalculator\PositionCalculator\PositionCalculator.cpp(119,21): warning C4305: 'initializing': truncation from 'double' to 'float'
-C:\Users\shado\source\repos\PSU-Graviti\PositionCalculator\PositionCalculator\PositionCalculator.cpp(120,26): warning C4305: 'initializing': truncation from 'double' to 'float'
-C:\Users\shado\source\repos\PSU-Graviti\PositionCalculator\PositionCalculator\PositionCalculator.cpp(121,25): warning C4305: 'initializing': truncation from 'double' to 'float'
-  PositionCalculator.vcxproj -> C:\Users\shado\source\repos\PSU-Graviti\PositionCalculator\x64\Debug\PositionCalculator.exe
