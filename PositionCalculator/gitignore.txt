@@ -1,0 +1,6 @@
+.vs
+PositionCalculator/x64
+PositionCalculator/x64/Debug
+PositionCalculator/.vs
+PositionCalculator/PositionCalculator/x64
+*/x64/
