@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "QtGraviti", "QtGraviti.vcxp
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GUnitTest", "..\GUnitTest\GUnitTest.vcxproj", "{105724DE-FAAF-4E00-A569-49DCF98B3DC7}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PositionCalculator", "..\PositionCalculator\PositionCalculator\PositionCalculator.vcxproj", "{4099F459-6890-47B8-915F-6F90285F7F25}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -21,6 +23,10 @@ Global
 		{105724DE-FAAF-4E00-A569-49DCF98B3DC7}.Debug|x64.Build.0 = Debug|x64
 		{105724DE-FAAF-4E00-A569-49DCF98B3DC7}.Release|x64.ActiveCfg = Release|x64
 		{105724DE-FAAF-4E00-A569-49DCF98B3DC7}.Release|x64.Build.0 = Release|x64
+		{4099F459-6890-47B8-915F-6F90285F7F25}.Debug|x64.ActiveCfg = Debug|x64
+		{4099F459-6890-47B8-915F-6F90285F7F25}.Debug|x64.Build.0 = Debug|x64
+		{4099F459-6890-47B8-915F-6F90285F7F25}.Release|x64.ActiveCfg = Release|x64
+		{4099F459-6890-47B8-915F-6F90285F7F25}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
