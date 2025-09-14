@@ -3,4 +3,7 @@ QtGraviti/x64
 QtGraviti/.vs
 QtGraviti/packages/
 QtGraviti/QtGraviti/x64
-*/x64/
+PositionCalculator/x64
+PositionCalculator/.vs
+PositionCalculator/PositionCalculator/x64
+**/x64/**
