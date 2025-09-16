@@ -8,6 +8,7 @@
 const bool debugCSV = false;
 
 bool fileExists(std::string filePath) {
+    //check if a file exists
     std::ifstream file(filePath);
 
     if (file) {
@@ -23,6 +24,8 @@ bool fileExists(std::string filePath) {
         
 
 class orbitObject {
+	// define an object that has mass, size, a name, position, velocity, acceleration
+
     float mass = 0.0f;
     float size = 0.0f;
 
@@ -101,7 +104,7 @@ public:
 	}
     void integrate( float timestep) {
         
-        // Simple Euler integration
+		// Simple Euler integration to update position and velocity for a givent timestep
         position[0] = position[0] + velocity[0] * timestep;
         position[1] = position[1] + velocity[1] * timestep;
         position[2] = position[2] + velocity[2] * timestep;
@@ -137,6 +140,7 @@ class simulation {
             it->printPosition();
 
             if (debugCSV) {
+				// if debug mode is true, write positions to CSV
                 it->writepositionCSV();
             }
         }
@@ -196,7 +200,7 @@ public:
             step();
             currentTime += timestep;
 
-            
+			// debug: print positions of all objects
             //for (const auto& obj : planetoids) {
             //    const float* pos = obj.getPosition(); // Use pointer directly
             //    std::cout << "Current position: (" << pos[0] << ", " << pos[1] << ", " << pos[2] << ")" << std::endl;
