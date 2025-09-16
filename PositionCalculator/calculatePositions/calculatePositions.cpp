@@ -3,20 +3,36 @@
 
 #include <iostream>
 #include <list>
+#include <fstream>
 
+const bool debugCSV = false;
 
+bool fileExists(std::string filePath) {
+    std::ifstream file(filePath);
 
+    if (file) {
+        return true;
+        file.close();
+    }
+    else {
+        return false;
+    }
+
+}
+
+        
 
 class orbitObject {
     float mass = 0.0f;
     float size = 0.0f;
 
+	std::string name = "Unnamed";
     float position[3] = {0.0f,0.0f,0.0f};     // x, y, z
     float velocity[3] = { 0.0f,0.0f,0.0f };     // x, y, z
     float acceleration[3] = { 0.0f,0.0f,0.0f }; // x, y, z
 
 public:
-    orbitObject(float m, float s, float pos[3], float vel[3])    {
+    orbitObject(float m, float s, float pos[3], float vel[3], std::string Name)    {
         mass = m;
         size = s;
         position[0] = pos[0];
@@ -25,11 +41,32 @@ public:
         velocity[0] = vel[0];
         velocity[1] = vel[1];
         velocity[2] = vel[2];
+        name = Name;
 
     }
 
     void* printPosition() {
         std::cout << "Current position: (" << position[0] << ", " << position[1] << ", " << position[2] << ")" << std::endl;
+        return 0;
+    }
+
+    void* writepositionCSV() {
+
+		// if "name.csv" file does not exist, create it and add header
+        // else, append to it
+		std::string filename = name + ".csv";
+        std::ofstream file{};
+
+		if (!fileExists(filename)) {
+			file.open(filename, std::ios::out);
+			file << "x,y,z\n";
+		}
+		else {
+			file.open(filename, std::ios::app);
+		}
+		file << position[0] << "," << position[1] << "," << position[2] << "\n";
+		file.close();
+
         return 0;
     }
     float* getPosition() {
@@ -72,8 +109,7 @@ public:
         velocity[0] = velocity[0] + acceleration[0] * timestep;
         velocity[1] = velocity[1] + acceleration[1] * timestep;
         velocity[2] = velocity[2] + acceleration[2] * timestep;
-        
-        
+
     }
     
 };
@@ -95,13 +131,14 @@ class simulation {
         for (auto it = planetoids.begin(); it != planetoids.end(); ++it) {
             // Placeholder for gravitational force calculation
             // Update position based on velocity and acceleration
-            
-			it->integrate(timestep);
 
-			it->printPosition();
+            it->integrate(timestep);
 
-            
+            it->printPosition();
 
+            if (debugCSV) {
+                it->writepositionCSV();
+            }
         }
     }
     void calcGravForces() {
@@ -188,12 +225,12 @@ int main()
     float velE[3] = { 0.0f,0.0f,0.0f };     // x, y, z
     float massofEarth = 100.0e10f; // in kg
 
-    auto earth = orbitObject(massofEarth, 100.0f, posE, velE);
+    auto earth = orbitObject(massofEarth, 100.0f, posE, velE, "Earth");
     float posM[3] = { 100.0f,0.0f,0.0f };     // x, y, z
     float velM[3] = { 0.0f,0.0f,0.0f };     // x, y, z
     float massofMoon = 1.0e10f; // in kg
 
-    auto moon = orbitObject(massofMoon, 50.0f, posM, velM);
+    auto moon = orbitObject(massofMoon, 50.0f, posM, velM, "Moon");
 
 	simulation sim(1.0f,300.0f);
     sim.addObject(earth);
