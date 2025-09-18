@@ -3,7 +3,8 @@
 static EntityManager* entity_manager = nullptr;
 
 EntityManager::EntityManager()
-    : entities(std::make_shared<std::vector<Entity>>())
+    : entities(std::make_shared<std::vector<Entity>>()),
+    m_nextID(0)
 {
 }
 
@@ -22,6 +23,7 @@ EntityManager* EntityManager::getInstance()
 
 void EntityManager::addEntity(Entity& entity)
 {
+    entity.setID(m_nextID++);
     entities->push_back(entity);
 }
 

@@ -19,14 +19,18 @@ public:
 
 	void setEntityName(std::string entity_name);
 
-	long int getEntityId() const;
+	long int getEntityID() const;
 
 	//How many time steps to simulate forward
 	bool Simulate(int time_steps);
 
 	//Tick forward one time step
 	bool TickForward();
-	
+
+	friend class EntityManager;
+protected:
+	void setID(long int newID);
+
 private:
 	std::string m_entity_name;
 
@@ -36,5 +40,7 @@ private:
 	std::vector<PhysicalState> m_past_trajectory;
 	std::vector<PhysicalState> m_future_trajectory;
 	PhysicalState m_current_state;
+
+	long int m_entityid;
 };
 

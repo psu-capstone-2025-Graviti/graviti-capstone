@@ -77,3 +77,13 @@ bool Entity::TickForward()
     m_future_trajectory.erase(m_future_trajectory.begin());
     return true;
 }
+
+void Entity::setID(long int newID)
+{
+    m_entityid = newID;
+}
+
+long int Entity::getEntityID() const
+{
+    return m_entityid;
+}

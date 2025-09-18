@@ -20,7 +20,7 @@ public:
 
 private:
     //EntityManager* entity_manager;
-
+    long int m_nextID;
     EntityManager();
     ~EntityManager();
 
