@@ -50,6 +50,7 @@ public:
     float getAcceleration(int index) const;
 	Vec3 getAcceleration() const;
     float getTimestamp() const;
+	float getMass() const;
     
     // Setters 
     void setPosition(Vec3 pos);
@@ -59,8 +60,14 @@ public:
     void setAcceleration(Vec3 acc);
     void setAcceleration(int index, float value);
     void setTimestamp(const float timestamp);
+	void integrate(float timestep);
     //void setTimestampNow();
     
+	//debug print position
+	void printPosition() const;
+	void writepositionCSV(const std::string& name) const;
+	bool fileExists(const std::string& filename) const;
+
     // Reset all values to zero
     void reset();
     
