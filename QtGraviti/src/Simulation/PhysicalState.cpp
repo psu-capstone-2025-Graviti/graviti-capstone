@@ -1,8 +1,4 @@
 #include "PhysicalState.h"
-#include "PhysicalState.h"
-#include "PhysicalState.h"
-#include "PhysicalState.h"
-#include "PhysicalState.h"
 #include <iostream>
 #include <fstream>
 
