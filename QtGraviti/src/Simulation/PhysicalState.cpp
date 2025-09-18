@@ -1,4 +1,6 @@
 #include "PhysicalState.h"
+#include <iostream>
+#include <fstream>
 
 using namespace std::chrono;
 
@@ -41,6 +43,7 @@ Vec3 PhysicalState::getPosition() const
     return m_position;
 }
 
+
 float PhysicalState::getVelocity(int index) const
 {
     switch (index) {
@@ -74,6 +77,11 @@ Vec3 PhysicalState::getAcceleration() const
 float PhysicalState::getTimestamp() const
 {
     return m_timestamp;
+}
+
+float PhysicalState::getMass() const
+{
+    return m_mass;
 }
 
 void PhysicalState::setPosition(Vec3 pos)
@@ -126,10 +134,67 @@ void PhysicalState::setTimestamp(const float timestamp)
     m_timestamp = timestamp;
 }
 
+void PhysicalState::integrate(float timestep)
+{
+	auto oldPosition = getPosition();
+    auto vel = getVelocity();
+    auto acc = getAcceleration();
+
+    setPosition({oldPosition.x + vel.x * timestep,
+                 oldPosition.y + vel.y * timestep,
+				 oldPosition.z + vel.z * timestep });
+    
+    setVelocity({vel.x + acc.x * timestep,
+				 vel.y + acc.y * timestep,
+		         vel.z + acc.z * timestep });
+
+}
+
+void PhysicalState::printPosition() const
+{
+    std::cout << "Current position: (" << m_position.x << ", " << m_position.y << ", " << m_position.z << ")" << std::endl;
+}
+
+void PhysicalState::writepositionCSV(const std::string& name) const
+{
+
+        // if "name.csv" file does not exist, create it and add header
+        // else, append to it
+        std::string filename = name + ".csv";
+        std::ofstream file{};
+
+        if (!fileExists(filename)) {
+            file.open(filename, std::ios::out);
+            file << "x,y,z\n";
+        }
+        else {
+            file.open(filename, std::ios::app);
+        }
+        file << m_position.x << "," << m_position.y << "," << m_position.z << "\n";
+        file.close();
+
+    
+}
+
+bool PhysicalState::fileExists(const std::string& filename) const
+{
+    std::ifstream file(filename);
+
+    if (file) {
+        return true;
+        file.close();
+    }
+    else {
+        return false;
+    }
+
+}
+
 //void PhysicalState::setTimestampNow()
 //{
 //    m_timestamp = high_resolution_clock::now();
 //}
+
 
 void PhysicalState::reset()
 {
