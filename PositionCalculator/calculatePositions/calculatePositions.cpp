@@ -5,7 +5,7 @@
 #include <list>
 #include <fstream>
 
-const bool debugCSV = false;
+const bool debugCSV = true;
 
 bool fileExists(std::string filePath) {
     std::ifstream file(filePath);
@@ -116,10 +116,10 @@ public:
 
 
 class simulation {
-    float G = 6.67430e-11f; // Gravitational constant in m^3 kg^-1 s^-2
-    float timestep = 1.0f; // Time step in seconds
+    float G = 6.6743E-20f; // Gravitational constant in m^3 kg^-1 s^-2
+    float timestep = 46656.0f; // Time step in seconds
     float currentTime = 0.0f;
-    float endTime = 100.0f;
+    float endTime = 2332800.0f;
 
     std::list<orbitObject> planetoids = { };
 
@@ -152,9 +152,9 @@ class simulation {
                     float distance = std::sqrt(dx * dx + dy * dy + dz * dz);
                     if (distance > 1e-5f) { // Prevent division by zero
                         float accMagnitude = G * jt->getMass() / (distance * distance);
-                        totalAcc[0] += (accMagnitude * (dx / distance));
-                        totalAcc[1] += (accMagnitude * (dy / distance));
-                        totalAcc[2] += (accMagnitude * (dz / distance));
+                        totalAcc[0] = totalAcc[0]+(accMagnitude * (dx / distance));
+                        totalAcc[1] = totalAcc[1]+(accMagnitude * (dy / distance));
+                        totalAcc[2] = totalAcc[2]+(accMagnitude * (dz / distance));
                     }
                     else { // Prevent division by zero
                         totalAcc[0] = 0;
@@ -194,7 +194,7 @@ public:
         while (currentTime < endTime) {
             std::cout << "Current Time: " << currentTime << " seconds" << std::endl;
             step();
-            currentTime += timestep;
+            currentTime = currentTime+ timestep;
 
             
             //for (const auto& obj : planetoids) {
@@ -210,31 +210,42 @@ public:
 int main()
 {
 
- //   float posE[3] = { 0.0f,0.0f,0.0f };     // x, y, z
- //   float velE[3] = { 0.0f,0.0f,0.0f };     // x, y, z
-	//float massofEarth = 5.972e24f; // in kg
+    float posE[3] = { 0.0f,0.0f,0.0f };     // x, y, z km
+    float velE[3] = { 0.0f,0.0f,30.0f };     // x, y, z km/s
+	float massofEarth = 5.972e24f; // in kg
 	//
-	//auto earth = orbitObject(massofEarth, 100.0f, posE, velE);
- //   float posM[3] = { 384400.0f,0.0f,0.0f };     // x, y, z
- //   float velM[3] = { 0.0f,0.0f,0.0f };     // x, y, z
-	//float massofMoon = 7.346e22f; // in kg
+	auto earth = orbitObject(massofEarth, 100.0f, posE, velE, "earth");
+    float posM[3] = { 384400.0f,0.0f,0.0f };     // x, y, z
+    float velM[3] = { 0.0f,1.0f,30.0f };     // x, y, z
+	float massofMoon = 7.346e22f; // in kg
  //   
-	//auto moon = orbitObject(massofMoon, 50.0f, posM, velM);
+	auto moon = orbitObject(massofMoon, 50.0f, posM, velM, "moon");
 
-    float posE[3] = { 0.0f,0.0f,0.0f };     // x, y, z
-    float velE[3] = { 0.0f,0.0f,0.0f };     // x, y, z
-    float massofEarth = 100.0e10f; // in kg
+    //float posE[3] = { 0.0f,0.0f,0.0f };     // x, y, z
+    //float velE[3] = { 0.0f,0.0f,0.0f };     // x, y, z
+    //float massofEarth = 100.0e10f; // in kg
 
-    auto earth = orbitObject(massofEarth, 100.0f, posE, velE, "Earth");
-    float posM[3] = { 100.0f,0.0f,0.0f };     // x, y, z
-    float velM[3] = { 0.0f,0.0f,0.0f };     // x, y, z
-    float massofMoon = 1.0e10f; // in kg
+    //auto earth = orbitObject(massofEarth, 100.0f, posE, velE, "Earth");
+    //float posM[3] = { 100.0f,0.0f,0.0f };     // x, y, z
+    //float velM[3] = { 0.0f,0.0f,0.0f };     // x, y, z
+    //float massofMoon = 1.0e10f; // in kg
 
-    auto moon = orbitObject(massofMoon, 50.0f, posM, velM, "Moon");
+    //auto moon = orbitObject(massofMoon, 50.0f, posM, velM, "Moon");
+    float massofsun = 2e30f; // in kg
+    float posS[3] = { -149598023.0f,0.0f,0.0f };     // x, y, z
+    float velS[3] = { 0.0f,0.0f,0.0f };     // x, y, z
+    auto sun = orbitObject(massofsun, 100.0f, posS, velS, "sun");
+    
+    
 
-	simulation sim(1.0f,300.0f);
+
+	float timestep = 24.0f*60.0f*60.0f;
+    /*float endtime = 2332800.0f;*/
+    float endtime = 60.0*60.0*24.0*365.0;
+	simulation sim(timestep, endtime*2);
     sim.addObject(earth);
     sim.addObject(moon);
+    sim.addObject(sun);
 	sim.run();
     
 }
