@@ -4,6 +4,7 @@
 #include <iostream>
 #include <list>
 #include <fstream>
+#include <array>
 
 const bool debugCSV = false;
 
@@ -20,7 +21,49 @@ bool fileExists(std::string filePath) {
 
 }
 
-        
+class orbitTrajectory {
+
+    std::list<int> timeStepNum = {};
+    std::list<float> times = { };
+    std::list<std::array<float, 3>> positions = {};
+    std::list<std::array<float, 3>> velocities= {};
+    std::list<std::array<float, 3>> accelerations = {};
+
+public:
+    orbitTrajectory(float time, float pos[3], float vel[3], float acc[3]) {
+		timeStepNum.push_back(0);
+        times.push_back(time);
+		positions.push_back(std::array<float, 3>{pos[0], pos[1], pos[2]});
+		velocities.push_back(std::array<float, 3>{vel[0], vel[1], vel[2]});
+		accelerations.push_back(std::array<float, 3>{acc[0], acc[1], acc[2]});
+    }
+
+
+    void* addStep(float tick, float pos[3], float vel[3], float acc[3]) {
+        timeStepNum.push_back(timeStepNum.back() + 1);
+		times.push_back(times.back() + tick); // assuming constant timestep of 1.0f for simplicity
+        positions.push_back(std::array<float, 3>{ pos[0], pos[1], pos[2] });
+        velocities.push_back(std::array<float, 3>{ vel[0], vel[1], vel[2] });
+        accelerations.push_back(std::array<float, 3>{ acc[0], acc[1], acc[2] });
+        return 0;
+    }
+    void* printSimpleTrajectory() {
+        // Use explicit iterator types to avoid type confusion
+        std::list<int>::iterator it = timeStepNum.begin();
+        std::list<float>::iterator jt = times.begin();
+        std::list<std::array<float, 3>>::iterator kt = positions.begin();
+
+        // for each timestepnum, print time and position
+        for (size_t i = 0; i < timeStepNum.size(); ++i) {
+            auto it = std::next(timeStepNum.begin(), i); // Access element at index i
+            auto jt = std::next(positions.begin(), i); // Access element at index i
+            std::cout << *it << " " << (*jt)[0] << " " << (*jt)[1] << " " << (*jt)[2]<<std::endl;
+        }
+
+        return 0;
+	}
+
+};
 
 class orbitObject {
     float mass = 0.0f;
@@ -30,6 +73,9 @@ class orbitObject {
     float position[3] = {0.0f,0.0f,0.0f};     // x, y, z
     float velocity[3] = { 0.0f,0.0f,0.0f };     // x, y, z
     float acceleration[3] = { 0.0f,0.0f,0.0f }; // x, y, z
+
+    // need a way to get start time
+	orbitTrajectory trajectory = orbitTrajectory(0.0f, position, velocity, acceleration);
 
 public:
     orbitObject(float m, float s, float pos[3], float vel[3], std::string Name)    {
@@ -44,6 +90,18 @@ public:
         name = Name;
 
     }
+
+    void* writeTrajectory() {
+        //need a way to get time step
+        //simulation::getTimeStep()
+		trajectory.addStep(1.0f, position, velocity, acceleration);
+        return 0;
+	}
+
+    orbitTrajectory* getTrajectory() {
+        return &trajectory;
+	}
+
 
     void* printPosition() {
         std::cout << "Current position: (" << position[0] << ", " << position[1] << ", " << position[2] << ")" << std::endl;
@@ -136,10 +194,16 @@ class simulation {
 
             it->printPosition();
 
+            it->writeTrajectory();
+
             if (debugCSV) {
                 it->writepositionCSV();
             }
+
+
         }
+        
+
     }
     void calcGravForces() {
         for (auto it = planetoids.begin(); it != planetoids.end(); ++it) {
@@ -189,10 +253,12 @@ public:
     void addObject(orbitObject obj) {
         planetoids.push_back(obj);
     }
-
+    float getTimeStep() {
+        return timestep;
+	}
     void run() {
         while (currentTime < endTime) {
-            std::cout << "Current Time: " << currentTime << " seconds" << std::endl;
+            //std::cout << "Current Time: " << currentTime << " seconds" << std::endl;
             step();
             currentTime += timestep;
 
@@ -236,6 +302,10 @@ int main()
     sim.addObject(earth);
     sim.addObject(moon);
 	sim.run();
+
+	auto x =sim.getPlanetoids();
+	x.begin()->getTrajectory()->printSimpleTrajectory();
+	
     
 }
 
