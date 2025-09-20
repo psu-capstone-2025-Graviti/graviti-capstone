@@ -27,6 +27,6 @@ public:
      * currentState      The current state of the entity
      * futureTrajectory  Pointer to where to store the future trajectory of the entity
      */
-    virtual void simulate(float duration, int timeSteps, PhysicalState& currentState, std::shared_ptr<std::vector<PhysicalState>> futureTrajectory) = 0;
+    virtual void simulate(float duration, int timeSteps, PhysicalState& currentState, long int callingID, std::shared_ptr<std::vector<PhysicalState>> futureTrajectory) = 0;
 
 };

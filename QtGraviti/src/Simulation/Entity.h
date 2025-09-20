@@ -9,15 +9,18 @@ using namespace std::chrono;
 class Entity
 {
 public:
-	Entity(std::unique_ptr<IPhysicsEngine> engine);
+	Entity(std::unique_ptr<IPhysicsEngine>& engine);
 	~Entity();
 
 	void setTickDuration(float tick_duration);
 	void setTimestep(float timestep);
 	void setOrigin(PhysicalState origin);
-	void setPhysicsEngine(std::unique_ptr<IPhysicsEngine> engine);
+	//void setPhysicsEngine(std::unique_ptr<IPhysicsEngine>& engine);
+
+	PhysicalState* getPhysicalState();
 
 	void setEntityName(std::string entity_name);
+	std::string getEntityName();
 
 	long int getEntityID() const;
 

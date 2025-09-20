@@ -1,12 +1,15 @@
 #include "Entity.h"
 #include <algorithm>
 #include <memory>
+#include <string>
 
-Entity::Entity(std::unique_ptr<IPhysicsEngine> engine)
+Entity::Entity(std::unique_ptr<IPhysicsEngine>& engine)
     : m_current_state(),
     m_entity_name("TEST"),
     m_future_trajectory(),
-    m_past_trajectory()
+    m_past_trajectory(),
+    m_entityid(0),
+    m_timestep(0.0f)
 {
     m_engine = std::move(engine);
 }
@@ -20,7 +23,10 @@ void Entity::setEntityName(std::string entity_name)
 {
     m_entity_name = entity_name;
 }
-
+std::string Entity::getEntityName()
+{
+    return m_entity_name;
+}
 //long int Entity::getEntityId() const
 //{
 //    return entity_id;
@@ -45,9 +51,14 @@ void Entity::setOrigin(PhysicalState origin)
     m_future_trajectory.clear();
 }
 
-void Entity::setPhysicsEngine(std::unique_ptr<IPhysicsEngine> engine)
+//void Entity::setPhysicsEngine()
+//{
+//    m_engine = std::move(engine);
+//}
+
+PhysicalState* Entity::getPhysicalState()
 {
-    m_engine = std::move(engine);
+    return &m_current_state;
 }
 
 bool Entity::Simulate(int time_steps)
@@ -62,19 +73,18 @@ bool Entity::Simulate(int time_steps)
     m_future_trajectory.clear(); //TODO - we can use the future trajectory if its still valid
 
     // Use the physics engine to simulate one timestep
-    m_engine->simulate(m_timestep, time_steps, m_current_state, std::make_shared<std::vector<PhysicalState>>(m_future_trajectory));
+    m_engine->simulate(m_timestep, time_steps, m_current_state, this->getEntityID(), std::make_shared<std::vector<PhysicalState>>(m_future_trajectory));
     return true;
 }
 
 bool Entity::TickForward()
 {
-    if(m_future_trajectory.size() < 1) {
-        if(!this->Simulate(1)) {
-            return false;
-        }
-    }
-    m_current_state = m_future_trajectory[0];
-    m_future_trajectory.erase(m_future_trajectory.begin());
+    //if(m_future_trajectory.size() < 1) {
+    //    return false;
+    //}
+    //m_current_state = m_future_trajectory[0];
+    //m_future_trajectory.erase(m_future_trajectory.begin());
+    
     return true;
 }
 

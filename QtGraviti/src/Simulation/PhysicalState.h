@@ -50,7 +50,8 @@ public:
     float getAcceleration(int index) const;
 	Vec3 getAcceleration() const;
     float getTimestamp() const;
-	float getMass() const;
+    float getMass() const;
+    void setMass(float mass);
     
     // Setters 
     void setPosition(Vec3 pos);
@@ -59,6 +60,7 @@ public:
     void setVelocity(int index, float value);
     void setAcceleration(Vec3 acc);
     void setAcceleration(int index, float value);
+    void addAcceleration(Vec3 additional);
     void setTimestamp(const float timestamp);
 	void integrate(float timestep);
     //void setTimestampNow();

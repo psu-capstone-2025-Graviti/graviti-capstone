@@ -79,6 +79,11 @@ float PhysicalState::getTimestamp() const
     return m_timestamp;
 }
 
+void PhysicalState::setMass(float mass)
+{
+    m_mass = mass;
+}
+
 float PhysicalState::getMass() const
 {
     return m_mass;
@@ -127,6 +132,13 @@ void PhysicalState::setAcceleration(int index, float value)
         case Z: m_acceleration.z = value; break;
         default: break;
     }
+}
+
+void PhysicalState::addAcceleration(Vec3 additional)
+{
+    m_acceleration.x += additional.x;
+    m_acceleration.y += additional.y;
+    m_acceleration.z += additional.z;
 }
 
 void PhysicalState::setTimestamp(const float timestamp)

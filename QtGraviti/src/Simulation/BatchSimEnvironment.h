@@ -1,0 +1,17 @@
+#pragma once
+
+#include "EntityManager.h"
+
+using namespace std::chrono;
+
+class BatchSimEnvironment
+{
+public:
+	BatchSimEnvironment();
+	void initialize();
+	//After run is called, we cant add more stuff to environment
+	void run();
+
+private:
+	float m_origin_time;
+};
