@@ -1,5 +1,6 @@
 #pragma once
 #include <chrono>
+#include <string>
 
 using namespace std::chrono;
 
@@ -37,7 +38,7 @@ public:
     PhysicalState();
     
     // Constructor with initial values
-    PhysicalState(Vec3 pos, Vec3 vel, Vec3 acc, float mass, float radius);
+    PhysicalState(Vec3 pos, Vec3 vel, Vec3 acc, float mass, float radius, float timestamp);
     
     // Destructor
     ~PhysicalState();

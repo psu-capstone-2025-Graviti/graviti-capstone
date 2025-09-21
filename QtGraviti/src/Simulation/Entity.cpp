@@ -42,6 +42,11 @@ void Entity::setTimestep(float timestep)
     m_timestep = timestep;
 }
 
+float Entity::getTimestep()
+{
+    return m_timestep;
+};
+
 void Entity::setOrigin(PhysicalState origin)
 {
     m_current_state = origin;

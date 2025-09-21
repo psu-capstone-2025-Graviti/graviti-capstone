@@ -15,19 +15,7 @@ void BatchSimEnvironment::initialize()
 	// Create entities
 	auto entityManager = EntityManager::getInstance();
 
-	/*
-	
-    float posE[3] = { 0.0f,0.0f,0.0f };     // x, y, z
-    float velE[3] = { 0.0f,0.0f,0.0f };     // x, y, z
-    float massofEarth = 100.0e10f; // in kg
 
-    auto earth = orbitObject(massofEarth, 100.0f, posE, velE, "Earth");
-    float posM[3] = { 100.0f,0.0f,0.0f };     // x, y, z
-    float velM[3] = { 0.0f,0.0f,0.0f };     // x, y, z
-    float massofMoon = 1.0e10f; // in kg
-
-    auto moon = orbitObject(massofMoon, 50.0f, posM, velM, "Moon");
-	*/
 	std::unique_ptr<IPhysicsEngine> physicsEngine = std::make_unique<NBodyPhysics>();
 	Entity earth = Entity(physicsEngine);
 	earth.setEntityName("Earth");
@@ -38,7 +26,7 @@ void BatchSimEnvironment::initialize()
 	Entity moon = Entity(physicsEngine);
 	moon.setEntityName("Moon");
 	PhysicalState moonState;
-	moonState.setPosition(X, 100.0f);
+	moonState.setPosition(X, 1000);
 	moonState.setMass(1.0e10f);
 	moon.setOrigin(moonState);
 	entityManager->addEntity(moon);

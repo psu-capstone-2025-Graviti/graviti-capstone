@@ -10,17 +10,20 @@ PhysicalState::PhysicalState()
     , m_velocity{0.0, 0.0, 0.0}
     , m_acceleration{0.0, 0.0, 0.0}
     , m_timestamp(0.0) //todo - make epoch
+    , m_mass(0.0)
+    , m_radius(0.0)
 {
 }
 
 
-PhysicalState::PhysicalState(Vec3 pos, Vec3 vel, Vec3 acc, float mass, float radius)
+PhysicalState::PhysicalState(Vec3 pos, Vec3 vel, Vec3 acc, float mass, float radius, float timestamp)
 {
     m_position = pos;
     m_velocity = vel;
     m_acceleration = acc;
     m_mass = mass;
     m_radius = radius;
+    m_timestamp = timestamp;
 }
 
 
@@ -221,6 +224,8 @@ PhysicalState::PhysicalState(const PhysicalState& other)
     , m_velocity(other.m_velocity)
     , m_acceleration(other.m_acceleration)
     , m_timestamp(other.m_timestamp)
+    , m_mass(other.m_mass)
+    , m_radius(other.m_radius)
 {
 }
 
@@ -230,5 +235,7 @@ PhysicalState& PhysicalState::operator=(const PhysicalState& other)
     m_velocity = other.m_velocity;
     m_acceleration = other.m_acceleration;
     m_timestamp = other.m_timestamp;
+    m_radius = other.m_radius;
+    m_mass = other.m_mass;
     return *this;
 }

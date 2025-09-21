@@ -13,10 +13,11 @@ void NBodyPhysics::simulate(float duration, int timeSteps, PhysicalState& curren
 
     float currentTime = currentState.getTimestamp();
 
+
     for (int step = 0; step < timeSteps; step++) {
         //std::cout << "Current Time: " << currentTime << " seconds" << std::endl;
 
-        float totalAcc[3] = { 0.0f, 0.0f, 0.0f };
+        Vec3 totalAcc = { 0.0, 0.0, 0.0 };
         for (auto jt = m_entities->begin(); jt != m_entities->end(); ++jt) {
             if (jt->getEntityID() != callingID) { // Avoid self-interaction
                 
@@ -28,22 +29,20 @@ void NBodyPhysics::simulate(float duration, int timeSteps, PhysicalState& curren
                 float dy = other_state->getPosition().y - self_state.getPosition().y;
                 float dz = other_state->getPosition().z - self_state.getPosition().z;
                 float distance = std::sqrt(dx * dx + dy * dy + dz * dz);
-                if (distance > 1e-5f) { // Prevent division by zero
+                if (distance > std::numeric_limits<float>::epsilon()) { // Prevent division by zero
                     float accMagnitude = G * jt->getPhysicalState()->getMass() / (distance * distance);
-                    totalAcc[X] += (accMagnitude * (dx / distance));
-                    totalAcc[Y] += (accMagnitude * (dy / distance));
-                    totalAcc[Z] += (accMagnitude * (dz / distance));
+                    totalAcc.x += (accMagnitude * (dx / distance));
+                    totalAcc.y += (accMagnitude * (dy / distance));
+                    totalAcc.z += (accMagnitude * (dz / distance));
                 }
                 else { // Prevent division by zero
-                    totalAcc[X] = 0;
-                    totalAcc[Y] = 0;
-                    totalAcc[Z] = 0;
+                    totalAcc.x = 0;
+                    totalAcc.y = 0;
+                    totalAcc.z = 0;
                 }
             }
         }
-        Vec3 sendTotalAcc = { totalAcc[X], totalAcc[Y], totalAcc[Z] };
-
-        currentState.addAcceleration(sendTotalAcc);
+        currentState.setAcceleration(totalAcc);
         currentTime += timestep;
     }
 	

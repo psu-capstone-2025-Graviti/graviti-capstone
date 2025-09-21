@@ -14,6 +14,7 @@ public:
 
 	void setTickDuration(float tick_duration);
 	void setTimestep(float timestep);
+	float getTimestep();
 	void setOrigin(PhysicalState origin);
 	//void setPhysicsEngine(std::unique_ptr<IPhysicsEngine>& engine);
 
@@ -30,8 +31,6 @@ public:
 	//Tick forward one time step
 	bool TickForward();
 
-	friend class EntityManager;
-protected:
 	void setID(long int newID);
 
 private:
