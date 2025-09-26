@@ -1,7 +1,7 @@
-#include "BatchSimEnvironment.h"
-#include "Entity.h"
-#include "NBodyEngine.h"
-#include "EntityManager.h"
+#include "GravitiLib/BatchSimEnvironment.h"
+#include "GravitiLib/Entity.h"
+#include "GravitiLib/NBodyEngine.h"
+#include "GravitiLib/EntityManager.h"
 #include <memory>
 #include <iostream>
 

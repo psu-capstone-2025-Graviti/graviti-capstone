@@ -1,4 +1,6 @@
-#pragma once
+#ifndef NBodyEngine_INCLUDE_GUARD_H
+#define NBodyEngine_INCLUDE_GUARD_H
+
 #include "IPhysicsEngine.h"
 #include "EntityManager.h"
 
@@ -16,3 +18,4 @@ public:
 	void simulate(float duration, int timeSteps, PhysicalState& currentState, long int callingID, std::shared_ptr<std::vector<PhysicalState>> futureTrajectory);
 };
 
+#endif // NBodyEngine_INCLUDE_GUARD_H

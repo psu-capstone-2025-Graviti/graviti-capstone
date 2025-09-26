@@ -1,4 +1,5 @@
-#pragma once
+#ifndef IPhysicsEngine_INCLUDE_GUARD_H
+#define IPhysicsEngine_INCLUDE_GUARD_H
 
 #include "PhysicalState.h"
 #include <chrono>
@@ -30,3 +31,5 @@ public:
     virtual void simulate(float duration, int timeSteps, PhysicalState& currentState, long int callingID, std::shared_ptr<std::vector<PhysicalState>> futureTrajectory) = 0;
 
 };
+
+#endif // IPhysicsEngine_INCLUDE_GUARD_H

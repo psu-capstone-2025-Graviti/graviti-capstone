@@ -1,14 +1,11 @@
-#include <QApplication>
-#include "src/App/mainwindow.h"
-#include "src/Simulation/BatchSimEnvironment.h"
+//#include <QApplication>
+//#include "src/App/mainwindow.h"
+#include "GravitiLib/BatchSimEnvironment.h"
 #include <thread>
-
-//#include "src/Simulation/ISimEnvironment.h"
 
 int main(int argc, char* argv[])
 {
-    //std::thread t;
-
+    //std::thread t
     BatchSimEnvironment batch;
     batch.initialize();
     batch.run();

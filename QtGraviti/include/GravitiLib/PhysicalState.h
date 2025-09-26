@@ -1,4 +1,6 @@
-#pragma once
+#ifndef PhysicalState_INCLUDE_GUARD_H
+#define PhysicalState_INCLUDE_GUARD_H
+
 #include <chrono>
 #include <string>
 
@@ -81,3 +83,4 @@ public:
     PhysicalState& operator=(const PhysicalState& other);
 };
 
+#endif // PhysicalState_INCLUDE_GUARD_H
