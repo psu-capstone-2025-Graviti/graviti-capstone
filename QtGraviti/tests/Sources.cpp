@@ -5,7 +5,7 @@
 	tested here, then write the individual unit tests against the headers.
 	Potential fix to avoid this badness is to restrucre the Simulation folder inside QTGraviti to compile to a lib
 */
-#include "src/Simulation/Entity.cpp"
-#include "src/Simulation/NBodyEngine.cpp"
-#include "src/Simulation/PhysicalState.cpp"
-#include "src/Simulation/EntityManager.cpp"
+#include "src/Entity.cpp"
+#include "src/NBodyEngine.cpp"
+#include "src/PhysicalState.cpp"
+#include "src/EntityManager.cpp"

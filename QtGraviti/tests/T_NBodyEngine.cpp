@@ -1,7 +1,7 @@
-#include "../../pch.h"
-#include "src/Simulation/NBodyEngine.h"
-#include "src/Simulation/Entity.h"
-#include "src/Simulation/EntityManager.h"
+#include "pch.h"
+#include "GravitiLib/NBodyEngine.h"
+#include "GravitiLib/Entity.h"
+#include "GravitiLib/EntityManager.h"
 #include <memory>
 #include <cmath>
 
