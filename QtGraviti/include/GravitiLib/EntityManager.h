@@ -1,4 +1,7 @@
-#pragma once
+#ifndef EntityManager_INCLUDE_GUARD_H
+#define EntityManager_INCLUDE_GUARD_H
+
+
 #include "Entity.h"
 #include <memory>
 #include <mutex>
@@ -31,3 +34,5 @@ private:
 
     //long int next_entity_id; //TODO - will we need entity ids?
 };
+
+#endif // EntityManager_INCLUDE_GUARD_H

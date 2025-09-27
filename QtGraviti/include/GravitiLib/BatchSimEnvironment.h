@@ -1,4 +1,5 @@
-#pragma once
+#ifndef BatchSimEnvironment_INCLUDE_GUARD_H
+#define BatchSimEnvironment_INCLUDE_GUARD_H
 
 #include "EntityManager.h"
 
@@ -15,3 +16,5 @@ public:
 private:
 	float m_origin_time;
 };
+
+#endif // BatchSimEnvironment_INCLUDE_GUARD_H

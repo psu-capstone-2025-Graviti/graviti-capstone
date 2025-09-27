@@ -2,8 +2,12 @@
 QtGraviti/x64
 QtGraviti/.vs
 QtGraviti/packages/
+QtGraviti/TestResults
+QtGraviti/test-results
 QtGraviti/QtGraviti/x64
 PositionCalculator/x64
 PositionCalculator/.vs
 PositionCalculator/PositionCalculator/x64
 **/x64/**
+QtGraviti/out
+build/*

@@ -1,4 +1,6 @@
-#pragma once
+#ifndef Entity_INCLUDE_GUARD_H
+#define Entity_INCLUDE_GUARD_H
+
 #include "PhysicalState.h"
 #include "IPhysicsEngine.h"
 #include <vector>
@@ -46,3 +48,4 @@ private:
 	long int m_entityid;
 };
 
+#endif // Entity_INCLUDE_GUARD_H

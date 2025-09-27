@@ -1,4 +1,4 @@
-#include "NBodyEngine.h"
+#include "GravitiLib/NBodyEngine.h"
 #include <iostream>
 
 bool debugCSV = true;

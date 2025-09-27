@@ -1,5 +1,7 @@
 <RCC>
-    <qresource prefix="/qt/qml/qtgraviti">
-        <file>main.qml</file>
+    <qresource prefix="/sources">
+        <file>src/App/qml/BaseInterface.ui.qml</file>
+        <file>src/App/qml/main.qml</file>
+        <file>src/App/qml/SimulationView.qml</file>
     </qresource>
 </RCC>
