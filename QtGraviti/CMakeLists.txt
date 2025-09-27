@@ -111,13 +111,19 @@ include(GoogleTest)
 # CTest sets BUILD_TESTING to on. To disable tests add -DBUILD_TESTING=OFF when invoking cmake
 enable_testing()
 
+#Prile flags - needed for CTest code coverage?
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /PROFILE")
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /PROFILE")
+set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /PROFILE")
+
+# Code coverage flags for msvc
+add_compile_options(/Zi /Od)
+add_link_options(/PROFILE)
+
 file(GLOB_RECURSE TEST_SRC_FILES
     "tests/*.cpp"
 )
 
-
-message(TEST_SRC_FILES="${TEST_SRC_FILES}")
-# A test is just an executable that is linked against the unit testing library
 add_executable(GravitiTests ${TEST_SRC_FILES})
     
 target_include_directories(GravitiTests
@@ -125,16 +131,59 @@ PUBLIC
 $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/>
 $<INSTALL_INTERFACE:include/>)
 
-# Link the test executable with GTest libraries and GravitiLib
+#Link libraries for testing
 target_link_libraries(GravitiTests
     PRIVATE
     GravitiLib
     gtest
     gtest_main
-    #vtkCommon
 )
 
-gtest_discover_tests(GravitiTests)
 
-# register the test with CTest, telling it what executable to run
-add_test(NAME GravitiUnitTests COMMAND GravitiTests)
+# Set properties for code coverage on test executable
+set_target_properties(GravitiTests PROPERTIES
+    COMPILE_FLAGS "/Zi /Od"
+    LINK_FLAGS "/PROFILE"
+)
+
+# Ensure the library is also instrumented for coverage
+set_target_properties(GravitiLib PROPERTIES
+    COMPILE_FLAGS "/Zi /Od"
+    LINK_FLAGS "/PROFILE"
+)
+
+
+# Create test results directory in build directory
+file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/test-results")
+
+gtest_discover_tests(GravitiTests
+    XML_OUTPUT_DIR "${CMAKE_BINARY_DIR}/test-results"
+    DISCOVERY_TIMEOUT 60
+    PROPERTIES
+    ENVIRONMENT "GTEST_OUTPUT=xml:${CMAKE_BINARY_DIR}/test-results/"
+)
+
+# Set CTest properties for XML output
+set_property(DIRECTORY PROPERTY CTEST_CUSTOM_MAXIMUM_NUMBER_OF_ERRORS 1000)
+set_property(DIRECTORY PROPERTY CTEST_CUSTOM_MAXIMUM_NUMBER_OF_WARNINGS 1000)
+
+
+set_target_properties(GravitiTests PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
+    RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_BINARY_DIR}
+    RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR}
+)
+
+set_target_properties(GravitiTests PROPERTIES
+    COMPILE_PDB_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
+    COMPILE_PDB_NAME "GravitiTests"
+    COMPILE_PDB_NAME_DEBUG "GravitiTests_debug"
+    COMPILE_PDB_NAME_RELEASE "GravitiTests_release"
+)
+
+set_target_properties(GravitiLib PROPERTIES
+    COMPILE_PDB_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
+    COMPILE_PDB_NAME "GravitiLib"
+    COMPILE_PDB_NAME_DEBUG "GravitiLib_debug"
+    COMPILE_PDB_NAME_RELEASE "GravitiLib_release"
+)

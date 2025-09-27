@@ -193,7 +193,7 @@ TEST(NBodyEngineTests, SimulateDifferentMasses)
     auto futureTrajectory = std::make_shared<std::vector<PhysicalState>>();
     
     // Run simulation on entity1
-    physicsEngine.simulate(1.0f, 1, state1, 1, futureTrajectory);
+    physicsEngine.simulate(1.0f, 1, state1, 0, futureTrajectory);
     
     // Calculate expected acceleration with larger mass
     float G = 6.67430e-11f;
