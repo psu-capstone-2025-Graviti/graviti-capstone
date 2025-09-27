@@ -1,4 +1,4 @@
-#include "gtest/gtest.h"
+#include "pch.h"
 #include "GravitiLib/NBodyEngine.h"
 #include "GravitiLib/Entity.h"
 #include "GravitiLib/EntityManager.h"

@@ -92,8 +92,9 @@ if(QT_VERSION_MAJOR EQUAL 6)
 endif()
 
 
-
-############################
+################################
+# GTest
+################################
 include(FetchContent)
 FetchContent_Declare(
   googletest
@@ -105,18 +106,14 @@ FetchContent_MakeAvailable(googletest)
 
 include(GoogleTest)
 
-# CTest sets BUILD_TESTING to on. To disable tests add -DBUILD_TESTING=OFF when invoking cmake
-if(BUILD_TESTING)
+enable_testing()
+include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 
-    # A test is just an executable that is linked against the unit testing library
-    add_executable(graviti src/main.cpp "tests/Sources.cpp" "tests/T_Entity.cpp" "tests/T_NBodyEngine.cpp" "tests/T_PhysicalState.cpp")
-    
-    target_include_directories(my_test_exe
-    PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/>
-    $<INSTALL_INTERFACE:include/>)
-
-    # register the test with CTest, telling it what executable to run
-    add_test(NAME abc COMMAND my_test_exe)
-
-endif()
+################################
+# Unit Tests
+################################
+# Add test cpp file
+add_executable(runUnitTests tests/T_Entity.cpp tests/T_NBodyEngine.cpp tests/T_PhysicalState.cpp)
+# Link test executable against gtest & gtest_main
+target_link_libraries(runUnitTests gtest gtest_main GravitiLib)
+add_test( runUnitTests runUnitTests )
