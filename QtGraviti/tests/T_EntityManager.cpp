@@ -31,56 +31,19 @@ public:
     }
 };
 
-class MockEntityManager {
-public:
-    MockEntityManager(const MockEntityManager&) = delete;
-    MockEntityManager& operator=(const MockEntityManager&) = delete;
-
-    static MockEntityManager* getInstance()
-    {
-        static MockEntityManager* entity_manager = nullptr;
-        if (entity_manager == nullptr) {
-            entity_manager = new MockEntityManager();
-        }
-        return entity_manager;
-    }
-
-    void addEntity(Entity& entity)
-    {
-        entity.setID(m_nextID++);
-        entities->push_back(entity);
-    }
-
-    std::shared_ptr<std::vector<Entity>> getAllEntities();
-
-    long int m_nextID;
-
-    std::shared_ptr<std::vector<Entity>> entities;
-
-    MockEntityManager::MockEntityManager()
-        : entities(std::make_shared<std::vector<Entity>>()),
-        m_nextID(0)
-    {
-    }
-
-    MockEntityManager::~MockEntityManager()
-    {
-        entities->clear();
-    }
-};
 
 TEST(EntityManagerTests, VerifyEntities)
 {
     std::unique_ptr<IPhysicsEngine> physicsEngine = std::make_unique<MockPhysicsEngine>();
     Entity e(physicsEngine);
-    MockEntityManager* Man = MockEntityManager::getInstance();
+    EntityManager* Man = EntityManager::getInstance();
     Entity earth = Entity(physicsEngine);
     earth.setEntityName("Earth");
     earth.getPhysicalState()->setMass(100.0e10f);
     Man->addEntity(earth);
 
 
-    auto x = Man->entities;
+    auto x = Man->getAllEntities();
 	x->at(0).getEntityName();
 	x->at(0).getPhysicalState()->getMass();
 	EXPECT_EQ(x->at(0).getEntityName(), "Earth");
@@ -94,24 +57,23 @@ TEST(EntityManagerTests, VerifyEntitiesDeleted)
 {
     std::unique_ptr<IPhysicsEngine> physicsEngine = std::make_unique<MockPhysicsEngine>();
     Entity e(physicsEngine);
-    MockEntityManager* Man = MockEntityManager::getInstance();
+    EntityManager* Man = EntityManager::getInstance();
     Entity earth = Entity(physicsEngine);
     earth.setEntityName("Earth");
     earth.getPhysicalState()->setMass(100.0e10f);
     Man->addEntity(earth);
 
-
-    auto x = Man->entities;
+    auto x = Man->getAllEntities();
     x->at(0).getEntityName();
     x->at(0).getPhysicalState()->getMass();
     EXPECT_EQ(x->at(0).getEntityName(), "Earth");
     EXPECT_FLOAT_EQ(x->at(0).getPhysicalState()->getMass(), 100.0e10f);
 
-    Man ->~MockEntityManager();
-    auto y = Man->entities;
-    
+    // Clear the entities vector to simulate deletion
+    Man->getAllEntities()->clear();
+    auto y = Man->getAllEntities();
+
     EXPECT_THROW(y->at(0).getEntityName(), std::out_of_range);
     EXPECT_THROW(y->at(0).getPhysicalState(), std::out_of_range);
-    
 }
 
