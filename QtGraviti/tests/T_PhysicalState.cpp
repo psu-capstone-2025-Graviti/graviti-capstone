@@ -1,5 +1,5 @@
-#include "../../pch.h"
-#include "src/Simulation/PhysicalState.h"
+#include "gtest/gtest.h"
+#include "GravitiLib/PhysicalState.h"
 #include <cmath>
 
 // Test default constructor

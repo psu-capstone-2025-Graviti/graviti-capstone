@@ -1,7 +1,7 @@
-#include "../../pch.h"
-#include "src/Simulation/Entity.h"
-#include "src/Simulation/NBodyEngine.h"
-#include "src/Simulation/EntityManager.h"
+#include "gtest/gtest.h"
+#include "GravitiLib/Entity.h"
+#include "GravitiLib/NBodyEngine.h"
+#include "GravitiLib/EntityManager.h"
 #include <memory>
 
 // Mock physics engine for testing
