@@ -35,6 +35,8 @@ private:
 
     float m_radius;
 
+    bool file_opened;
+
 public:
     // Default constructor
     PhysicalState();
@@ -70,7 +72,7 @@ public:
     
 	//debug print position
 	void printPosition() const;
-	void writepositionCSV(const std::string& name) const;
+	void writepositionCSV(const std::string& name);
 	bool fileExists(const std::string& filename) const;
 
     // Reset all values to zero

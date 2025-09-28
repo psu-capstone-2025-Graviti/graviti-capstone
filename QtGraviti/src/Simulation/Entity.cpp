@@ -73,12 +73,16 @@ bool Entity::Simulate(int time_steps)
         return false;
     }
     
+    // Store current state in past trajectory before simulation
     m_past_trajectory.push_back(m_current_state);//Make copy
 
     m_future_trajectory.clear(); //TODO - we can use the future trajectory if its still valid
 
     // Use the physics engine to simulate one timestep
     m_engine->simulate(m_timestep, time_steps, m_current_state, this->getEntityID(), std::make_shared<std::vector<PhysicalState>>(m_future_trajectory));
+
+    // After simulation, integrate the current state to get the new position
+    m_current_state.integrate(m_timestep);
     return true;
 }
 
@@ -96,6 +100,16 @@ bool Entity::TickForward()
 void Entity::setID(long int newID)
 {
     m_entityid = newID;
+}
+
+const std::vector<PhysicalState>& Entity::getFutureTrajectory() const
+{
+    return m_future_trajectory;
+}
+
+const std::vector<PhysicalState>& Entity::getPastTrajectory() const
+{
+    return m_past_trajectory;
 }
 
 long int Entity::getEntityID() const

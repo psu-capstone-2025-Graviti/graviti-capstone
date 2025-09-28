@@ -1,6 +1,7 @@
 import QtQuick 2.9
 import QtQuick.Window 2.2
 import QtQuick3D
+import GravitiLib 1.0
 
 Item {
     id: root
@@ -54,21 +55,71 @@ Item {
                 z: 350
             }
 
-            // Test sphere at origin to verify rendering
-            Model {
-                id: testSphere
-                source: "#Sphere"
-                position: Qt.vector3d(0, 0, 0)
-                materials: specularGlossy
-                scale: Qt.vector3d(1, 1, 1)
-            }
 
-            Model {
-                id: testSphereMoon
-                source: "#Sphere"
-                position: Qt.vector3d(150, 180, 0)
-                materials: specularGlossy
-                scale: Qt.vector3d(0.3, 0.3, 0.3)
+
+            //Trajectory Spheres
+            Node {
+                id: trajectorySphereContainer
+                Component {
+                    id: trajectorySphereComponent
+                    Model {
+                        id: trajectorySphere
+                        objectName: "trajectorySphere"
+                        source: "#Sphere"
+
+                        property int sphereIndex: 0
+                        property var sphereData: null
+
+                        x: sphereData.position.x
+                        y: sphereData.position.y
+                        z: sphereData.position.z
+
+                        // Scale from trajectoryRenderer
+                        scale: Qt.vector3d(sphereData.scale.x, sphereData.scale.y, sphereData.scale.z)
+
+                        // Material based on entity type or index
+                        materials: [
+                            PrincipledMaterial {
+                                baseColor: sphereData.materialColor
+                            }
+                        ]
+
+                        Connections {
+                            target: trajectoryRenderer
+                            function onTrajectorySpheresChanged() {
+                                if (trajectoryRenderer && sphereIndex < trajectoryRenderer.count) {
+                                    dynamicTrajectorySphere.sphereData = trajectoryRenderer.trajectorySpheres[sphereIndex]
+                                }
+                            }
+                        }
+                    }
+                }
+
+
+                Component.onCompleted: {
+                    createTrajectorySpheres()
+                }
+
+                function createTrajectorySpheres() {
+                    var count = trajectoryRenderer.count
+
+                    for (var i = 0; i < count; i++) {
+                        var sphereData = trajectoryRenderer.trajectorySpheres[i]
+                        if (sphereData) {
+                            var sphere = trajectorySphereComponent.createObject(trajectorySphereContainer, {
+                                "sphereIndex": i,
+                                "sphereData": sphereData
+                            })
+                        }
+                    }
+                }
+                // Connect to trajectoryRenderer changes to recreate spheres
+                Connections {
+                    target: trajectoryRenderer
+                    function onTrajectorySpheresChanged() {
+                        trajectorySphereContainer.createTrajectorySpheres()
+                    }
+                }
             }
 
         }

@@ -70,9 +70,9 @@ endif()
 
 target_link_libraries(Graviti PRIVATE
     GravitiLib
+    Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::Widgets
     Qt${QT_VERSION_MAJOR}::Qml
-    Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::Gui
     Qt${QT_VERSION_MAJOR}::QuickWidgets
 )
@@ -154,7 +154,7 @@ set_target_properties(GravitiLib PROPERTIES
 
 
 # Create test results directory in build directory
-file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/test-results")
+#file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/test-results")
 
 gtest_discover_tests(GravitiTests
     XML_OUTPUT_DIR "${CMAKE_BINARY_DIR}/test-results"

@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "TrajectoryRenderer.h"
 #include <QQuickWidget>
 #include <QUrl>
 #include <QDebug>
@@ -11,17 +12,28 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     
-    // Configure the QQuickWidget for proper resizing
-    ui->quickWidget->setResizeMode(QQuickWidget::SizeViewToRootObject);
-    
-    // Set the source to the QML file
     ui->quickWidget->setSource(QUrl("qrc:/sources/src/App/qml/main.qml"));
-    
-    // Ensure the QQuickWidget fills the available space
-    ui->quickWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+}
+
+MainWindow::MainWindow(TrajectoryRenderer* trajectoryRenderer, QWidget *parent)
+    : QMainWindow(parent)
+    , ui(new Ui::MainWindow)
+{
+    ui->setupUi(this);
+
+    if (trajectoryRenderer) {
+        ui->quickWidget->rootContext()->setContextProperty("trajectoryRenderer", trajectoryRenderer);
+    }
+
+    ui->quickWidget->setSource(QUrl("qrc:/sources/src/App/qml/main.qml"));
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+QQmlContext* MainWindow::rootContext()
+{
+    return ui->quickWidget->rootContext();
 }
