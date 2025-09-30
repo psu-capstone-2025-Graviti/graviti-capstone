@@ -1,8 +1,8 @@
 #include "GravitiLib/NBodyEngine.h"
 #include <iostream>
 
-bool debugCSV = true;
-bool debugLog = true;
+bool debugCSV = false;
+bool debugLog = false;
 
 
 void NBodyPhysics::simulate(float duration, int timeSteps, PhysicalState& currentState, long int callingID, std::shared_ptr<std::vector<PhysicalState>> futureTrajectory)
@@ -44,6 +44,10 @@ void NBodyPhysics::simulate(float duration, int timeSteps, PhysicalState& curren
         }
         currentState.setAcceleration(totalAcc);
         currentTime += timestep;
+
+        if (debugLog){
+            currentState.printPosition();
+}
     }
 	
 }
