@@ -31,6 +31,10 @@ void BatchSimEnvironment::initialize()
 	moon.setOrigin(moonState);
 	entityManager->addEntity(moon);
 
+	physicsEngine = std::make_unique<NBodyPhysics>();
+
+	entityManager->addEntityFromJson("/entityJsons/Earth.json", std::move(physicsEngine));
+
 }
 
 
