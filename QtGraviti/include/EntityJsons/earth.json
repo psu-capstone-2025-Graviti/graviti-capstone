@@ -1,0 +1,8 @@
+{
+  "name": "earth",
+  "positionX": 100,
+  "positionY": 100,
+  "positionZ": 200,
+  "mass": "100.0e10f",
+  "diameter": "12742.0f"
+}

@@ -18,8 +18,8 @@ int main(int argc, char* argv[])
 
     // Run batch simulation
     BatchSimEnvironment batch;
-    //batch.initialize_two_body();
-    batch.initialize_three_body();
+    batch.initialize_two_body();
+    //batch.initialize_three_body();
     batch.run();
 
     // Create trajectory renderer and convert trajectories
