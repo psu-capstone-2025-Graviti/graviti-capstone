@@ -9,7 +9,9 @@ class BatchSimEnvironment
 {
 public:
 	BatchSimEnvironment();
-	void initialize();
+	void initialize_two_body();
+	void initialize_three_body();
+
 	//After run is called, we cant add more stuff to environment
 	void run();
 

@@ -10,7 +10,7 @@ BatchSimEnvironment::BatchSimEnvironment()
 	m_origin_time = 0.0f;
 }
 
-void BatchSimEnvironment::initialize()
+void BatchSimEnvironment::initialize_two_body()
 {
 	// Create entities
 	auto entityManager = EntityManager::getInstance();
@@ -26,13 +26,48 @@ void BatchSimEnvironment::initialize()
 	Entity moon = Entity(physicsEngine);
 	moon.setEntityName("Moon");
 	PhysicalState moonState;
-	moonState.setPosition(X, 1000);
+	moonState.setPosition(X, 25);
+	moonState.setVelocity(Z, 2);
+	moonState.setVelocity(Y, 0.3);
 	moonState.setMass(1.0e10f);
 	moon.setOrigin(moonState);
 	entityManager->addEntity(moon);
 
 }
 
+void BatchSimEnvironment::initialize_three_body()
+{
+	// Create entities
+	auto entityManager = EntityManager::getInstance();
+
+
+	std::unique_ptr<IPhysicsEngine> physicsEngine = std::make_unique<NBodyPhysics>();
+	Entity earth = Entity(physicsEngine);
+	earth.setEntityName("Earth");
+	earth.getPhysicalState()->setMass(100.0e10f);
+	entityManager->addEntity(earth);
+
+	physicsEngine = std::make_unique<NBodyPhysics>();
+	Entity moon = Entity(physicsEngine);
+	moon.setEntityName("Moon");
+	PhysicalState moonState;
+	moonState.setPosition(X, 25);
+	moonState.setVelocity(Z, 2);
+	moonState.setVelocity(Y, 0.3);
+	moonState.setMass(1.0e10f);
+	moon.setOrigin(moonState);
+	entityManager->addEntity(moon);
+
+	physicsEngine = std::make_unique<NBodyPhysics>();
+	Entity moon2 = Entity(physicsEngine);
+	moon2.setEntityName("moon2");
+	PhysicalState moon2State;
+	moon2State.setPosition(X, 250);
+	moon2State.setVelocity(Y, 0.4);
+	moon2State.setMass(1.0e10f);
+	moon2.setOrigin(moon2State);
+	entityManager->addEntity(moon2);
+}
 
 void BatchSimEnvironment::run()
 {
@@ -40,7 +75,7 @@ void BatchSimEnvironment::run()
 	auto entities = entityManager->getAllEntities();
 
 	// Configure simulation parameters
-	const int totalTimeSteps = 1000;  // Total number of simulation steps
+	const int totalTimeSteps = 2000;  // Total number of simulation steps
 	const float timeStep = 1.0f;      // Time step in seconds
 	float time = 0.0f;
 	// Set timestep for all entities

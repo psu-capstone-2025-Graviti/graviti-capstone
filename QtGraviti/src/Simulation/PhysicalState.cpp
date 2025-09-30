@@ -170,7 +170,7 @@ void PhysicalState::printPosition() const
     std::cout << "Current position: (" << m_position.x << ", " << m_position.y << ", " << m_position.z << ")" << std::endl;
 }
 
-void PhysicalState::writepositionCSV(const std::string& name) const
+void PhysicalState::writepositionCSV(const std::string& name)
 {
 
         // if "name.csv" file does not exist, create it and add header
@@ -178,12 +178,13 @@ void PhysicalState::writepositionCSV(const std::string& name) const
         std::string filename = name + ".csv";
         std::ofstream file{};
 
-        if (!fileExists(filename)) {
+        if (!file_opened) {
             file.open(filename, std::ios::out);
             file << "x,y,z\n";
         }
         else {
             file.open(filename, std::ios::app);
+            file_opened = true;
         }
         file << m_position.x << "," << m_position.y << "," << m_position.z << "\n";
         file.close();

@@ -35,6 +35,10 @@ public:
 
 	void setID(long int newID);
 
+	// Get trajectories for trajectory rendering
+	const std::vector<PhysicalState>& getFutureTrajectory() const;
+	const std::vector<PhysicalState>& getPastTrajectory() const;
+
 private:
 	std::string m_entity_name;
 
