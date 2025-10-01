@@ -52,16 +52,35 @@ void EntityManager::addEntityFromJson(std::string filepathjsonPath, std::unique_
 
     fclose(fp);
 
-    Entity jsonEntity = Entity(physicsEngine);
 
-    jsonEntity.setEntityName(d["name"].GetString());
-    PhysicalState jsonEntityState;
-    jsonEntityState.setPosition(X, d["positionX"].GetFloat());
-    jsonEntityState.setPosition(Y, d["positionY"].GetFloat());
-    jsonEntityState.setPosition(Z, d["positionZ"].GetFloat());
-    jsonEntityState.setMass(d["mass"].GetFloat());
-    jsonEntity.setOrigin(jsonEntityState);
+    for (auto itr = d.MemberBegin(); itr != d.MemberEnd(); ++itr) {
+        if (itr->value.IsObject()) {
+            Entity jsonEntity = Entity(physicsEngine);
+            PhysicalState jsonEntityState;
 
-    jsonEntity.setID(m_nextID++);
-    entities->push_back(jsonEntity);
+            jsonEntity.setEntityName(itr->name.GetString());
+            const auto& obj = itr->value;
+
+            jsonEntityState.setPosition(X, obj["positionX"].GetFloat());
+            jsonEntityState.setPosition(Y, obj["positionY"].GetFloat());
+            jsonEntityState.setPosition(Z, obj["positionZ"].GetFloat());
+            const char* massStr = obj["mass"].GetString();
+
+            // Remove trailing 'f' if present
+            std::string cleaned = massStr;
+            if (cleaned.back() == 'f') {
+                cleaned.pop_back();
+            }
+
+            // Convert to float
+            float mass = std::strtof(cleaned.c_str(), nullptr);
+            jsonEntityState.setMass(mass);
+
+            jsonEntity.setOrigin(jsonEntityState);
+            jsonEntity.setID(m_nextID++);
+            entities->push_back(jsonEntity);
+        }
+    }
+
+
 }

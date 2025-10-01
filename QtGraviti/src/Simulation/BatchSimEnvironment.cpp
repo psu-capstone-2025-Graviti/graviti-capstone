@@ -34,10 +34,6 @@ void BatchSimEnvironment::initialize_two_body()
 	entityManager->addEntity(moon);
 
 
-	physicsEngine = std::make_unique<NBodyPhysics>();
-
-	entityManager->addEntityFromJson("include/EntityJsons/earth.json", std::move(physicsEngine));
-
 }
 
 void BatchSimEnvironment::initialize_three_body()
@@ -72,6 +68,18 @@ void BatchSimEnvironment::initialize_three_body()
 	moon2State.setMass(1.0e10f);
 	moon2.setOrigin(moon2State);
 	entityManager->addEntity(moon2);
+}
+
+void BatchSimEnvironment::initialize_json_body()
+{
+	// Create entities
+	auto entityManager = EntityManager::getInstance();
+
+
+	std::unique_ptr<IPhysicsEngine> physicsEngine = std::make_unique<NBodyPhysics>();
+	physicsEngine = std::make_unique<NBodyPhysics>();
+
+	entityManager->addEntityFromJson("earth.json", std::move(physicsEngine));
 }
 
 void BatchSimEnvironment::run()

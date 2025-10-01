@@ -11,6 +11,7 @@ public:
 	BatchSimEnvironment();
 	void initialize_two_body();
 	void initialize_three_body();
+	void initialize_json_body();
 
 	//After run is called, we cant add more stuff to environment
 	void run();

@@ -3,21 +3,21 @@
     "positionX": 0,
     "positionY": 0,
     "positionZ": 0,
-    "mass": "300.0f",
+    "mass": "5.972e24f",
     "diameter": "12742.0f"
   },
   "moon": {
     "positionX": 0,
-    "positionY": 100,
+    "positionY": 384400,
     "positionZ": 0,
-    "mass": "3.7f",
+    "mass": "7.35e22f",
     "diameter": "12742.0f"
   },
   "sun": {
     "positionX": 0,
     "positionY": 0,
-    "positionZ": 389,
-    "mass": "100000000.00f",
+    "positionZ": 149600000,
+    "mass": "1.989e30f",
     "diameter": "12742.0f"
   }
 }
