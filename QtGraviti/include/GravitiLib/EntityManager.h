@@ -19,6 +19,8 @@ public:
 
     void addEntity(Entity& entity);
 
+    void addEntityFromJson(std::string jsonPath);
+
     std::shared_ptr<std::vector<Entity>> getAllEntities();
 
 private:

@@ -33,6 +33,7 @@ void BatchSimEnvironment::initialize_two_body()
 	moon.setOrigin(moonState);
 	entityManager->addEntity(moon);
 
+
 }
 
 void BatchSimEnvironment::initialize_three_body()
@@ -67,6 +68,17 @@ void BatchSimEnvironment::initialize_three_body()
 	moon2State.setMass(1.0e10f);
 	moon2.setOrigin(moon2State);
 	entityManager->addEntity(moon2);
+}
+
+void BatchSimEnvironment::initialize_json_body()
+{
+	// Create entities
+	auto entityManager = EntityManager::getInstance();
+
+
+	
+
+	entityManager->addEntityFromJson("earth.json");
 }
 
 void BatchSimEnvironment::run()

@@ -23,6 +23,9 @@ project (GravitiLib)
 
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/include/EntityJsons/earth.json
+     DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+
 file(GLOB_RECURSE GRAVLIB_SRC_FILES
     "src/Simulation/*.cpp"
 )

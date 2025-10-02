@@ -1,4 +1,8 @@
 #include "GravitiLib/EntityManager.h"
+#include "rapidjson/document.h"
+#include "rapidjson/filereadstream.h"
+#include <GravitiLib/NBodyEngine.h>
+#include "GravitiLib/IPhysicsEngine.h"
 
 static EntityManager* entity_manager = nullptr;
 
@@ -31,3 +35,62 @@ std::shared_ptr<std::vector<Entity>> EntityManager::getAllEntities()
 {
     return entities;
 }
+
+void EntityManager::addEntityFromJson(std::string filepathjsonPath)
+{
+    
+    FILE* fp = fopen(filepathjsonPath.c_str(), "r");
+    if (!fp) {
+        // Handle file open error (optional: log or throw)
+        return;
+    }
+
+    // Move the large buffer to the heap to avoid stack overflow
+    std::unique_ptr<char[]> readBuffer(new char[65536]);
+    rapidjson::FileReadStream is(fp, readBuffer.get(), 65536);
+
+    rapidjson::Document d;
+    d.ParseStream(is);
+
+    fclose(fp);
+    std::unique_ptr<IPhysicsEngine> physicsEngine = std::make_unique<NBodyPhysics>();
+    rapidjson::Value::ConstValueIterator itr;
+
+    for (auto itr = d.Begin(); itr != d.End(); ++itr) {
+       
+            
+        physicsEngine = std::make_unique<NBodyPhysics>();
+        Entity jsonEntity = Entity(physicsEngine);
+        PhysicalState jsonEntityState;
+        auto obj = itr->GetObject();
+        jsonEntity.setEntityName(obj["name"].GetString());
+        
+
+        jsonEntityState.setPosition(X, obj["positionX"].GetFloat());
+        jsonEntityState.setPosition(Y, obj["positionY"].GetFloat());
+        jsonEntityState.setPosition(Z, obj["positionZ"].GetFloat());
+
+        jsonEntityState.setVelocity(X, obj["velocityX"].GetFloat());
+        jsonEntityState.setVelocity(Y, obj["velocityY"].GetFloat());
+        jsonEntityState.setVelocity(Z, obj["velocityZ"].GetFloat());
+        const char* massStr = obj["mass"].GetString();
+
+        // Remove trailing 'f' if present
+        std::string cleaned = massStr;
+        if (cleaned.back() == 'f') {
+            cleaned.pop_back();
+        }
+
+        // Convert to float
+        float mass = std::strtof(cleaned.c_str(), nullptr);
+        jsonEntityState.setMass(mass);
+
+        jsonEntity.setOrigin(jsonEntityState);
+        jsonEntity.setID(m_nextID++);
+        entities->push_back(jsonEntity);
+        
+    }
+
+
+}
+
