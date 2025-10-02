@@ -5,8 +5,8 @@
     "positionY": 0,
     "positionZ": 0,
     "velocityX": 0,
-    "velocityY": 0,
-    "velocityZ": 30,
+    "velocityY": 30,
+    "velocityZ": 0,
     "mass": "300.0f",
     "diameter": "12742.0f"
   },
@@ -16,8 +16,8 @@
     "positionX": 0,
     "positionY": 100,
     "positionZ": 0,
-    "velocityX": 0,
-    "velocityY": 1,
+    "velocityX": 1,
+    "velocityY": 0,
     "velocityZ": 0,
     "mass": "3.7f",
     "diameter": "12742.0f"
