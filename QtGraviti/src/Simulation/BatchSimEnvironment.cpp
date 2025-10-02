@@ -76,10 +76,9 @@ void BatchSimEnvironment::initialize_json_body()
 	auto entityManager = EntityManager::getInstance();
 
 
-	std::unique_ptr<IPhysicsEngine> physicsEngine = std::make_unique<NBodyPhysics>();
-	physicsEngine = std::make_unique<NBodyPhysics>();
+	
 
-	entityManager->addEntityFromJson("earth.json", std::move(physicsEngine));
+	entityManager->addEntityFromJson("earth.json");
 }
 
 void BatchSimEnvironment::run()
