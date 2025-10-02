@@ -69,6 +69,10 @@ void EntityManager::addEntityFromJson(std::string filepathjsonPath)
         jsonEntityState.setPosition(X, obj["positionX"].GetFloat());
         jsonEntityState.setPosition(Y, obj["positionY"].GetFloat());
         jsonEntityState.setPosition(Z, obj["positionZ"].GetFloat());
+
+        jsonEntityState.setVelocity(X, obj["velocityX"].GetFloat());
+        jsonEntityState.setVelocity(Y, obj["velocityY"].GetFloat());
+        jsonEntityState.setVelocity(Z, obj["velocityZ"].GetFloat());
         const char* massStr = obj["mass"].GetString();
 
         // Remove trailing 'f' if present
