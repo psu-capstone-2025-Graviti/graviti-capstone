@@ -64,6 +64,7 @@ void EntityManager::addEntityFromJson(std::string filepathjsonPath)
     std::unique_ptr<IPhysicsEngine> physicsEngine = std::make_unique<NBodyPhysics>();
     rapidjson::Value::ConstValueIterator itr;
 
+	float scalingFactor = 20.0f; // Adjust this factor as needed
     for (auto itr = d.Begin(); itr != d.End(); ++itr) {
        
             
@@ -74,14 +75,14 @@ void EntityManager::addEntityFromJson(std::string filepathjsonPath)
         jsonEntity.setEntityName(obj["name"].GetString());
         
 
-        jsonEntityState.setPosition(X, cleanFloat(obj["positionX"].GetString()));
-        jsonEntityState.setPosition(Y, cleanFloat(obj["positionY"].GetString()));
-        jsonEntityState.setPosition(Z, cleanFloat(obj["positionZ"].GetString()));
+        jsonEntityState.setPosition(X, scalingFactor * cleanFloat(obj["positionX"].GetString()));
+        jsonEntityState.setPosition(Y, scalingFactor * cleanFloat(obj["positionY"].GetString()));
+        jsonEntityState.setPosition(Z, scalingFactor * cleanFloat(obj["positionZ"].GetString()));
 
-        jsonEntityState.setVelocity(X, cleanFloat(obj["velocityX"].GetString()));
-        jsonEntityState.setVelocity(Y, cleanFloat(obj["velocityY"].GetString()));
-        jsonEntityState.setVelocity(Z, cleanFloat(obj["velocityZ"].GetString()));
-        jsonEntityState.setMass(cleanFloat(obj["mass"].GetString()));
+        jsonEntityState.setVelocity(X, scalingFactor * cleanFloat(obj["velocityX"].GetString()));
+        jsonEntityState.setVelocity(Y, scalingFactor * cleanFloat(obj["velocityY"].GetString()));
+        jsonEntityState.setVelocity(Z, scalingFactor * cleanFloat(obj["velocityZ"].GetString()));
+        jsonEntityState.setMass(scalingFactor * cleanFloat(obj["mass"].GetString()));
         const char* massStr = obj["mass"].GetString();
         
 

@@ -1,36 +1,36 @@
 [
   {
     "name": "earth",
-    "positionX": 0,
-    "positionY": 0,
-    "positionZ": 0,
-    "velocityX": "1.73E-02",
-    "velocityY": 0,
-    "velocityZ": 0,
+    "positionX": "0",
+    "positionY": "0",
+    "positionZ": "0",
+    "velocityX": "0",
+    "velocityY": "1.73E-02",
+    "velocityZ": "0",
     "mass": "1.496e8f",
     "diameter": "12742.0f"
   },
 
   {
     "name": "moon",
-    "positionX": 0,
-    "positionY": "2.57E-03f",
-    "positionZ": 0,
-    "velocityX": 0,
-    "velocityY": 0,
-    "velocityZ": "5.90E-04f",
+    "positionX": "0",
+    "positionY": "0",
+    "positionZ": "2.57E-03f",
+    "velocityX": "5.90E-04f",
+    "velocityY": "0",
+    "velocityZ": "0",
     "mass": "3.70E-08f",
     "diameter": "12742.0f"
   },
 
   {
     "name": "sun",
-    "positionX": 0,
-    "positionY": 0,
-    "positionZ": 1,
-    "velocityX": 0,
-    "velocityY": 0,
-    "velocityZ": 0,
+    "positionX": "1",
+    "positionY": "0",
+    "positionZ": "0",
+    "velocityX": "0",
+    "velocityY": "0",
+    "velocityZ": "0",
     "mass": "1",
     "diameter": "12742.0f"
   }

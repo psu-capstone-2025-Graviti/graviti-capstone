@@ -9,7 +9,8 @@ class NBodyPhysics : public IPhysicsEngine
 private:
 	//not sure if we set current time and end time here vs in the cpp file
 	float G = 6.67430e-11f; // Gravitational constant in km^3 kg^-1 s^-2
-	
+
+	float ScalingFactor = 10; // Scale distances to make simulation more manageable
 	float D = 1; // Duration of one day in seconds 1 day = 86400 seconds	| replace Time
 	float S = 1; // Mass of the the sun in AU 1.989e+30 kg					| replace mass
 	float AU = 1; // Distance from the sun to the earth in 1.496e+8 km = 1 AU| replace meter

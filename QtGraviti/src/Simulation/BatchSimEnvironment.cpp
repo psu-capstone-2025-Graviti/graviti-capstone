@@ -75,10 +75,9 @@ void BatchSimEnvironment::initialize_json_body()
 	// Create entities
 	auto entityManager = EntityManager::getInstance();
 
-
 	
 
-	entityManager->addEntityFromJson("earth.json");
+	entityManager->addEntityFromJson("localEarthAU.json");
 }
 
 void BatchSimEnvironment::run()
