@@ -21,6 +21,8 @@ public:
 
     void addEntityFromJson(std::string jsonPath);
 
+    float cleanFloat(std::string value);
+
     std::shared_ptr<std::vector<Entity>> getAllEntities();
 
 private:
