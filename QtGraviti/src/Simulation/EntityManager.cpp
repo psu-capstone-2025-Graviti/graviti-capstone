@@ -31,6 +31,14 @@ void EntityManager::addEntity(Entity& entity)
     entities->push_back(entity);
 }
 
+float EntityManager::cleanFloat(std::string value)
+{
+    if (value.back() == 'f') {
+        value.pop_back();
+    }
+    return std::strtof(value.c_str(), nullptr);
+}
+
 std::shared_ptr<std::vector<Entity>> EntityManager::getAllEntities()
 {
     return entities;
@@ -66,24 +74,15 @@ void EntityManager::addEntityFromJson(std::string filepathjsonPath)
         jsonEntity.setEntityName(obj["name"].GetString());
         
 
-        jsonEntityState.setPosition(X, obj["positionX"].GetFloat());
-        jsonEntityState.setPosition(Y, obj["positionY"].GetFloat());
-        jsonEntityState.setPosition(Z, obj["positionZ"].GetFloat());
+        jsonEntityState.setPosition(X, cleanFloat(obj["positionX"].GetString()));
+        jsonEntityState.setPosition(Y, cleanFloat(obj["positionY"].GetString()));
+        jsonEntityState.setPosition(Z, cleanFloat(obj["positionZ"].GetString()));
 
-        jsonEntityState.setVelocity(X, obj["velocityX"].GetFloat());
-        jsonEntityState.setVelocity(Y, obj["velocityY"].GetFloat());
-        jsonEntityState.setVelocity(Z, obj["velocityZ"].GetFloat());
-        const char* massStr = obj["mass"].GetString();
+        jsonEntityState.setVelocity(X, cleanFloat(obj["velocityX"].GetString()));
+        jsonEntityState.setVelocity(Y, cleanFloat(obj["velocityY"].GetString()));
+        jsonEntityState.setVelocity(Z, cleanFloat(obj["velocityZ"].GetString()));
+        jsonEntityState.setMass(cleanFloat(obj["mass"].GetString()));
 
-        // Remove trailing 'f' if present
-        std::string cleaned = massStr;
-        if (cleaned.back() == 'f') {
-            cleaned.pop_back();
-        }
-
-        // Convert to float
-        float mass = std::strtof(cleaned.c_str(), nullptr);
-        jsonEntityState.setMass(mass);
 
         jsonEntity.setOrigin(jsonEntityState);
         jsonEntity.setID(m_nextID++);
