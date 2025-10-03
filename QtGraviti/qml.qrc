@@ -4,4 +4,7 @@
         <file>src/App/qml/main.qml</file>
         <file>src/App/qml/SimulationView.qml</file>
     </qresource>
+    <qresource prefix="/">
+        <file>content/images/HubbleDeepField.jpg</file>
+    </qresource>
 </RCC>

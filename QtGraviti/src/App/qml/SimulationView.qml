@@ -39,6 +39,8 @@ Item {
             id: sceneEnvironment1
             antialiasingQuality: SceneEnvironment.High
             antialiasingMode: SceneEnvironment.MSAA
+            backgroundMode: SceneEnvironment.SkyBox
+            lightProbe: Texture { source: "qrc:/content/images/HubbleDeepField.jpg"}
         }
 
         Node {
@@ -136,6 +138,55 @@ Item {
     property point lastMousePos: Qt.point(0, 0)
     property bool isPanning: false
 
+    property real cameraOffsetX: 0
+    property real cameraOffsetY: 0
+    property real cameraOffsetZ: 0
+
+
+    Keys.onPressed: (event) => {
+        var moveSpeed = 10
+
+        switch(event.key){
+            case Qt.Key_W:
+                // Forwards
+                cameraOffsetX -= moveSpeed * Math.sin(cameraRotationY * Math.PI / 180)
+                cameraOffsetZ -= moveSpeed * Math.cos(cameraRotationY * Math.PI / 180)
+                event.accepted = true; // Stop event propagation
+                break;
+            case Qt.Key_S:
+                // Backwards
+                cameraOffsetX += moveSpeed * Math.sin(cameraRotationY * Math.PI / 180)
+                cameraOffsetZ += moveSpeed * Math.cos(cameraRotationY * Math.PI / 180)
+                event.accepted = true; // Stop event propagation
+                break;
+            case Qt.Key_A:
+                // Right
+                cameraOffsetX -= moveSpeed * Math.cos(cameraRotationY * Math.PI / 180)
+                cameraOffsetZ += moveSpeed * Math.sin(cameraRotationY * Math.PI / 180)
+                event.accepted = true; // Stop event propagation
+                break;
+            case Qt.Key_D:
+                // Left
+                cameraOffsetX += moveSpeed * Math.cos(cameraRotationY * Math.PI / 180)
+                cameraOffsetZ -= moveSpeed * Math.sin(cameraRotationY * Math.PI / 180)
+                event.accepted = true; // Stop event propagation
+                break;
+
+            case Qt.Key_Q:
+                // Up
+                cameraOffsetY += moveSpeed
+                event.accepted = true; // Stop event propagation
+                break;
+            case Qt.Key_E:
+                // Down
+                cameraOffsetY -= moveSpeed
+                event.accepted = true; // Stop event propagation
+                break;
+        }
+
+        updateCameraPosition()
+    }
+
     MouseArea {
         id: mouseArea
         anchors.fill: parent
@@ -176,6 +227,8 @@ Item {
             updateCameraPosition()
         }
     }
+
+
     
     function updateCameraPosition() {
         var radiansX = cameraRotationX * Math.PI / 180
@@ -184,9 +237,14 @@ Item {
         var x = cameraDistance * Math.cos(radiansX) * Math.sin(radiansY)
         var y = cameraDistance * Math.sin(radiansX)
         var z = cameraDistance * Math.cos(radiansX) * Math.cos(radiansY)
-        
-        sceneCamera.position = Qt.vector3d(x, y, z)
-        sceneCamera.lookAt(Qt.vector3d(0, 0, 0))
+
+
+        var dx = cameraOffsetX
+        var dy = cameraOffsetY
+        var dz = cameraOffsetZ
+
+        sceneCamera.position = Qt.vector3d(x + dx, y + dy, z + dz)
+        sceneCamera.lookAt(Qt.vector3d(0 + dx, 0 + dy, 0 + dz))
     }
 }
 
