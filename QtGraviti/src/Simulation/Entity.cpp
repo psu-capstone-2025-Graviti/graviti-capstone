@@ -3,20 +3,26 @@
 #include <memory>
 #include <string>
 
+
 Entity::Entity(std::unique_ptr<IPhysicsEngine>& engine)
     : m_current_state(),
     m_entity_name("TEST"),
     m_future_trajectory(),
     m_past_trajectory(),
     m_entityid(0),
-    m_timestep(0.0f)
+    m_timestep(0.0f),
+    m_file(nullptr)
 {
     m_engine = std::move(engine);
+
 }
 
 Entity::~Entity()
 {
-
+    if (m_file) {
+        m_file->close();
+        delete m_file;
+    }
 }
 
 void Entity::setEntityName(std::string entity_name)
@@ -115,4 +121,45 @@ const std::vector<PhysicalState>& Entity::getPastTrajectory() const
 long int Entity::getEntityID() const
 {
     return m_entityid;
+}
+
+void Entity::savePastTrajectoryToCSV(void)
+{
+    std::string filename = m_entity_name + ".csv";
+
+    if (!m_file) {
+        m_file = new std::ofstream(filename);
+        if (m_file->is_open()) {
+            *m_file << "x,y,z\n";
+        }
+    }
+
+    for (const auto& state : m_past_trajectory) {
+        *m_file << state.getPosition(X) << ","
+                << state.getPosition(Y) << ","
+                << state.getPosition(Z) << "\n";
+    }
+    m_file->flush();
+}
+
+void Entity::saveCurrentStateToCSV(void)
+{
+    //return;
+    // if "name.csv" file does not exist, create it and add header
+    // else, append to it
+    std::string filename = m_entity_name + ".csv";
+
+    if (!m_file) {
+        m_file = new std::ofstream(filename);
+        if (m_file->is_open()) {
+            *m_file << "x,y,z\n";
+        }
+    }
+
+    if (m_file && m_file->is_open()) {
+        *m_file << getPhysicalState()->getPosition(X) << ","
+                << getPhysicalState()->getPosition(Y) << ","
+                << getPhysicalState()->getPosition(Z) << "\n";
+        m_file->flush();
+    }
 }

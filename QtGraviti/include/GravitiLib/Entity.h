@@ -5,6 +5,8 @@
 #include "IPhysicsEngine.h"
 #include <vector>
 #include <memory>
+#include <iostream>
+#include <fstream>
 
 using namespace std::chrono;
 
@@ -35,11 +37,15 @@ public:
 
 	void setID(long int newID);
 
+	void saveCurrentStateToCSV(void);    //These two are not really compatible with one another, we need to decide which to use
+	void savePastTrajectoryToCSV(void);  //These two are not really compatible with one another, we need to decide which to use
+
 	// Get trajectories for trajectory rendering
 	const std::vector<PhysicalState>& getFutureTrajectory() const;
 	const std::vector<PhysicalState>& getPastTrajectory() const;
 
 private:
+	std::ofstream* m_file;
 	std::string m_entity_name;
 
 

@@ -106,7 +106,8 @@ void BatchSimEnvironment::run()
 		}
 		for (auto& entity : *entities) {
 			entity.getPhysicalState()->integrate(timeStep);
-			entity.getPhysicalState()->writepositionCSV(entity.getEntityName());
+			//entity.saveCurrentStateToCSV();
+			//entity.getPhysicalState()->writepositionCSV(entity.getEntityName());
 		}
 		// Optional: Add progress output
 		if (step % 10 == 0) {
@@ -114,6 +115,8 @@ void BatchSimEnvironment::run()
 		}
 		time += timeStep;
 	}
-	
+	for (auto& entity : *entities) {
+		entity.savePastTrajectoryToCSV();
+	}
 	std::cout << "Batch simulation completed!" << std::endl;
 }
