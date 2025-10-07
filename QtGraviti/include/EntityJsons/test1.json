@@ -7,31 +7,31 @@
     "velocityX": "0",
     "velocityY": "30",
     "velocityZ": "0",
-    "mass": "300.0f",
+    "mass": "100.0e10f",
     "diameter": "12742.0f"
   },
 
   {
     "name": "moon",
-    "positionX": "0",
-    "positionY": "100",
+    "positionX": "25",
+    "positionY": "0",
     "positionZ": "0",
-    "velocityX": "1",
-    "velocityY": "0",
-    "velocityZ": "0",
-    "mass": "3.7f",
+    "velocityX": "0",
+    "velocityY": "0.3",
+    "velocityZ": "2",
+    "mass": "1.0e10f",
     "diameter": "12742.0f"
   },
 
   {
-    "name": "sun",
-    "positionX": "0",
+    "name": "moon2",
+    "positionX": "250",
     "positionY": "0",
-    "positionZ": "389",
+    "positionZ": "0",
     "velocityX": "0",
-    "velocityY": "0",
+    "velocityY": "0.4",
     "velocityZ": "0",
-    "mass": "100000000.00f",
+    "mass": "1.0e10f",
     "diameter": "12742.0f"
   }
 ]

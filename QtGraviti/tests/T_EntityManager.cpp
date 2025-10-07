@@ -77,3 +77,40 @@ TEST(EntityManagerTests, VerifyEntitiesDeleted)
     EXPECT_THROW(y->at(0).getPhysicalState(), std::out_of_range);
 }
 
+
+TEST(EntityManagerTests, VerifyEntitiesDeletedJson)
+{
+    
+    EntityManager* Man = EntityManager::getInstance();
+	Man->addEntityFromJson("EntityJsons/test1.json");
+    auto x = Man->getAllEntities();
+    x->at(0).getEntityName();
+    x->at(0).getPhysicalState()->getMass();
+    EXPECT_EQ(x->at(0).getEntityName(), "earth");
+    EXPECT_FLOAT_EQ(x->at(0).getPhysicalState()->getMass(), 100.0e10f);
+    EXPECT_EQ(x->at(1).getEntityName(), "moon");
+    EXPECT_FLOAT_EQ(x->at(1).getPhysicalState()->getMass(), 1.0e10f);
+    EXPECT_EQ(x->at(2).getEntityName(), "moon2");
+    EXPECT_FLOAT_EQ(x->at(2).getPhysicalState()->getMass(), 1.0e10f);
+
+    EXPECT_THROW(x->at(3).getEntityName(), std::out_of_range);
+    EXPECT_THROW(x->at(3).getPhysicalState(), std::out_of_range);
+
+    // Clear the entities vector to simulate deletion
+    Man->getAllEntities()->clear();
+    auto y = Man->getAllEntities();
+
+    EXPECT_THROW(y->at(0).getEntityName(), std::out_of_range);
+    EXPECT_THROW(y->at(0).getPhysicalState(), std::out_of_range);
+}
+
+
+TEST(EntityManagerTests, VerifyNonExistJson)
+{
+
+    EntityManager* Man = EntityManager::getInstance();
+    Man->addEntityFromJson("EntityJsons/NonExist.json");
+    auto y = Man->getAllEntities();
+    EXPECT_THROW(y->at(0).getEntityName(), std::out_of_range);
+    EXPECT_THROW(y->at(0).getPhysicalState(), std::out_of_range);
+}
