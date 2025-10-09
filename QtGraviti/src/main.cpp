@@ -20,7 +20,7 @@ int main(int argc, char* argv[])
     BatchSimEnvironment batch;
     //batch.initialize_two_body();
     //batch.initialize_three_body();
-    batch.initialize_json_body();
+    batch.initialize_json_body("EntityJsons/test1.json");
     batch.run();
 
     // Create trajectory renderer and convert trajectories

@@ -12,6 +12,9 @@ public:
 	void initialize_two_body();
 	void initialize_three_body();
 	void initialize_json_body();
+	float cleanFloat(std::string value);
+	void initialize_json_body(std::string filepathjsonPath);
+
 
 	//After run is called, we cant add more stuff to environment
 	void run();
