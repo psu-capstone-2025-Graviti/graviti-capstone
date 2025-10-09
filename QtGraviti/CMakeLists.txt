@@ -16,8 +16,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 ##set(CMAKE_PREFIX_PATH "C:/Qt/6.9.2/msvc2022_64")
 
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Qml Core Gui QuickWidgets)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Qml Core Gui QuickWidgets )
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Qml Core Gui QuickWidgets Test)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Qml Core Gui QuickWidgets Test)
 
 project (GravitiLib)
 
@@ -124,7 +124,7 @@ add_compile_options(/Zi /Od)
 add_link_options(/PROFILE)
 
 file(GLOB_RECURSE TEST_SRC_FILES
-    "tests/*.cpp"
+    "tests/gTest/*.cpp"
 )
 
 add_executable(GravitiTests ${TEST_SRC_FILES})

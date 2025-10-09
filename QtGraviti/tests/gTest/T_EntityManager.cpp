@@ -13,20 +13,23 @@ public:
     int lastTimeSteps = 0;
     long int lastCallingID = 0;
 
-    void simulate(float duration, int timeSteps, PhysicalState& currentState, long int callingID, std::shared_ptr<std::vector<PhysicalState>> futureTrajectory) override
+    void calculateForces(float duration, Entity& callingEntity) override
+    {
+        // Mock implementation - do nothing
+    }
+
+    void updatePosition(float duration, Entity& callingEntity) override
     {
         simulateCalled = true;
         lastDuration = duration;
-        lastTimeSteps = timeSteps;
-        lastCallingID = callingID;
 
         // Add some mock states to the future trajectory
-        for (int i = 0; i < timeSteps; ++i)
+        for (int i = 0; i < 100; ++i)
         {
             PhysicalState mockState;
             mockState.setPosition({ 1.0f + i, 2.0f + i, 3.0f + i });
-            mockState.setTimestamp(currentState.getTimestamp() + duration * (i + 1));
-            futureTrajectory->push_back(mockState);
+            //mockState.setTimestamp(currentState.getTimestamp() + duration * (i + 1));
+            callingEntity.getFutureTrajectory().push_back(mockState);
         }
     }
 };
