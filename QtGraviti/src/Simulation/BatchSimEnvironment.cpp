@@ -2,6 +2,8 @@
 #include "GravitiLib/Entity.h"
 #include "GravitiLib/NBodyEngine.h"
 #include "GravitiLib/EntityManager.h"
+#include "rapidjson/document.h"
+#include "rapidjson/filereadstream.h"
 #include <memory>
 #include <iostream>
 
@@ -70,15 +72,65 @@ void BatchSimEnvironment::initialize_three_body()
 	entityManager->addEntity(moon2);
 }
 
-void BatchSimEnvironment::initialize_json_body()
+float BatchSimEnvironment::cleanFloat(std::string value)
+{
+	if (value.back() == 'f') {
+		value.pop_back();
+	}
+	return std::strtof(value.c_str(), nullptr);
+}
+
+void BatchSimEnvironment::initialize_json_body(std::string filepathjsonPath)
 {
 	// Create entities
 	auto entityManager = EntityManager::getInstance();
+	auto entities = entityManager->getAllEntities();
+
+	FILE* fp = fopen(filepathjsonPath.c_str(), "r");
+	if (!fp) {
+		// Handle file open error (optional: log or throw)
+		return;
+	}
+
+	// Move the large buffer to the heap to avoid stack overflow
+	std::unique_ptr<char[]> readBuffer(new char[65536]);
+	rapidjson::FileReadStream is(fp, readBuffer.get(), 65536);
+
+	rapidjson::Document d;
+	d.ParseStream(is);
+
+	fclose(fp);
+	std::unique_ptr<IPhysicsEngine> physicsEngine = std::make_unique<NBodyPhysics>();
+	rapidjson::Value::ConstValueIterator itr;
+
+	for (auto itr = d.Begin(); itr != d.End(); ++itr) {
+
+
+		physicsEngine = std::make_unique<NBodyPhysics>();
+		Entity jsonEntity = Entity(physicsEngine);
+		PhysicalState jsonEntityState;
+		auto obj = itr->GetObject();
+		jsonEntity.setEntityName(obj["name"].GetString());
+
+
+		jsonEntityState.setPosition(X, cleanFloat(obj["positionX"].GetString()));
+		jsonEntityState.setPosition(Y, cleanFloat(obj["positionY"].GetString()));
+		jsonEntityState.setPosition(Z, cleanFloat(obj["positionZ"].GetString()));
+
+		jsonEntityState.setVelocity(X, cleanFloat(obj["velocityX"].GetString()));
+		jsonEntityState.setVelocity(Y, cleanFloat(obj["velocityY"].GetString()));
+		jsonEntityState.setVelocity(Z, cleanFloat(obj["velocityZ"].GetString()));
+		jsonEntityState.setMass(cleanFloat(obj["mass"].GetString()));
+
+
+		jsonEntity.setOrigin(jsonEntityState);
+		entityManager->addEntity(jsonEntity);
+
+
+	}
 
 
 	
-
-	entityManager->addEntityFromJson("EntityJsons/test1.json");
 }
 
 void BatchSimEnvironment::run()

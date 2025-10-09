@@ -23,7 +23,7 @@ void NBodyPhysics::simulate(float duration, int timeSteps, PhysicalState& curren
                 
                 auto other_state = jt->getPhysicalState();
                 auto self_state = currentState;
-                
+
 
                 float dx = other_state->getPosition().x - self_state.getPosition().x;
                 float dy = other_state->getPosition().y - self_state.getPosition().y;
