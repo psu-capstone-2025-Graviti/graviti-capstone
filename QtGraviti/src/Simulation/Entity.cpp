@@ -78,7 +78,7 @@ bool Entity::Simulate(float duration)
         // No physics engine set, cannot simulate
         return false;
     }
-    
+    setTimestep(duration);
     // Store current state in past trajectory before simulation
     m_past_trajectory.push_back(m_current_state);//Make copy
 
