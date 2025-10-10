@@ -35,8 +35,7 @@ TEST(NBodyEngineTests, SimulateSingleEntity)
     auto futureTrajectory = std::make_shared<std::vector<PhysicalState>>();
     
     // Run simulation
-    physicsEngine.calculateForces(1.0f, testEntity);
-    physicsEngine.updatePosition(1.0f, testEntity);
+    physicsEngine.simulate(1.0f, 1, initialState, 1, futureTrajectory);
     
     // Verify that acceleration was set (should be zero for single entity)
     EXPECT_FLOAT_EQ(initialState.getAcceleration().x, 0.0f);
@@ -88,19 +87,18 @@ TEST(NBodyEngineTests, GravitationalForceCalculation)
     auto futureTrajectory = std::make_shared<std::vector<PhysicalState>>();
     
     // Run simulation on entity1
-    physicsEngine.calculateForces(1.0f, entity1);
-    physicsEngine.updatePosition(1.0f, entity1);
+    physicsEngine.simulate(1.0f, 1, state1, 0, futureTrajectory);
     
     // Calculate expected acceleration using F = G * m1 * m2 / r^2
     // and a = F / m1 = G * m2 / r^2
     float G = 6.67430e-11f; // Gravitational constant
     float r = 1.0f; // Distance between entities
     float expectedAcceleration = G / (r * r);
-
+    
     // Verify acceleration is approximately correct (within floating point precision)
-    EXPECT_NEAR(entity1.getPhysicalState()->getAcceleration().x, expectedAcceleration, 1e-15f);
-    EXPECT_FLOAT_EQ(entity1.getPhysicalState()->getAcceleration().y, 0.0f);
-    EXPECT_FLOAT_EQ(entity1.getPhysicalState()->getAcceleration().z, 0.0f);
+    EXPECT_NEAR(state1.getAcceleration().x, expectedAcceleration, 1e-15f);
+    EXPECT_FLOAT_EQ(state1.getAcceleration().y, 0.0f);
+    EXPECT_FLOAT_EQ(state1.getAcceleration().z, 0.0f);
 }
 
 // Test simulation with entities at same position (division by zero protection)
@@ -145,7 +143,7 @@ TEST(NBodyEngineTests, SimulateSamePosition)
     auto futureTrajectory = std::make_shared<std::vector<PhysicalState>>();
     
     // Run simulation on entity1
-    //physicsEngine.simulate(1.0f, 1, state1, 1, futureTrajectory);
+    physicsEngine.simulate(1.0f, 1, state1, 1, futureTrajectory);
     
     // Verify that acceleration is zero (division by zero protection)
     EXPECT_FLOAT_EQ(state1.getAcceleration().x, 0.0f);
@@ -195,17 +193,16 @@ TEST(NBodyEngineTests, SimulateDifferentMasses)
     auto futureTrajectory = std::make_shared<std::vector<PhysicalState>>();
     
     // Run simulation on entity1
-    physicsEngine.calculateForces(1.0f, entity1);
-    physicsEngine.updatePosition(1.0f, entity1);
+    physicsEngine.simulate(1.0f, 1, state1, 0, futureTrajectory);
     
     // Calculate expected acceleration with larger mass
     float G = 6.67430e-11f;
     float m2 = 10.0f; // Larger mass
     float r = 1.0f;
     float expectedAcceleration = G * m2 / (r * r);
-
+    
     // Verify acceleration is approximately correct (should be 10 times larger)
-    EXPECT_NEAR(entity1.getPhysicalState()->getAcceleration().x, expectedAcceleration, 1e-15f);
-    EXPECT_FLOAT_EQ(entity1.getPhysicalState()->getAcceleration().y, 0.0f);
-    EXPECT_FLOAT_EQ(entity1.getPhysicalState()->getAcceleration().z, 0.0f);
+    EXPECT_NEAR(state1.getAcceleration().x, expectedAcceleration, 1e-15f);
+    EXPECT_FLOAT_EQ(state1.getAcceleration().y, 0.0f);
+    EXPECT_FLOAT_EQ(state1.getAcceleration().z, 0.0f);
 }

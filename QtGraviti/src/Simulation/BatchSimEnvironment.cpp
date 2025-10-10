@@ -151,15 +151,15 @@ void BatchSimEnvironment::run()
 	for (int step = 0; step < totalTimeSteps; step++) {
 		// Simulate all entities for one time step
 		for (auto& entity : *entities) {
-			if (!entity.Simulate(timeStep)) {
+			if (!entity.Simulate(1)) {
 				// Handle simulation error if needed
 				std::cout << "Simulation failed for entity: " << entity.getEntityID() << std::endl;
 			}
 		}
 		for (auto& entity : *entities) {
-			entity.TickForward();
-			entity.saveCurrentStateToCSV();
-
+			entity.getPhysicalState()->integrate(timeStep);
+			//entity.saveCurrentStateToCSV();
+			//entity.getPhysicalState()->writepositionCSV(entity.getEntityName());
 		}
 		// Optional: Add progress output
 		if (step % 10 == 0) {

@@ -1,67 +1,53 @@
 #include "GravitiLib/NBodyEngine.h"
 #include <iostream>
 
+bool debugCSV = false;
+bool debugLog = false;
 
 
-void NBodyPhysics::calculateForces(float duration, Entity& callingEntity)
+void NBodyPhysics::simulate(float duration, int timeSteps, PhysicalState& currentState, long int callingID, std::shared_ptr<std::vector<PhysicalState>> futureTrajectory)
 {
 	auto entManager = EntityManager::getInstance();
 
-	auto m_entities = entManager->getAllEntities();
+	m_entities = entManager->getAllEntities();
 
-    long int callingID = callingEntity.getEntityID();
-    float currentTime = callingEntity.getPhysicalState()->getTimestamp();
+    float currentTime = currentState.getTimestamp();
 
-    Vec3 totalAcc = { 0.0, 0.0, 0.0 };
-    auto self_state = callingEntity.getPhysicalState();
 
-    for (auto jt = m_entities->begin(); jt != m_entities->end(); ++jt) {
-        if (jt->getEntityID() != callingID) { // Avoid self-interaction
+    for (int step = 0; step < timeSteps; step++) {
+        //std::cout << "Current Time: " << currentTime << " seconds" << std::endl;
+
+        Vec3 totalAcc = { 0.0, 0.0, 0.0 };
+        for (auto jt = m_entities->begin(); jt != m_entities->end(); ++jt) {
+            if (jt->getEntityID() != callingID) { // Avoid self-interaction
                 
-            auto other_state = jt->getPhysicalState();
+                auto other_state = jt->getPhysicalState();
+                auto self_state = currentState;
 
-            float dx = other_state->getPosition().x - self_state->getPosition().x;
-            float dy = other_state->getPosition().y - self_state->getPosition().y;
-            float dz = other_state->getPosition().z - self_state->getPosition().z;
 
-            float distance = std::sqrt(dx * dx + dy * dy + dz * dz);
-            if (distance > std::numeric_limits<float>::epsilon()) { // Prevent division by zero
-                float accMagnitude = G * jt->getPhysicalState()->getMass() / (distance * distance);
-                totalAcc.x += (accMagnitude * (dx / distance));
-                totalAcc.y += (accMagnitude * (dy / distance));
-                totalAcc.z += (accMagnitude * (dz / distance));
-            }
-            else { // Prevent division by zero
-                totalAcc.x = 0;
-                totalAcc.y = 0;
-                totalAcc.z = 0;
+                float dx = other_state->getPosition().x - self_state.getPosition().x;
+                float dy = other_state->getPosition().y - self_state.getPosition().y;
+                float dz = other_state->getPosition().z - self_state.getPosition().z;
+                float distance = std::sqrt(dx * dx + dy * dy + dz * dz);
+                if (distance > std::numeric_limits<float>::epsilon()) { // Prevent division by zero
+                    float accMagnitude = G * jt->getPhysicalState()->getMass() / (distance * distance);
+                    totalAcc.x += (accMagnitude * (dx / distance));
+                    totalAcc.y += (accMagnitude * (dy / distance));
+                    totalAcc.z += (accMagnitude * (dz / distance));
+                }
+                else { // Prevent division by zero
+                    totalAcc.x = 0;
+                    totalAcc.y = 0;
+                    totalAcc.z = 0;
+                }
             }
         }
+        currentState.setAcceleration(totalAcc);
+        currentTime += timestep;
+
+        if (debugLog){
+            currentState.printPosition();
+}
     }
-    self_state->setAcceleration(totalAcc);
+	
 }
-
-
-
-void NBodyPhysics::updatePosition(float duration, Entity& callingEntity)
-{
-    auto state = callingEntity.getPhysicalState();
-    auto oldPosition = state->getPosition();
-    auto vel = state->getVelocity();
-    auto acc = state->getAcceleration();
-
-    //Constant acceleration integration - Need RK4 to be stable
-
-    float newX = oldPosition.x + ((vel.x * duration) + (0.5 * acc.x * (duration * duration)));
-    float newY = oldPosition.y + ((vel.y * duration) + (0.5 * acc.y * (duration * duration)));
-    float newZ = oldPosition.z + ((vel.z * duration) + (0.5 * acc.z * (duration * duration)));
-
-    state->setPosition({ newX,
-                         newY,
-                         newZ});
-
-    state->setVelocity({ vel.x + acc.x * duration,
-                         vel.y + acc.y * duration,
-                         vel.z + acc.z * duration });
-}
-

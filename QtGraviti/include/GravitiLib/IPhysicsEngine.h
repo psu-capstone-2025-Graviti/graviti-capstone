@@ -1,11 +1,10 @@
 #ifndef IPhysicsEngine_INCLUDE_GUARD_H
 #define IPhysicsEngine_INCLUDE_GUARD_H
 
+#include "PhysicalState.h"
 #include <chrono>
 #include <memory>
 #include <vector>
-
-class Entity;
 
 using namespace std::chrono;
 
@@ -22,20 +21,14 @@ class IPhysicsEngine
 public:
     virtual ~IPhysicsEngine() = default;
     /**
-     * Calculates the forces over a duration
+     * Runs the simulation for the given number of steps
      * 
-     * duration          The duraction of the time step
-     * callingEntity     Reference to the entity that is being simulated
+     * duration          The duraction of each time step
+     * timeSteps         The total number of time steps to simulate
+     * currentState      The current state of the entity
+     * futureTrajectory  Pointer to where to store the future trajectory of the entity
      */
-    virtual void calculateForces(float duration, Entity& callingEntity) = 0;
-
-    /**
-     * Updates the position of the Entity
-     *
-     * duration          The duraction of the time step
-     * callingEntity     Reference to the entity that is being simulated
-     */
-    virtual void updatePosition(float duration, Entity& callingEntity) = 0;
+    virtual void simulate(float duration, int timeSteps, PhysicalState& currentState, long int callingID, std::shared_ptr<std::vector<PhysicalState>> futureTrajectory) = 0;
 
 };
 

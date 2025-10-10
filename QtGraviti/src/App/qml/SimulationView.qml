@@ -58,6 +58,7 @@ Item {
             }
 
 
+
             //Trajectory Spheres
             Node {
                 id: trajectorySphereContainer
@@ -95,6 +96,7 @@ Item {
                         }
                     }
                 }
+
 
                 Component.onCompleted: {
                     createTrajectorySpheres()
@@ -141,14 +143,7 @@ Item {
     property real cameraOffsetZ: 0
 
 
-
-    //KEYBOARD INPUT FOR CAMERA
-    //This section of code handles the capture and processing of keyboard inputs
-    //Currently, this code has a fixed move speed for the camera, and only one key is processed
-    //at a time
     Keys.onPressed: (event) => {
-        //Camera move speed in "units"
-        //TODO - make scale with camera zoom?
         var moveSpeed = 10
 
         switch(event.key){

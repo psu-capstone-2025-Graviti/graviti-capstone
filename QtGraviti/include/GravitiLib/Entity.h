@@ -30,7 +30,7 @@ public:
 	long int getEntityID() const;
 
 	//How many time steps to simulate forward
-	bool Simulate(float duration);
+	bool Simulate(int time_steps);
 
 	//Tick forward one time step
 	bool TickForward();
@@ -41,8 +41,8 @@ public:
 	void savePastTrajectoryToCSV(void);  //These two are not really compatible with one another, we need to decide which to use
 
 	// Get trajectories for trajectory rendering
-	std::vector<PhysicalState>& getFutureTrajectory();
-	std::vector<PhysicalState>& getPastTrajectory();
+	const std::vector<PhysicalState>& getFutureTrajectory() const;
+	const std::vector<PhysicalState>& getPastTrajectory() const;
 
 private:
 	std::ofstream* m_file;

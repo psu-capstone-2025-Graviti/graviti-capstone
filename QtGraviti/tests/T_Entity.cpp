@@ -10,26 +10,24 @@ class MockPhysicsEngine : public IPhysicsEngine
 public:
     bool simulateCalled = false;
     float lastDuration = 0.0f;
-    float accumulatedTime = 0;
+    int lastTimeSteps = 0;
     long int lastCallingID = 0;
-
-    void calculateForces(float duration, Entity& callingEntity) override
-    {
-        // Mock implementation - do nothing
-    }
-
-    void updatePosition(float duration, Entity& callingEntity) override
+    
+    void simulate(float duration, int timeSteps, PhysicalState& currentState, long int callingID, std::shared_ptr<std::vector<PhysicalState>> futureTrajectory) override
     {
         simulateCalled = true;
         lastDuration = duration;
-        accumulatedTime += duration;
+        lastTimeSteps = timeSteps;
+        lastCallingID = callingID;
+        
         // Add some mock states to the future trajectory
-
-        //PhysicalState mockState;
-        //auto curr_state = mockState.getPosition();
-        //mockState.setPosition({ 1.0f + 1, 2.0f + i, 3.0f + i });
-        //callingEntity.getFutureTrajectory().push_back(mockState);
-        //}
+        for (int i = 0; i < timeSteps; ++i)
+        {
+            PhysicalState mockState;
+            mockState.setPosition({1.0f + i, 2.0f + i, 3.0f + i});
+            mockState.setTimestamp(currentState.getTimestamp() + duration * (i + 1));
+            futureTrajectory->push_back(mockState);
+        }
     }
 };
 
@@ -181,19 +179,15 @@ TEST(EntityTests, SimulateWithValidEngine)
     initialState.setTimestamp(0.0f);
     e.setOrigin(initialState);
     e.setTimestep(0.1f);
-    float timestep = 0.1f;
+    
     // Run simulation
-    bool result = false;
-    for (int i = 0; i < 50; i++)
-    {
-        result = e.Simulate(timestep);
-        e.TickForward();
-    }
+    bool result = e.Simulate(5);
     
     // Verify simulation was successful
     EXPECT_TRUE(result);
     EXPECT_TRUE(mockPtr->simulateCalled);
     EXPECT_FLOAT_EQ(mockPtr->lastDuration, 0.1f);
+    EXPECT_EQ(mockPtr->lastTimeSteps, 5);
     EXPECT_EQ(mockPtr->lastCallingID, e.getEntityID());
 }
 
@@ -279,16 +273,17 @@ TEST(EntityTests, MultipleSimulationCalls)
     
     // First simulation
     bool result1 = e.Simulate(3);
-    e.TickForward();
     EXPECT_TRUE(result1);
     EXPECT_TRUE(mockPtr->simulateCalled);
+    EXPECT_EQ(mockPtr->lastTimeSteps, 3);
     
     // Reset the mock
     mockPtr->simulateCalled = false;
+    mockPtr->lastTimeSteps = 0;
     
     // Second simulation
     bool result2 = e.Simulate(7);
-    e.TickForward();
     EXPECT_TRUE(result2);
     EXPECT_TRUE(mockPtr->simulateCalled);
+    EXPECT_EQ(mockPtr->lastTimeSteps, 7);
 }
