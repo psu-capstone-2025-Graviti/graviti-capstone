@@ -77,6 +77,11 @@ Vec3 PhysicalState::getAcceleration() const
     return m_acceleration;
 }
 
+float PhysicalState::getRadius() const
+{
+    return m_radius;
+}
+
 float PhysicalState::getTimestamp() const
 {
     return m_timestamp;
@@ -149,7 +154,7 @@ void PhysicalState::setTimestamp(const float timestamp)
     m_timestamp = timestamp;
 }
 
-void PhysicalState::integrate(float timestep)
+void PhysicalState::eulerintegrate(float timestep)
 {
 	auto oldPosition = getPosition();
     auto vel = getVelocity();
@@ -162,6 +167,22 @@ void PhysicalState::integrate(float timestep)
     setVelocity({vel.x + acc.x * timestep,
 				 vel.y + acc.y * timestep,
 		         vel.z + acc.z * timestep });
+
+}
+
+void PhysicalState::integrate(float timestep)
+{
+    auto oldPosition = getPosition();
+    auto vel = getVelocity();
+    auto acc = getAcceleration();
+
+    setPosition({ oldPosition.x + vel.x * timestep,
+                 oldPosition.y + vel.y * timestep,
+                 oldPosition.z + vel.z * timestep });
+
+    setVelocity({ vel.x + acc.x * timestep,
+                 vel.y + acc.y * timestep,
+                 vel.z + acc.z * timestep });
 
 }
 
