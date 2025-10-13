@@ -18,7 +18,7 @@ void BatchSimEnvironment::initialize_two_body()
 	auto entityManager = EntityManager::getInstance();
 
 
-	std::unique_ptr<IPhysicsEngine> physicsEngine = std::make_unique<NBodyPhysics>();
+	std::shared_ptr<IPhysicsEngine> physicsEngine = std::make_shared<NBodyPhysics>();
 	Entity earth = Entity(physicsEngine);
 	earth.setEntityName("Earth");
 	earth.getPhysicalState()->setMass(100.0e10f);
@@ -44,7 +44,7 @@ void BatchSimEnvironment::initialize_three_body()
 	auto entityManager = EntityManager::getInstance();
 
 
-	std::unique_ptr<IPhysicsEngine> physicsEngine = std::make_unique<NBodyPhysics>();
+	std::shared_ptr<IPhysicsEngine> physicsEngine = std::make_shared<NBodyPhysics>();
 	Entity earth = Entity(physicsEngine);
 	earth.setEntityName("Earth");
 	earth.getPhysicalState()->setMass(100.0e10f);
@@ -100,13 +100,13 @@ void BatchSimEnvironment::initialize_json_body(std::string filepathjsonPath)
 	d.ParseStream(is);
 
 	fclose(fp);
-	std::unique_ptr<IPhysicsEngine> physicsEngine = std::make_unique<NBodyPhysics>();
+	std::shared_ptr<IPhysicsEngine> physicsEngine = std::make_shared<NBodyPhysics>();
 	rapidjson::Value::ConstValueIterator itr;
 
 	for (auto itr = d.Begin(); itr != d.End(); ++itr) {
 
 
-		physicsEngine = std::make_unique<NBodyPhysics>();
+		physicsEngine = std::make_shared<NBodyPhysics>();
 		Entity jsonEntity = Entity(physicsEngine);
 		PhysicalState jsonEntityState;
 		auto obj = itr->GetObject();

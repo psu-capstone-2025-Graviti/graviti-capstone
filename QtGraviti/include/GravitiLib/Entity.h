@@ -13,7 +13,7 @@ using namespace std::chrono;
 class Entity
 {
 public:
-	Entity(std::unique_ptr<IPhysicsEngine>& engine);
+	Entity(std::shared_ptr<IPhysicsEngine>& engine);
 	~Entity();
 
 	void setTickDuration(float tick_duration);

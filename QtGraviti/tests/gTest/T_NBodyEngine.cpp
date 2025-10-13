@@ -18,7 +18,7 @@ TEST(NBodyEngineTests, SimulateSingleEntity)
     NBodyPhysics physicsEngine;
     
     // Create a test entity
-    std::unique_ptr<IPhysicsEngine> engine = std::make_unique<NBodyPhysics>();
+    std::shared_ptr<IPhysicsEngine> engine = std::make_shared<NBodyPhysics>();
     Entity testEntity(engine);
     testEntity.setID(1);
     

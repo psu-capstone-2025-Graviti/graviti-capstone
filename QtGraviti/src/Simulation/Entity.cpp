@@ -4,7 +4,7 @@
 #include <string>
 
 
-Entity::Entity(std::unique_ptr<IPhysicsEngine>& engine)
+Entity::Entity(std::shared_ptr<IPhysicsEngine>& engine)
     : m_current_state(),
     m_entity_name("TEST"),
     m_future_trajectory(),
@@ -15,7 +15,7 @@ Entity::Entity(std::unique_ptr<IPhysicsEngine>& engine)
     m_origin(),
     m_origin_set(false)
 {
-    m_engine = std::move(engine);
+    m_engine = engine;
 
 }
 
