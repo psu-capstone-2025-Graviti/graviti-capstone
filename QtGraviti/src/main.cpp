@@ -26,7 +26,8 @@ int main(int argc, char* argv[])
     // Create trajectory renderer and convert trajectories
     TrajectoryRenderer trajectoryRenderer;
     //change first number to see more spheres, change second number to change sphere scale
-    trajectoryRenderer.convertTrajectoriesToSpheres(5, 0.1f);
+    trajectoryRenderer.convertTrajectoriesToSpheres(5, 0.025f);
+    trajectoryRenderer.addEntityOrigins(0.2f);
 
     MainWindow window(&trajectoryRenderer);
 

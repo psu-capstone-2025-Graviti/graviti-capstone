@@ -70,6 +70,62 @@ void TrajectoryRenderer::convertTrajectoriesToSpheres(int timeStepInterval,float
     emit trajectorySpheresChanged();
 }
 
+void TrajectoryRenderer::addEntityOrigins(float originScale)
+{
+    EntityManager* entityManager = EntityManager::getInstance();
+
+
+    auto entities = entityManager->getAllEntities();
+    if (!entities) {
+        qWarning() << "addEntityOrigins: No entities found";
+        return;
+    }
+
+    // TODO - these colors are hard coded at the moment
+    QStringList entityColors = { "#6f0000", "#006f6f", "#6f006f" };
+    int colorIndex = 0;
+
+    for (auto& entity : *entities) {
+        QString materialColor = entityColors[colorIndex % entityColors.size()];
+        colorIndex++;
+        auto state = entity.getOrigin();
+        Vec3 position = state.getPosition();
+
+
+        int scale_up = 1; //mostly for debugging - allows us to scale up the position rendering  - Keep at 1
+        QVector3D QspherePosition = QVector3D(position.x * scale_up, position.y * scale_up, position.z * scale_up);
+
+        auto new_scale = originScale;// *entity.getPhysicalState()->getMass();
+
+        //TODO - we need to come up with some way to scale the entity sphere based on mass.
+        // 
+        //if(new_scale > originScale*2)
+        //{
+        //    new_scale = originScale*2;
+        //}
+        //else if(new_scale < originScale/2)
+        //{
+        //    new_scale = originScale/2;
+        //}
+
+        QVector3D QsphereScale = QVector3D(new_scale, new_scale, new_scale);
+
+        // Create gradient from light to dark
+
+        auto sphere = new EntitySphere(
+            QspherePosition,
+            QsphereScale,
+            QString::fromStdString(entity.getEntityName()),
+            state.getTimestamp(),
+            materialColor,
+            this  // Set parent to this TrajectoryRenderer
+        );
+
+        
+        m_entitySpheres.append(sphere);
+    }
+    emit entitySpheresChanged();
+};
 
 QQmlListProperty<TrajectorySphere> TrajectoryRenderer::trajectorySpheres()
 {
@@ -85,6 +141,24 @@ TrajectorySphere* TrajectoryRenderer::trajectorySphereAt(int index) const
 {
     if (index >= 0 && index < m_trajectorySpheres.size()) {
         return m_trajectorySpheres[index];
+    }
+    return nullptr;
+}
+
+QQmlListProperty<EntitySphere> TrajectoryRenderer::entitySpheres()
+{
+    return QQmlListProperty<EntitySphere>(this, &m_entitySpheres);
+}
+
+int TrajectoryRenderer::entitySphereCount() const
+{
+    return m_entitySpheres.size();
+}
+
+EntitySphere* TrajectoryRenderer::entitySphereAt(int index) const
+{
+    if (index >= 0 && index < m_entitySpheres.size()) {
+        return m_entitySpheres[index];
     }
     return nullptr;
 }
@@ -191,3 +265,20 @@ QString TrajectoryRenderer::changeColor(const QString& baseColor, float timeProg
     
     return QString("#%1%2%3").arg(newR, 2, 16, QChar('0')).arg(newG, 2, 16, QChar('0')).arg(newB, 2, 16, QChar('0'));
 }
+
+// EntitySphere implementation
+EntitySphere::EntitySphere(QObject *parent)
+    : TrajectorySphere(parent)
+{
+}
+
+EntitySphere::EntitySphere(const QVector3D& position, const QVector3D& scale,
+                           const QString& entityName, float timestamp,
+                           const QString& materialColor, QObject *parent)
+    : TrajectorySphere(position, scale, entityName, timestamp, materialColor, parent)
+{
+}
+
+
+
+

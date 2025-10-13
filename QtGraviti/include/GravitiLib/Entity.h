@@ -20,6 +20,7 @@ public:
 	void setTimestep(float timestep);
 	float getTimestep();
 	void setOrigin(PhysicalState origin);
+	PhysicalState getOrigin() const;
 	//void setPhysicsEngine(std::unique_ptr<IPhysicsEngine>& engine);
 
 	PhysicalState* getPhysicalState();
@@ -55,6 +56,9 @@ private:
 	std::vector<PhysicalState> m_future_trajectory;
 	PhysicalState m_current_state;
 
+
+	PhysicalState m_origin;
+	bool m_origin_set;
 	long int m_entityid;
 };
 

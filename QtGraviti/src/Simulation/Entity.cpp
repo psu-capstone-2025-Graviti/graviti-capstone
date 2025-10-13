@@ -11,7 +11,9 @@ Entity::Entity(std::unique_ptr<IPhysicsEngine>& engine)
     m_past_trajectory(),
     m_entityid(0),
     m_timestep(0.0f),
-    m_file(nullptr)
+    m_file(nullptr),
+    m_origin(),
+    m_origin_set(false)
 {
     m_engine = std::move(engine);
 
@@ -55,13 +57,19 @@ float Entity::getTimestep()
 
 void Entity::setOrigin(PhysicalState origin)
 {
-    m_current_state = origin;
-    
+    //m_current_state = origin;
+    m_origin = origin;
+    m_origin_set = true;
     // Clear trajectories when setting new origin
     m_past_trajectory.clear();
     m_future_trajectory.clear();
+    m_current_state = m_origin;
 }
 
+PhysicalState Entity::getOrigin() const
+{
+    return m_origin;
+}
 //void Entity::setPhysicsEngine()
 //{
 //    m_engine = std::move(engine);
@@ -77,6 +85,11 @@ bool Entity::Simulate(float duration)
     if (!m_engine) {
         // No physics engine set, cannot simulate
         return false;
+    }
+
+    if (!m_origin_set)
+    {
+        setOrigin(m_current_state);
     }
     setTimestep(duration);
     // Store current state in past trajectory before simulation

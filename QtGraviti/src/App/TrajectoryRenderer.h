@@ -14,12 +14,15 @@
 
 // Forward declare
 class TrajectorySphere;
+class EntitySphere;
 
 class TrajectoryRenderer : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QQmlListProperty<TrajectorySphere> trajectorySpheres READ trajectorySpheres NOTIFY trajectorySpheresChanged)
     Q_PROPERTY(int count READ trajectorySphereCount NOTIFY trajectorySpheresChanged)
+    Q_PROPERTY(QQmlListProperty<EntitySphere> entitySpheres READ entitySpheres NOTIFY entitySpheresChanged)
+    Q_PROPERTY(int entitySphereCount READ entitySphereCount NOTIFY entitySpheresChanged)
 
 public:
     explicit TrajectoryRenderer(QObject *parent = nullptr);
@@ -29,18 +32,23 @@ public:
     //Will need to update to do past and future trajectories, and support real time simulatin with trajectory updates
     void convertTrajectoriesToSpheres( int timeStepInterval, float sphereScale);
     QQmlListProperty<TrajectorySphere> trajectorySpheres();
+    QQmlListProperty<EntitySphere> entitySpheres();
 
     int trajectorySphereCount() const;
+    int entitySphereCount() const;
     TrajectorySphere* trajectorySphereAt(int index) const;
+    EntitySphere* entitySphereAt(int index) const;
 
     QString changeColor(const QString& baseColor, float timeProgress) const;
 
+    void addEntityOrigins(float originScale);
 
 signals:
     void trajectorySpheresChanged();
-
+    void entitySpheresChanged();
 private:
     QList<TrajectorySphere*> m_trajectorySpheres;
+    QList<EntitySphere*> m_entitySpheres;
 };
 
 //TODO - we will need different classes for the different types of rendering. We will probably want a base
@@ -85,3 +93,25 @@ private:
     QString m_materialColor;
 };
 
+class EntitySphere : public TrajectorySphere
+{
+    Q_OBJECT
+
+public:
+    explicit EntitySphere(QObject *parent = nullptr);
+    EntitySphere(const QVector3D& position, const QVector3D& scale,
+                 const QString& entityName, float timestamp,
+                 const QString& materialColor = "#ffffff", QObject *parent = nullptr);
+
+    // Getters
+    //QString texturePath() const;
+
+    // Setters
+    //void setTexturePath(const QString& texturePath);
+
+signals:
+    //void texturePathChanged();
+
+private:
+    //QString m_texturePath;
+};

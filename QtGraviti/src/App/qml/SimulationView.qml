@@ -122,6 +122,69 @@ Item {
                 }
             }
 
+            //Entity Spheres
+            Node {
+                id: entitySphereContainer
+                Component {
+                    id: entitySphereComponent
+                    Model {
+                        id: entitySphere
+                        objectName: "entitySphere"
+                        source: "#Sphere"
+
+                        property int sphereIndex: 0
+                        property var sphereData: null
+
+                        x: sphereData.position.x
+                        y: sphereData.position.y
+                        z: sphereData.position.z
+
+                        // Scale from trajectoryRenderer
+                        scale: Qt.vector3d(sphereData.scale.x, sphereData.scale.y, sphereData.scale.z)
+
+                        // Material based on entity type or index
+                        materials: [
+                            PrincipledMaterial {
+                                baseColor: sphereData.materialColor
+                            }
+                        ]
+
+                        Connections {
+                            target: trajectoryRenderer
+                            function onEntitySpheresChanged() {
+                                if (trajectoryRenderer && sphereIndex < trajectoryRenderer.entitySphereCount) {
+                                    entitySphere.sphereData = trajectoryRenderer.entitySpheres[sphereIndex]
+                                }
+                            }
+                        }
+                    }
+                }
+
+                Component.onCompleted: {
+                    createEntitySpheres()
+                }
+
+                function createEntitySpheres() {
+                    var count = trajectoryRenderer.entitySphereCount
+
+                    for (var i = 0; i < count; i++) {
+                        var sphereData = trajectoryRenderer.entitySpheres[i]
+                        if (sphereData) {
+                            var sphere = entitySphereComponent.createObject(entitySphereContainer, {
+                                "sphereIndex": i,
+                                "sphereData": sphereData
+                            })
+                        }
+                    }
+                }
+                Connections {
+                    target: trajectoryRenderer
+                    function onEntitySpheresChanged() {
+                        entitySphereContainer.createEntitySpheres()
+                    }
+                }
+            }
+
         }
     }
 
