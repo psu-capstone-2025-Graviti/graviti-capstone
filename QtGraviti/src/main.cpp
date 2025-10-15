@@ -22,7 +22,7 @@ int main(int argc, char* argv[])
     //batch.initialize_three_body();
     batch.initialize_json_body("EntityJsons/test1.json");
     batch.run();
-
+	//batch.saveEntitiesAsJson("EntityJsons/test1_output.json");
     // Create trajectory renderer and convert trajectories
     TrajectoryRenderer trajectoryRenderer;
     //change first number to see more spheres, change second number to change sphere scale
