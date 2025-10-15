@@ -14,6 +14,8 @@ public:
 	float cleanFloat(std::string value);
 	void initialize_json_body(std::string filepathjsonPath);
 
+	void saveEntitiesAsJson(std::string filepathjsonPath);
+
 
 	//After run is called, we cant add more stuff to environment
 	void run();
