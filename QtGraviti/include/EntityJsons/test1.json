@@ -8,7 +8,8 @@
     "velocityY": "0",
     "velocityZ": "0",
     "mass": "100.0e10f",
-    "diameter": "12742.0f"
+    "diameter": "12742.0f",
+    "texturePath": "qrc:/content/images/Blue_Marble_2002.png"
   },
 
   {
@@ -20,7 +21,8 @@
     "velocityY": "0.3",
     "velocityZ": "2",
     "mass": "1.0e10f",
-    "diameter": "12742.0f"
+    "diameter": "12742.0f",
+    "texturePath": "qrc:/content/images/MoonNASA.jpg"
   },
 
   {
@@ -32,6 +34,7 @@
     "velocityY": "0.4",
     "velocityZ": "0",
     "mass": "1.0e10f",
-    "diameter": "12742.0f"
+    "diameter": "12742.0f",
+    "texturePath": "qrc:/content/images/MoonNASA.jpg"
   }
 ]

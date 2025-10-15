@@ -146,6 +146,16 @@ Item {
                         materials: [
                             PrincipledMaterial {
                                 baseColor: sphereData.materialColor
+                                baseColorMap: sphereData.texturePath && sphereData.texturePath !== "" ? textureMap : null
+                                roughness: 0.5
+
+                                property Texture textureMap: Texture {
+                                    source: sphereData.texturePath || ""
+                                }
+
+                                Component.onCompleted: {
+                                    console.log("Entity sphere created with texturePath:", sphereData.texturePath)
+                                }
                             }
                         ]
 

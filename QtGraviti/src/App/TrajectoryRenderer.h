@@ -96,22 +96,24 @@ private:
 class EntitySphere : public TrajectorySphere
 {
     Q_OBJECT
+    Q_PROPERTY(QString texturePath READ texturePath WRITE setTexturePath NOTIFY texturePathChanged)
 
 public:
     explicit EntitySphere(QObject *parent = nullptr);
     EntitySphere(const QVector3D& position, const QVector3D& scale,
                  const QString& entityName, float timestamp,
-                 const QString& materialColor = "#ffffff", QObject *parent = nullptr);
+                 const QString& materialColor = "#ffffff",
+                 const QString& texturePath = "", QObject *parent = nullptr);
 
     // Getters
-    //QString texturePath() const;
+    QString texturePath() const;
 
     // Setters
-    //void setTexturePath(const QString& texturePath);
+    void setTexturePath(const QString& texturePath);
 
 signals:
-    //void texturePathChanged();
+    void texturePathChanged();
 
 private:
-    //QString m_texturePath;
+    QString m_texturePath;
 };

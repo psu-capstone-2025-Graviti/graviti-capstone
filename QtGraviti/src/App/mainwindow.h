@@ -8,9 +8,8 @@ namespace Ui {
 class MainWindow;
 }
 
-class sphereList;
-
 class TrajectoryRenderer;
+class SimulationController;
 
 class MainWindow : public QMainWindow
 {
@@ -18,7 +17,7 @@ class MainWindow : public QMainWindow
 
 public:
     explicit MainWindow(QWidget *parent = nullptr);
-    explicit MainWindow(TrajectoryRenderer* trajectoryRenderer, QWidget *parent = nullptr);
+    explicit MainWindow(TrajectoryRenderer* trajectoryRenderer, SimulationController* controller, QWidget *parent = nullptr);
     ~MainWindow();
 
     QQmlContext* rootContext();

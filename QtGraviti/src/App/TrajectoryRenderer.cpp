@@ -111,6 +111,12 @@ void TrajectoryRenderer::addEntityOrigins(float originScale)
         QVector3D QsphereScale = QVector3D(new_scale, new_scale, new_scale);
 
         // Create gradient from light to dark
+        auto texturePath = entity.getTexturePath();
+
+        if (texturePath != "")
+        {
+            materialColor = "#ffffff"; //Dont tint the textures
+        }
 
         auto sphere = new EntitySphere(
             QspherePosition,
@@ -118,6 +124,7 @@ void TrajectoryRenderer::addEntityOrigins(float originScale)
             QString::fromStdString(entity.getEntityName()),
             state.getTimestamp(),
             materialColor,
+            QString::fromStdString(texturePath),  // texturePath - empty for now
             this  // Set parent to this TrajectoryRenderer
         );
 
@@ -269,14 +276,30 @@ QString TrajectoryRenderer::changeColor(const QString& baseColor, float timeProg
 // EntitySphere implementation
 EntitySphere::EntitySphere(QObject *parent)
     : TrajectorySphere(parent)
+    , m_texturePath("")
 {
 }
 
 EntitySphere::EntitySphere(const QVector3D& position, const QVector3D& scale,
                            const QString& entityName, float timestamp,
-                           const QString& materialColor, QObject *parent)
+                           const QString& materialColor,
+                           const QString& texturePath, QObject *parent)
     : TrajectorySphere(position, scale, entityName, timestamp, materialColor, parent)
+    , m_texturePath(texturePath)
 {
+}
+
+QString EntitySphere::texturePath() const
+{
+    return m_texturePath;
+}
+
+void EntitySphere::setTexturePath(const QString& texturePath)
+{
+    if (m_texturePath != texturePath) {
+        m_texturePath = texturePath;
+        emit texturePathChanged();
+    }
 }
 
 

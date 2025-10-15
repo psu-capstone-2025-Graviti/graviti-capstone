@@ -12,131 +12,11 @@ BatchSimEnvironment::BatchSimEnvironment()
 	m_origin_time = 0.0f;
 }
 
-void BatchSimEnvironment::initialize_two_body()
-{
-	// Create entities
-	auto entityManager = EntityManager::getInstance();
-
-
-	std::shared_ptr<IPhysicsEngine> physicsEngine = std::make_shared<NBodyPhysics>();
-	Entity earth = Entity(physicsEngine);
-	earth.setEntityName("Earth");
-	earth.getPhysicalState()->setMass(100.0e10f);
-	entityManager->addEntity(earth);
-
-	physicsEngine = std::make_unique<NBodyPhysics>();
-	Entity moon = Entity(physicsEngine);
-	moon.setEntityName("Moon");
-	PhysicalState moonState;
-	moonState.setPosition(X, 25);
-	moonState.setVelocity(Z, 2);
-	moonState.setVelocity(Y, 0.3);
-	moonState.setMass(1.0e10f);
-	moon.setOrigin(moonState);
-	entityManager->addEntity(moon);
-
-
-}
-
-void BatchSimEnvironment::initialize_three_body()
-{
-	// Create entities
-	auto entityManager = EntityManager::getInstance();
-
-
-	std::shared_ptr<IPhysicsEngine> physicsEngine = std::make_shared<NBodyPhysics>();
-	Entity earth = Entity(physicsEngine);
-	earth.setEntityName("Earth");
-	earth.getPhysicalState()->setMass(100.0e10f);
-	entityManager->addEntity(earth);
-
-	physicsEngine = std::make_unique<NBodyPhysics>();
-	Entity moon = Entity(physicsEngine);
-	moon.setEntityName("Moon");
-	PhysicalState moonState;
-	moonState.setPosition(X, 25);
-	moonState.setVelocity(Z, 2);
-	moonState.setVelocity(Y, 0.3);
-	moonState.setMass(1.0e10f);
-	moon.setOrigin(moonState);
-	entityManager->addEntity(moon);
-
-	physicsEngine = std::make_unique<NBodyPhysics>();
-	Entity moon2 = Entity(physicsEngine);
-	moon2.setEntityName("moon2");
-	PhysicalState moon2State;
-	moon2State.setPosition(X, 250);
-	moon2State.setVelocity(Y, 0.4);
-	moon2State.setMass(1.0e10f);
-	moon2.setOrigin(moon2State);
-	entityManager->addEntity(moon2);
-}
-
-float BatchSimEnvironment::cleanFloat(std::string value)
-{
-	if (value.back() == 'f') {
-		value.pop_back();
-	}
-	return std::strtof(value.c_str(), nullptr);
-}
-
-void BatchSimEnvironment::initialize_json_body(std::string filepathjsonPath)
-{
-	// Create entities
-	auto entityManager = EntityManager::getInstance();
-	auto entities = entityManager->getAllEntities();
-
-	FILE* fp = fopen(filepathjsonPath.c_str(), "r");
-	if (!fp) {
-		// Handle file open error (optional: log or throw)
-		return;
-	}
-
-	// Move the large buffer to the heap to avoid stack overflow
-	std::unique_ptr<char[]> readBuffer(new char[65536]);
-	rapidjson::FileReadStream is(fp, readBuffer.get(), 65536);
-
-	rapidjson::Document d;
-	d.ParseStream(is);
-
-	fclose(fp);
-	std::shared_ptr<IPhysicsEngine> physicsEngine = std::make_shared<NBodyPhysics>();
-	rapidjson::Value::ConstValueIterator itr;
-
-	for (auto itr = d.Begin(); itr != d.End(); ++itr) {
-
-
-		physicsEngine = std::make_shared<NBodyPhysics>();
-		Entity jsonEntity = Entity(physicsEngine);
-		PhysicalState jsonEntityState;
-		auto obj = itr->GetObject();
-		jsonEntity.setEntityName(obj["name"].GetString());
-
-
-		jsonEntityState.setPosition(X, cleanFloat(obj["positionX"].GetString()));
-		jsonEntityState.setPosition(Y, cleanFloat(obj["positionY"].GetString()));
-		jsonEntityState.setPosition(Z, cleanFloat(obj["positionZ"].GetString()));
-
-		jsonEntityState.setVelocity(X, cleanFloat(obj["velocityX"].GetString()));
-		jsonEntityState.setVelocity(Y, cleanFloat(obj["velocityY"].GetString()));
-		jsonEntityState.setVelocity(Z, cleanFloat(obj["velocityZ"].GetString()));
-		jsonEntityState.setMass(cleanFloat(obj["mass"].GetString()));
-
-
-		jsonEntity.setOrigin(jsonEntityState);
-		entityManager->addEntity(jsonEntity);
-
-
-	}
-
-
-	
-}
-
 void BatchSimEnvironment::run()
 {
 	auto entityManager = EntityManager::getInstance();
 	auto entities = entityManager->getAllEntities();
+
 
 	// Configure simulation parameters
 	const int totalTimeSteps = 2000;  // Total number of simulation steps
@@ -162,7 +42,7 @@ void BatchSimEnvironment::run()
 
 		}
 		// Optional: Add progress output
-		if (step % 10 == 0) {
+		if (step % 200 == 0) {
 			std::cout << "Simulation step: " << step << "/" << totalTimeSteps << " at time" << time << std::endl;
 		}
 		time += timeStep;

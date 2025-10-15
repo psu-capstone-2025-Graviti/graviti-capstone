@@ -174,3 +174,22 @@ void Entity::saveCurrentStateToCSV(void)
         m_file->flush();
     }
 }
+
+void Entity::setTexturePath(const std::string& texturePath)
+{
+    m_texturePath = texturePath;
+}
+
+std::string Entity::getTexturePath() const
+{
+    return m_texturePath;
+}
+
+//void Entity::setFlatIconRepr(std::shared_ptr< FlatIcon > flatIcon)
+//{
+//    m_fi_repr = flatIcon;
+//}
+//std::shared_ptr< FlatIcon > Entity::setFlatIconRepr()
+//{
+//    return m_fi_repr;
+//}

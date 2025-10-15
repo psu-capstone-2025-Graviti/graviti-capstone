@@ -6,5 +6,7 @@
     </qresource>
     <qresource prefix="/">
         <file>content/images/HubbleDeepField.jpg</file>
+        <file>content/images/Blue_Marble_2002.png</file>
+        <file>content/images/MoonNASA.jpg</file>
     </qresource>
 </RCC>

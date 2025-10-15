@@ -51,6 +51,8 @@ file(GLOB_RECURSE APP_SRC_FILES
     "src/App/*.h"
     "src/App/*.ui"
     "src/App/*.qml"
+    "src/App/controllers/*.h"
+    "src/App/controllers/*.cpp"
 )
 
 set(PROJECT_SOURCES

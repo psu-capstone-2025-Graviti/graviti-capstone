@@ -10,6 +10,7 @@
 
 using namespace std::chrono;
 
+
 class Entity
 {
 public:
@@ -45,10 +46,17 @@ public:
 	std::vector<PhysicalState>& getFutureTrajectory();
 	std::vector<PhysicalState>& getPastTrajectory();
 
+	void setTexturePath(const std::string& texturePath);
+	std::string getTexturePath() const;
+
+	//void setFlatIconRepr(std::shared_ptr< FlatIcon > flatIcon);
+	//std::shared_ptr< FlatIcon > setFlatIconRepr();
 private:
 	std::ofstream* m_file;
 	std::string m_entity_name;
 
+	std::string m_texturePath;
+	//std::shared_ptr< FlatIcon > m_fi_repr;
 
 	std::shared_ptr<IPhysicsEngine> m_engine; //needs to be shared ptr?
 	float m_timestep;
