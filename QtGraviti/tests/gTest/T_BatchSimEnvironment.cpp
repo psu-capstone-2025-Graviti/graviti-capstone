@@ -75,3 +75,29 @@ TEST(BatchSimTests, json)
 
     EXPECT_THROW(e->at(3).getEntityName(), std::out_of_range);
 }
+
+TEST(BatchSimTests, saveJson)
+{
+    BatchSimEnvironment batch;
+    batch.initialize_three_body();
+    batch.run();
+    auto man = EntityManager::getInstance();
+    auto e = man->getAllEntities();
+
+
+	batch.saveEntitiesAsJson("EntityJsons/testoutput.json");
+    // Test default values
+    EXPECT_EQ(e->at(0).getEntityName(), "Earth");
+    EXPECT_EQ(e->at(0).getEntityID(), 0);
+    EXPECT_NE(e->at(0).getPhysicalState(), nullptr);
+
+    EXPECT_EQ(e->at(1).getEntityName(), "Moon");
+    EXPECT_EQ(e->at(1).getEntityID(), 1);
+    EXPECT_NE(e->at(1).getPhysicalState(), nullptr);
+
+    EXPECT_EQ(e->at(2).getEntityName(), "moon2");
+    EXPECT_EQ(e->at(2).getEntityID(), 2);
+    EXPECT_NE(e->at(2).getPhysicalState(), nullptr);
+
+    EXPECT_THROW(e->at(3).getEntityName(), std::out_of_range);
+}

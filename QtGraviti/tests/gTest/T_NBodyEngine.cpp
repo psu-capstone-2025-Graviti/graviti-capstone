@@ -209,3 +209,61 @@ TEST(NBodyEngineTests, SimulateDifferentMasses)
     EXPECT_FLOAT_EQ(entity1.getPhysicalState()->getAcceleration().y, 0.0f);
     EXPECT_FLOAT_EQ(entity1.getPhysicalState()->getAcceleration().z, 0.0f);
 }
+
+TEST(NBodyEngineTests, TestCalculateForces2)
+{
+    NBodyPhysics physicsEngine;
+
+    // Create two entities with different masses
+    std::unique_ptr<IPhysicsEngine> engine1 = std::make_unique<NBodyPhysics>();
+    std::unique_ptr<IPhysicsEngine> engine2 = std::make_unique<NBodyPhysics>();
+
+    Entity entity1(engine1);
+    Entity entity2(engine2);
+
+    entity1.setID(1);
+    entity2.setID(2);
+
+    // Set up entity1 at origin
+    PhysicalState state1;
+    state1.setPosition({ 0.0f, 0.0f, 0.0f });
+    state1.setVelocity({ 0.0f, 0.0f, 0.0f });
+    state1.setAcceleration({ 0.0f, 0.0f, 0.0f });
+    state1.setMass(1.0f);
+    state1.setTimestamp(0.0f);
+    entity1.setOrigin(state1);
+
+    // Set up entity2 with larger mass
+    PhysicalState state2;
+    state2.setPosition({ 1.0f, 0.0f, 0.0f });
+    state2.setVelocity({ 0.0f, 0.0f, 0.0f });
+    state2.setAcceleration({ 0.0f, 0.0f, 0.0f });
+    state2.setMass(10.0f); // 10 times larger mass
+    state2.setTimestamp(0.0f);
+    entity2.setOrigin(state2);
+
+    // Add entities to EntityManager
+    auto entityManager = EntityManager::getInstance();
+    entityManager->addEntity(entity1);
+    entityManager->addEntity(entity2);
+
+    // Create future trajectory vector
+    auto futureTrajectory = std::make_shared<std::vector<PhysicalState>>();
+
+    // Run simulation on entity1
+    physicsEngine.calculateForces2(1.0f, entity1);
+    physicsEngine.updatePosition(1.0f, entity1);
+    physicsEngine.rk4Step(entity1, entity2, 1);
+
+    // Calculate expected acceleration with larger mass
+    float G = 6.67430e-11f;
+    float m2 = 10.0f; // Larger mass
+    float r = 1.0f;
+    float expectedAcceleration = G * m2 / (r * r);
+
+    // Verify acceleration is approximately correct (should be 10 times larger)
+    EXPECT_NEAR(entity1.getPhysicalState()->getAcceleration().x, expectedAcceleration, 1e-15f);
+    EXPECT_FLOAT_EQ(entity1.getPhysicalState()->getAcceleration().y, 0.0f);
+    EXPECT_FLOAT_EQ(entity1.getPhysicalState()->getAcceleration().z, 0.0f);
+}
+
