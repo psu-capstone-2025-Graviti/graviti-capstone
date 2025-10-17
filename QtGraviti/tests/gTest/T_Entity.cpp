@@ -35,7 +35,7 @@ public:
 
 TEST(EntityTests, Constructor)
 {
-    std::unique_ptr<IPhysicsEngine> physicsEngine = std::make_unique<MockPhysicsEngine>();
+    std::shared_ptr<IPhysicsEngine> physicsEngine = std::make_shared<MockPhysicsEngine>();
     Entity e(physicsEngine);
     
     // Test default values
@@ -46,7 +46,7 @@ TEST(EntityTests, Constructor)
 
 TEST(EntityTests, EntityNameGettersAndSetters)
 {
-    std::unique_ptr<IPhysicsEngine> physicsEngine = std::make_unique<MockPhysicsEngine>();
+    std::shared_ptr<IPhysicsEngine> physicsEngine = std::make_shared<MockPhysicsEngine>();
     Entity e(physicsEngine);
     
     // Test default name
@@ -67,7 +67,7 @@ TEST(EntityTests, EntityNameGettersAndSetters)
 
 TEST(EntityTests, EntityIDGettersAndSetters)
 {
-    std::unique_ptr<IPhysicsEngine> physicsEngine = std::make_unique<MockPhysicsEngine>();
+    std::shared_ptr<IPhysicsEngine> physicsEngine = std::make_shared<MockPhysicsEngine>();
     Entity e(physicsEngine);
     
     // Test default ID
@@ -89,7 +89,7 @@ TEST(EntityTests, EntityIDGettersAndSetters)
 
 TEST(EntityTests, TimestepSetter)
 {
-    std::unique_ptr<IPhysicsEngine> physicsEngine = std::make_unique<MockPhysicsEngine>();
+    std::shared_ptr<IPhysicsEngine> physicsEngine = std::make_shared<MockPhysicsEngine>();
     Entity e(physicsEngine);
     
     // Test setting timestep
@@ -112,7 +112,7 @@ TEST(EntityTests, TimestepSetter)
 
 TEST(EntityTests, SetOrigin)
 {
-    std::unique_ptr<IPhysicsEngine> physicsEngine = std::make_unique<MockPhysicsEngine>();
+    std::shared_ptr<IPhysicsEngine> physicsEngine = std::make_shared<MockPhysicsEngine>();
     Entity e(physicsEngine);
     
     // Create a test origin state
@@ -145,7 +145,7 @@ TEST(EntityTests, SetOrigin)
 
 TEST(EntityTests, GetPhysicalState)
 {
-    std::unique_ptr<IPhysicsEngine> physicsEngine = std::make_unique<MockPhysicsEngine>();
+    std::shared_ptr<IPhysicsEngine> physicsEngine = std::make_shared<MockPhysicsEngine>();
     Entity e(physicsEngine);
     
     // Test that getPhysicalState returns a valid pointer
@@ -169,10 +169,10 @@ TEST(EntityTests, GetPhysicalState)
 
 TEST(EntityTests, SimulateWithValidEngine)
 {
-    auto mockEngine = std::make_unique<MockPhysicsEngine>();
+    auto mockEngine = std::make_shared<MockPhysicsEngine>();
     MockPhysicsEngine* mockPtr = mockEngine.get();
     
-    std::unique_ptr<IPhysicsEngine> physicsEngine = std::move(mockEngine);
+    std::shared_ptr<IPhysicsEngine> physicsEngine = mockEngine;
     Entity e(physicsEngine);
     
     // Set up initial state
@@ -200,7 +200,7 @@ TEST(EntityTests, SimulateWithValidEngine)
 
 TEST(EntityTests, SimulateWithNullEngine)
 {
-    std::unique_ptr<IPhysicsEngine> physicsEngine = nullptr;
+    std::shared_ptr<IPhysicsEngine> physicsEngine = nullptr;
     Entity e(physicsEngine);
     
     // Run simulation
@@ -213,7 +213,7 @@ TEST(EntityTests, SimulateWithNullEngine)
 
 TEST(EntityTests, EntityWithNBodyPhysics)
 {
-    std::unique_ptr<IPhysicsEngine> physicsEngine = std::make_unique<NBodyPhysics>();
+    std::shared_ptr<IPhysicsEngine> physicsEngine = std::make_shared<NBodyPhysics>();
     Entity e(physicsEngine);
     
     // Test basic functionality
@@ -248,7 +248,7 @@ TEST(EntityTests, EntityWithNBodyPhysics)
 
 TEST(EntityTests, EntityIDAssignment)
 {
-    std::unique_ptr<IPhysicsEngine> physicsEngine = std::make_unique<MockPhysicsEngine>();
+    std::shared_ptr<IPhysicsEngine> physicsEngine = std::make_shared<MockPhysicsEngine>();
     Entity e1(physicsEngine);
     Entity e2(physicsEngine);
     
@@ -269,10 +269,10 @@ TEST(EntityTests, EntityIDAssignment)
 
 TEST(EntityTests, MultipleSimulationCalls)
 {
-    auto mockEngine = std::make_unique<MockPhysicsEngine>();
+    auto mockEngine = std::make_shared<MockPhysicsEngine>();
     MockPhysicsEngine* mockPtr = mockEngine.get();
     
-    std::unique_ptr<IPhysicsEngine> physicsEngine = std::move(mockEngine);
+    std::shared_ptr<IPhysicsEngine> physicsEngine = mockEngine;
     Entity e(physicsEngine);
     
     e.setTimestep(0.1f);

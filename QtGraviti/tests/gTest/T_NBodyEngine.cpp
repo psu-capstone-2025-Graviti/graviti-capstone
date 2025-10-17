@@ -50,8 +50,8 @@ TEST(NBodyEngineTests, GravitationalForceCalculation)
     NBodyPhysics physicsEngine;
     
     // Create two entities with known masses and positions
-    std::unique_ptr<IPhysicsEngine> engine1 = std::make_unique<NBodyPhysics>();
-    std::unique_ptr<IPhysicsEngine> engine2 = std::make_unique<NBodyPhysics>();
+    std::shared_ptr<IPhysicsEngine> engine1 = std::make_shared<NBodyPhysics>();
+    std::shared_ptr<IPhysicsEngine> engine2 = std::make_shared<NBodyPhysics>();
     
     Entity entity1(engine1);
     Entity entity2(engine2);
@@ -109,11 +109,10 @@ TEST(NBodyEngineTests, SimulateSamePosition)
     NBodyPhysics physicsEngine;
     
     // Create two entities at the same position
-    std::unique_ptr<IPhysicsEngine> engine1 = std::make_unique<NBodyPhysics>();
-    std::unique_ptr<IPhysicsEngine> engine2 = std::make_unique<NBodyPhysics>();
+    std::shared_ptr<IPhysicsEngine> engine1 = std::make_shared<NBodyPhysics>();
     
     Entity entity1(engine1);
-    Entity entity2(engine2);
+    Entity entity2(engine1);
     
     entity1.setID(1);
     entity2.setID(2);
@@ -159,11 +158,10 @@ TEST(NBodyEngineTests, SimulateDifferentMasses)
     NBodyPhysics physicsEngine;
     
     // Create two entities with different masses
-    std::unique_ptr<IPhysicsEngine> engine1 = std::make_unique<NBodyPhysics>();
-    std::unique_ptr<IPhysicsEngine> engine2 = std::make_unique<NBodyPhysics>();
+    std::shared_ptr<IPhysicsEngine> engine1 = std::make_shared<NBodyPhysics>();
     
     Entity entity1(engine1);
-    Entity entity2(engine2);
+    Entity entity2(engine1);
     
     entity1.setID(1);
     entity2.setID(2);

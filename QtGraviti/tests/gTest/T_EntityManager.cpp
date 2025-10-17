@@ -37,7 +37,7 @@ public:
 
 TEST(EntityManagerTests, VerifyEntities)
 {
-    std::unique_ptr<IPhysicsEngine> physicsEngine = std::make_unique<MockPhysicsEngine>();
+    std::shared_ptr<IPhysicsEngine> physicsEngine = std::make_shared<MockPhysicsEngine>();
     Entity e(physicsEngine);
     EntityManager* Man = EntityManager::getInstance();
     Entity earth = Entity(physicsEngine);
@@ -58,7 +58,7 @@ TEST(EntityManagerTests, VerifyEntities)
 
 TEST(EntityManagerTests, VerifyEntitiesDeleted)
 {
-    std::unique_ptr<IPhysicsEngine> physicsEngine = std::make_unique<MockPhysicsEngine>();
+    std::shared_ptr<IPhysicsEngine> physicsEngine = std::make_shared<MockPhysicsEngine>();
     Entity e(physicsEngine);
     EntityManager* Man = EntityManager::getInstance();
     Entity earth = Entity(physicsEngine);
