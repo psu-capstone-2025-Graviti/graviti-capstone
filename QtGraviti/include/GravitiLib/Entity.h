@@ -22,6 +22,7 @@ public:
 	float getTimestep();
 	void setOrigin(PhysicalState origin);
 	PhysicalState getOrigin() const;
+	void resetToOrigin();
 	//void setPhysicsEngine(std::unique_ptr<IPhysicsEngine>& engine);
 
 	PhysicalState* getPhysicalState();

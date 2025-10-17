@@ -1,4 +1,4 @@
-#include "./TrajectoryRenderer.h"
+#include "TrajectoryRenderer.h"
 #include <QList>
 
 TrajectoryRenderer::TrajectoryRenderer(QObject *parent)
@@ -10,10 +10,10 @@ TrajectoryRenderer::~TrajectoryRenderer()
 {
 }
 
-void TrajectoryRenderer::convertTrajectoriesToSpheres(int timeStepInterval,float sphereScale)
+void TrajectoryRenderer::convertTrajectoriesToSpheres(int numSpheresToRender,float sphereScale)
 {
     EntityManager* entityManager = EntityManager::getInstance();
-
+    m_trajectorySpheres.clear();
 
     auto entities = entityManager->getAllEntities();
     if (!entities) {
@@ -32,11 +32,12 @@ void TrajectoryRenderer::convertTrajectoriesToSpheres(int timeStepInterval,float
 
         const std::vector<PhysicalState>& pastTrajectory = entity.getPastTrajectory();
         
-        if (pastTrajectory.empty()) {
-            printf("TrajectoryRenderer: No past trajectory found for entity %s", entityName);
+        if (pastTrajectory.empty() || numSpheresToRender == 0) {
+            //printf("TrajectoryRenderer: No past trajectory found for entity %s", entity.getEntityName());
             continue;
         }
 
+        int timeStepInterval = pastTrajectory.size() / numSpheresToRender;
         //We probably dont want to create a sphere at every tick
         for (size_t i = 0; i < pastTrajectory.size(); i += timeStepInterval) {
             const PhysicalState& state = pastTrajectory[i];
@@ -66,18 +67,23 @@ void TrajectoryRenderer::convertTrajectoriesToSpheres(int timeStepInterval,float
             m_trajectorySpheres.append(sphere);
         }
     }
+    emit trajectorySpheresChanged();
+}
 
+void TrajectoryRenderer::resetSpheres()
+{
+    m_trajectorySpheres.clear();
     emit trajectorySpheresChanged();
 }
 
 void TrajectoryRenderer::addEntityOrigins(float originScale)
 {
     EntityManager* entityManager = EntityManager::getInstance();
-
+    m_entitySpheres.clear();
 
     auto entities = entityManager->getAllEntities();
     if (!entities) {
-        qWarning() << "addEntityOrigins: No entities found";
+        emit entitySpheresChanged();
         return;
     }
 
@@ -97,18 +103,9 @@ void TrajectoryRenderer::addEntityOrigins(float originScale)
 
         auto new_scale = originScale;// *entity.getPhysicalState()->getMass();
 
-        //TODO - we need to come up with some way to scale the entity sphere based on mass.
-        // 
-        //if(new_scale > originScale*2)
-        //{
-        //    new_scale = originScale*2;
-        //}
-        //else if(new_scale < originScale/2)
-        //{
-        //    new_scale = originScale/2;
-        //}
-
-        QVector3D QsphereScale = QVector3D(new_scale, new_scale, new_scale);
+        float downscale = 0.2;
+        float rad = (entity.getPhysicalState()->getRadius())* downscale;
+        QVector3D QsphereScale = QVector3D(rad, rad, rad);
 
         // Create gradient from light to dark
         auto texturePath = entity.getTexturePath();

@@ -35,10 +35,6 @@ std::string Entity::getEntityName()
 {
     return m_entity_name;
 }
-//long int Entity::getEntityId() const
-//{
-//    return entity_id;
-//}
 
 void Entity::setTickDuration(float tick_duration)
 {
@@ -70,10 +66,11 @@ PhysicalState Entity::getOrigin() const
 {
     return m_origin;
 }
-//void Entity::setPhysicsEngine()
-//{
-//    m_engine = std::move(engine);
-//}
+
+void Entity::resetToOrigin()
+{
+    setOrigin(m_origin);
+}
 
 PhysicalState* Entity::getPhysicalState()
 {

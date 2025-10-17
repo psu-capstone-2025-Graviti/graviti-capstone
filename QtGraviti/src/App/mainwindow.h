@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 #include <QQmlContext>
+#include <QPushButton>
+#include <QLineEdit>
 
 namespace Ui {
 class MainWindow;
@@ -22,8 +24,17 @@ public:
 
     QQmlContext* rootContext();
 
+private slots:
+    void onStartSimulationClicked();
+    void onResetSimulationClicked();
+    void onClearEntitiesClicked();
+    void onAddEntityClicked();
+
 private:
+    void updateRender(int sphereCount);
     Ui::MainWindow *ui;
+    SimulationController* m_controller;
+    TrajectoryRenderer* m_renderer;
 };
 
 #endif // MAINWINDOW_H

@@ -30,7 +30,7 @@ public:
 
     //TODO - this is rather hard coded at the moment, and is only rendering past trajectories.
     //Will need to update to do past and future trajectories, and support real time simulatin with trajectory updates
-    void convertTrajectoriesToSpheres( int timeStepInterval, float sphereScale);
+    void convertTrajectoriesToSpheres( int numSpheresToRender, float sphereScale);
     QQmlListProperty<TrajectorySphere> trajectorySpheres();
     QQmlListProperty<EntitySphere> entitySpheres();
 
@@ -49,6 +49,7 @@ signals:
 private:
     QList<TrajectorySphere*> m_trajectorySpheres;
     QList<EntitySphere*> m_entitySpheres;
+    void resetSpheres();
 };
 
 //TODO - we will need different classes for the different types of rendering. We will probably want a base

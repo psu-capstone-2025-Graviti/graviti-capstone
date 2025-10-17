@@ -7,7 +7,8 @@
 
 
 SimulationController::SimulationController(QObject* parent)
-    : QObject(parent)
+    : QObject(parent),
+	m_env()
 {
     //m_entityList = new EntityListGUI(); //new? shared ptr?
 
@@ -16,6 +17,45 @@ SimulationController::SimulationController(QObject* parent)
 SimulationController::~SimulationController()
 {
 }
+
+void SimulationController::startSimulation(int numSteps, float tickDuration)
+{
+	m_env.run(numSteps, tickDuration);
+}
+
+void SimulationController::resetSimulation()
+{
+	m_env.clearSimulation();
+}
+void SimulationController::clearEntities()
+{
+	auto entityManager = EntityManager::getInstance();
+	entityManager->clearEntities();
+}
+
+void SimulationController::createEntity(const std::string& name, float posX, float posY, float posZ, 
+                                     float velX, float velY, float velZ, float mass)
+{
+	auto entityManager = EntityManager::getInstance();
+
+	std::shared_ptr<IPhysicsEngine> physicsEngine = std::make_shared<NBodyPhysics>();
+	Entity newEntity(physicsEngine);
+	newEntity.setEntityName(name);
+
+	PhysicalState entityState;
+	entityState.setPosition(X, posX);
+	entityState.setPosition(Y, posY);
+	entityState.setPosition(Z, posZ);
+	entityState.setVelocity(X, velX);
+	entityState.setVelocity(Y, velY);
+	entityState.setVelocity(Z, velZ);
+	entityState.setMass(mass);
+	entityState.setRadius(0.2f); // Default radius
+
+	newEntity.setOrigin(entityState);
+	entityManager->addEntity(newEntity);
+}
+
 
 void SimulationController::loadJson(std::string filepathjsonPath)
 {
@@ -58,6 +98,7 @@ void SimulationController::loadJson(std::string filepathjsonPath)
 		jsonEntityState.setVelocity(Y, cleanFloat(obj["velocityY"].GetString()));
 		jsonEntityState.setVelocity(Z, cleanFloat(obj["velocityZ"].GetString()));
 		jsonEntityState.setMass(cleanFloat(obj["mass"].GetString()));
+		jsonEntityState.setRadius(cleanFloat(obj["radius"].GetString()));
 
 		// Set texture path if it exists in JSON
 		if (obj.HasMember("texturePath") && obj["texturePath"].IsString()) {

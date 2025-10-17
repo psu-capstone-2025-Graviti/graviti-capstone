@@ -11,7 +11,8 @@ public:
 	BatchSimEnvironment();
 
 	//After run is called, we cant add more stuff to environment
-	void run();
+	void run(const int totalTimeSteps, const float timeStep);
+	void clearSimulation();
 
 private:
 	float m_origin_time;

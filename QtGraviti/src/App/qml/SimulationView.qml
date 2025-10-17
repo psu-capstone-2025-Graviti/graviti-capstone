@@ -61,58 +61,38 @@ Item {
             //Trajectory Spheres
             Node {
                 id: trajectorySphereContainer
-                Component {
-                    id: trajectorySphereComponent
+                property var sphereDataList: []
+                Repeater3D {
+                    model: trajectorySphereContainer.sphereDataList
                     Model {
-                        id: trajectorySphere
-                        objectName: "trajectorySphere"
                         source: "#Sphere"
+                        x: modelData.position.x
+                        y: modelData.position.y
+                        z: modelData.position.z
 
-                        property int sphereIndex: 0
-                        property var sphereData: null
-
-                        x: sphereData.position.x
-                        y: sphereData.position.y
-                        z: sphereData.position.z
-
-                        // Scale from trajectoryRenderer
-                        scale: Qt.vector3d(sphereData.scale.x, sphereData.scale.y, sphereData.scale.z)
-
-                        // Material based on entity type or index
+                        scale: Qt.vector3d(modelData.scale.x, modelData.scale.y, modelData.scale.z)
                         materials: [
                             PrincipledMaterial {
-                                baseColor: sphereData.materialColor
+                                baseColor: modelData.materialColor
+                                opacity: 0.5
                             }
                         ]
-
-                        Connections {
-                            target: trajectoryRenderer
-                            function onTrajectorySpheresChanged() {
-                                if (trajectoryRenderer && sphereIndex < trajectoryRenderer.count) {
-                                    dynamicTrajectorySphere.sphereData = trajectoryRenderer.trajectorySpheres[sphereIndex]
-                                }
-                            }
-                        }
                     }
-                }
-
-                Component.onCompleted: {
-                    createTrajectorySpheres()
                 }
 
                 function createTrajectorySpheres() {
+                    var newSphereDataList = []
                     var count = trajectoryRenderer.count
-
                     for (var i = 0; i < count; i++) {
                         var sphereData = trajectoryRenderer.trajectorySpheres[i]
                         if (sphereData) {
-                            var sphere = trajectorySphereComponent.createObject(trajectorySphereContainer, {
-                                "sphereIndex": i,
-                                "sphereData": sphereData
-                            })
+                            newSphereDataList.push(sphereData)
                         }
                     }
+                    sphereDataList = newSphereDataList
                 }
+
+
                 // Connect to trajectoryRenderer changes to recreate spheres
                 Connections {
                     target: trajectoryRenderer
@@ -125,48 +105,31 @@ Item {
             //Entity Spheres
             Node {
                 id: entitySphereContainer
-                Component {
-                    id: entitySphereComponent
+                property var entityDataList: []
+                Repeater3D {
+                    //id: entitySphereComponent
+                    model : entitySphereContainer.entityDataList
                     Model {
-                        id: entitySphere
-                        objectName: "entitySphere"
                         source: "#Sphere"
-
-                        property int sphereIndex: 0
-                        property var sphereData: null
-
-                        x: sphereData.position.x
-                        y: sphereData.position.y
-                        z: sphereData.position.z
+                        x: modelData.position.x
+                        y: modelData.position.y
+                        z: modelData.position.z
 
                         // Scale from trajectoryRenderer
-                        scale: Qt.vector3d(sphereData.scale.x, sphereData.scale.y, sphereData.scale.z)
+                        scale: Qt.vector3d(modelData.scale.x, modelData.scale.y, modelData.scale.z)
 
                         // Material based on entity type or index
                         materials: [
                             PrincipledMaterial {
-                                baseColor: sphereData.materialColor
-                                baseColorMap: sphereData.texturePath && sphereData.texturePath !== "" ? textureMap : null
+                                baseColor: modelData.materialColor
+                                baseColorMap: modelData.texturePath && modelData.texturePath !== "" ? textureMap : null
                                 roughness: 0.5
 
                                 property Texture textureMap: Texture {
-                                    source: sphereData.texturePath || ""
-                                }
-
-                                Component.onCompleted: {
-                                    console.log("Entity sphere created with texturePath:", sphereData.texturePath)
+                                    source: modelData.texturePath || ""
                                 }
                             }
                         ]
-
-                        Connections {
-                            target: trajectoryRenderer
-                            function onEntitySpheresChanged() {
-                                if (trajectoryRenderer && sphereIndex < trajectoryRenderer.entitySphereCount) {
-                                    entitySphere.sphereData = trajectoryRenderer.entitySpheres[sphereIndex]
-                                }
-                            }
-                        }
                     }
                 }
 
@@ -175,18 +138,18 @@ Item {
                 }
 
                 function createEntitySpheres() {
+                    var newEntityDataList = []
                     var count = trajectoryRenderer.entitySphereCount
 
                     for (var i = 0; i < count; i++) {
                         var sphereData = trajectoryRenderer.entitySpheres[i]
-                        if (sphereData) {
-                            var sphere = entitySphereComponent.createObject(entitySphereContainer, {
-                                "sphereIndex": i,
-                                "sphereData": sphereData
-                            })
+                        if(sphereData){
+                            newEntityDataList.push(sphereData)
                         }
                     }
+                    entityDataList = newEntityDataList
                 }
+
                 Connections {
                     target: trajectoryRenderer
                     function onEntitySpheresChanged() {
@@ -204,6 +167,7 @@ Item {
     property real zoomSpeed: 0.1
     property real rotationSpeed: 0.5
     property real panSpeed: 0.01
+    property real moveSpeed: 10.0
     
     property bool isMousePressed: false
     property point lastMousePos: Qt.point(0, 0)
@@ -221,8 +185,10 @@ Item {
     //at a time
     Keys.onPressed: (event) => {
         //Camera move speed in "units"
-        //TODO - make scale with camera zoom?
-        var moveSpeed = 10
+
+        //Base camera zoom is 350, we want values below this to slow move speed and values above to increase
+        var zoomscale = cameraDistance / 350
+        moveSpeed = zoomscale * 10
 
         switch(event.key){
             case Qt.Key_W:
@@ -325,10 +291,3 @@ Item {
         sceneCamera.lookAt(Qt.vector3d(0 + dx, 0 + dy, 0 + dz))
     }
 }
-
-/*##^##
-Designer {
-    D{i:0;matPrevEnvDoc:"SkyBox";matPrevEnvValueDoc:"preview_studio";matPrevModelDoc:"#Sphere"}
-D{i:6;cameraSpeed3d:25;cameraSpeed3dMultiplier:1}
-}
-##^##*/

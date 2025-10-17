@@ -12,15 +12,13 @@ BatchSimEnvironment::BatchSimEnvironment()
 	m_origin_time = 0.0f;
 }
 
-void BatchSimEnvironment::run()
+void BatchSimEnvironment::run(const int totalTimeSteps, const float timeStep)
 {
 	auto entityManager = EntityManager::getInstance();
 	auto entities = entityManager->getAllEntities();
 
 
 	// Configure simulation parameters
-	const int totalTimeSteps = 2000;  // Total number of simulation steps
-	const float timeStep = 1.0f;      // Time step in seconds
 	float time = 0.0f;
 	// Set timestep for all entities
 	for (auto& entity : *entities) {
@@ -39,7 +37,6 @@ void BatchSimEnvironment::run()
 		for (auto& entity : *entities) {
 			entity.TickForward();
 			entity.saveCurrentStateToCSV();
-
 		}
 		// Optional: Add progress output
 		if (step % 200 == 0) {
@@ -47,8 +44,14 @@ void BatchSimEnvironment::run()
 		}
 		time += timeStep;
 	}
-	for (auto& entity : *entities) {
-		entity.savePastTrajectoryToCSV();
-	}
 	std::cout << "Batch simulation completed!" << std::endl;
+}
+
+void BatchSimEnvironment::clearSimulation()
+{
+	auto entityManager = EntityManager::getInstance();
+	auto entities = entityManager->getAllEntities();
+	for (auto& entity : *entities) {
+		entity.resetToOrigin(); //Reset its current state back to origin
+	}
 }

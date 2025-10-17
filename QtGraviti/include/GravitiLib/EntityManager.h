@@ -21,6 +21,9 @@ public:
 
     std::shared_ptr<std::vector<Entity>> getAllEntities();
 
+    //DANGER
+    void clearEntities();
+
 private:
     //EntityManager* entity_manager;
     long int m_nextID;

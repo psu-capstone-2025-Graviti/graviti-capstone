@@ -21,17 +21,13 @@ int main(int argc, char* argv[])
     //qmlRegisterType<TextureSphere>("GravitiLib", 1, 0, "TextureSphere");
 
     // Run batch simulation
-    BatchSimEnvironment batch;
     SimulationController controller;
     //controller.initializeThreeBody();
     controller.loadJson("EntityJsons/test1.json");
-    batch.run();
 
     // Create trajectory renderer and convert trajectories - Renderer is View
     TrajectoryRenderer trajectoryRenderer;
-
-    //TODO - move these calls
-    trajectoryRenderer.convertTrajectoriesToSpheres(50, 0.01f);
+    //Entities are already in the env, so render them
     trajectoryRenderer.addEntityOrigins(0.2f);
 
     MainWindow window(&trajectoryRenderer, &controller);

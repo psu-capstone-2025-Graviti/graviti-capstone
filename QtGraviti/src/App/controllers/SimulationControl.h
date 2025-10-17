@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QObject>
+#include "GravitiLib/BatchSimEnvironment.h"
 
 class SimulationController : public QObject
 {
@@ -17,13 +18,17 @@ public:
     void initializeThreeBody();
     void loadJson(std::string filepathjsonPath);
 
+    void startSimulation(int numSteps, float tickDuration);
+    void resetSimulation();
+    void clearEntities();
+    void createEntity(const std::string& name, float posX, float posY, float posZ,
+                   float velX, float velY, float velZ, float mass);
+
 private:
 
 
     float cleanFloat(std::string value);
 
-    //EntityListGUI m_entityList;
-    //AddEntityGUI  m_addEntity;
-    //SimControlGUI m_simControl;
+    BatchSimEnvironment m_env;
 
 };
