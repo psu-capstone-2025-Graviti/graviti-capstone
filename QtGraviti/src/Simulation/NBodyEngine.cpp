@@ -42,8 +42,10 @@ void NBodyPhysics::calculateForces(float duration, Entity& callingEntity)
             if (jt->getEntityID() != callingID) { // Avoid self-interaction
 
                 auto other_state = jt->getPhysicalState();
-                
-			    totalAcc = gravitationalAcceleration(callingEntity, *jt);
+                auto newAcc= gravitationalAcceleration(callingEntity, *jt);
+                totalAcc.x += newAcc.x;
+                totalAcc.y += newAcc.y;
+                totalAcc.z += newAcc.z;
 
                 //rk4Step(callingEntity, *jt, 1);
             }
