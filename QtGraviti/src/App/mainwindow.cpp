@@ -2,27 +2,19 @@
 #include "ui_mainwindow.h"
 #include "TrajectoryRenderer.h"
 #include "controllers/SimulationControl.h"
+#include "controllers/EntityListController.h"
 #include <QQuickWidget>
 #include <QUrl>
 #include <QDebug>
 #include <QSizePolicy>
 #include <QString>
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
-    , ui(new Ui::MainWindow)
-    , m_controller(nullptr)
-{
-    ui->setupUi(this);
-    
-    ui->quickWidget->setSource(QUrl("qrc:/sources/src/App/qml/main.qml"));
-}
-
 MainWindow::MainWindow(TrajectoryRenderer* trajectoryRenderer, SimulationController* controller, QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
     , m_controller(controller)
     , m_renderer(trajectoryRenderer)
+    , m_entityModel(nullptr)
 {
     ui->setupUi(this);
 
@@ -34,13 +26,25 @@ MainWindow::MainWindow(TrajectoryRenderer* trajectoryRenderer, SimulationControl
         ui->quickWidget->rootContext()->setContextProperty("simController", controller);
     }
 
-    // Connect the Start Simulation button
+    //Set 3D view to the main qml file
+    ui->quickWidget->setSource(QUrl("qrc:/sources/src/App/qml/main.qml"));
+
+    //Connect buttons to actions
     connect(ui->pushButton, &QPushButton::clicked, this, &MainWindow::onStartSimulationClicked);
     connect(ui->pushButton_2, &QPushButton::clicked, this, &MainWindow::onResetSimulationClicked);
     connect(ui->pushButton_3, &QPushButton::clicked, this, &MainWindow::onClearEntitiesClicked);
     connect(ui->AddEntity, &QPushButton::clicked, this, &MainWindow::onAddEntityClicked);
 
-    ui->quickWidget->setSource(QUrl("qrc:/sources/src/App/qml/main.qml"));
+    //Setup entity list model
+    m_entityModel = new QStandardItemModel(this);
+    ui->treeView->setModel(m_entityModel);
+    ui->treeView->setHeaderHidden(false);
+
+    //Call first update
+    EntityListController::setupEntityList(m_entityModel);
+
+    updateEntityList();
+    updateRender();
 }
 
 MainWindow::~MainWindow()
@@ -53,10 +57,23 @@ QQmlContext* MainWindow::rootContext()
     return ui->quickWidget->rootContext();
 }
 
-void MainWindow::updateRender(int sphereCount = 1)
+void MainWindow::updateRender(int sphereCount)
 {
     m_renderer->convertTrajectoriesToSpheres(sphereCount, 0.01f);
     m_renderer->addEntityOrigins(0.2f);
+}
+
+void MainWindow::updateEntityList()
+{
+    if (!m_controller || !m_entityModel) {
+        return;
+    }
+    EntityListController::updateEntityList(m_entityModel);
+}
+
+void MainWindow::refreshEntityList()
+{
+    updateEntityList();
 }
 
 void MainWindow::onStartSimulationClicked()
@@ -83,6 +100,7 @@ void MainWindow::onResetSimulationClicked()
     }
     m_controller->resetSimulation();
     updateRender();
+    updateEntityList();
 }
 
 void MainWindow::onClearEntitiesClicked()
@@ -92,6 +110,7 @@ void MainWindow::onClearEntitiesClicked()
     }
     m_controller->clearEntities();
     updateRender();
+    updateEntityList();
 }
 
 void MainWindow::onAddEntityClicked()
@@ -133,4 +152,5 @@ void MainWindow::onAddEntityClicked()
     ui->lineEdit_2->clear();
     ui->lineEdit_8->clear();
     updateRender();
+    updateEntityList();
 }

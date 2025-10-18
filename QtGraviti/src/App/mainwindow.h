@@ -5,6 +5,7 @@
 #include <QQmlContext>
 #include <QPushButton>
 #include <QLineEdit>
+#include <QStandardItemModel>
 
 namespace Ui {
 class MainWindow;
@@ -18,7 +19,6 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = nullptr);
     explicit MainWindow(TrajectoryRenderer* trajectoryRenderer, SimulationController* controller, QWidget *parent = nullptr);
     ~MainWindow();
 
@@ -30,11 +30,17 @@ private slots:
     void onClearEntitiesClicked();
     void onAddEntityClicked();
 
+public:
+    // Public method to update entity list from external calls
+    void refreshEntityList();
+
 private:
-    void updateRender(int sphereCount);
+    void updateRender(int sphereCount = 1);
+    void updateEntityList();
     Ui::MainWindow *ui;
     SimulationController* m_controller;
     TrajectoryRenderer* m_renderer;
+    QStandardItemModel* m_entityModel;
 };
 
 #endif // MAINWINDOW_H
