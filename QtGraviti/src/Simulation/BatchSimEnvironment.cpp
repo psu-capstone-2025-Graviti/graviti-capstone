@@ -2,8 +2,6 @@
 #include "GravitiLib/Entity.h"
 #include "GravitiLib/NBodyEngine.h"
 #include "GravitiLib/EntityManager.h"
-#include "rapidjson/document.h"
-#include "rapidjson/filereadstream.h"
 #include <memory>
 #include <iostream>
 
@@ -11,6 +9,7 @@ BatchSimEnvironment::BatchSimEnvironment()
 {
 	m_origin_time = 0.0f;
 }
+
 
 void BatchSimEnvironment::run(const int totalTimeSteps, const float timeStep)
 {

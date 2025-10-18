@@ -4,6 +4,8 @@
 #include "GravitiLib/EntityManager.h"
 #include "rapidjson/document.h"
 #include "rapidjson/filereadstream.h"
+#include "rapidjson/filewritestream.h"
+#include "rapidjson/writer.h"
 
 
 SimulationController::SimulationController(QObject* parent)
@@ -57,7 +59,7 @@ void SimulationController::createEntity(const std::string& name, float posX, flo
 }
 
 
-void SimulationController::loadJson(std::string filepathjsonPath)
+void SimulationController::initialize_json_body(std::string filepathjsonPath)
 {
 	// Create entities
 	auto entityManager = EntityManager::getInstance();
@@ -142,6 +144,45 @@ void SimulationController::initializeThreeBody()
 	moon2State.setMass(1.0e10f);
 	moon2.setOrigin(moon2State);
 	entityManager->addEntity(moon2);
+}
+
+void SimulationController::saveEntitiesAsJson(std::string filepathjsonPath)
+{
+	// Create entities
+	auto entityManager = EntityManager::getInstance();
+	auto entities = entityManager->getAllEntities();
+
+	// Create a JSON array
+	rapidjson::Document document;
+	document.SetArray();
+
+	for (size_t i = 0; i < entities->size(); ++i) {
+		auto& entity = (*entities)[i];
+		PhysicalState* state = entity.getPhysicalState();
+
+		rapidjson::Value obj(rapidjson::kObjectType);
+
+		obj.AddMember("name", rapidjson::Value().SetString(entity.getEntityName().c_str(), document.GetAllocator()), document.GetAllocator());
+		obj.AddMember("positionX", rapidjson::Value().SetString(std::to_string(state->getPosition(X)).c_str(), document.GetAllocator()), document.GetAllocator());
+		obj.AddMember("positionY", rapidjson::Value().SetString(std::to_string(state->getPosition(Y)).c_str(), document.GetAllocator()), document.GetAllocator());
+		obj.AddMember("positionZ", rapidjson::Value().SetString(std::to_string(state->getPosition(Z)).c_str(), document.GetAllocator()), document.GetAllocator());
+		obj.AddMember("velocityX", rapidjson::Value().SetString(std::to_string(state->getVelocity(X)).c_str(), document.GetAllocator()), document.GetAllocator());
+		obj.AddMember("velocityY", rapidjson::Value().SetString(std::to_string(state->getVelocity(Y)).c_str(), document.GetAllocator()), document.GetAllocator());
+		obj.AddMember("velocityZ", rapidjson::Value().SetString(std::to_string(state->getVelocity(Z)).c_str(), document.GetAllocator()), document.GetAllocator());
+		obj.AddMember("mass", rapidjson::Value().SetString(std::to_string(state->getMass()).c_str(), document.GetAllocator()), document.GetAllocator());
+
+		document.PushBack(obj, document.GetAllocator());
+	}
+
+	// Write to file
+	FILE* fp = fopen(filepathjsonPath.c_str(), "w");
+	if (fp) {
+		char writeBuffer[65536];
+		rapidjson::FileWriteStream os(fp, writeBuffer, sizeof(writeBuffer));
+		rapidjson::Writer<rapidjson::FileWriteStream> writer(os);
+		document.Accept(writer);
+		fclose(fp);
+	}
 }
 
 float SimulationController::cleanFloat(std::string value)

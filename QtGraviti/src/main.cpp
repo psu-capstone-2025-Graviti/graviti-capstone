@@ -23,7 +23,7 @@ int main(int argc, char* argv[])
     // Run batch simulation
     SimulationController controller;
     //controller.initializeThreeBody();
-    controller.loadJson("EntityJsons/test1.json");
+    controller.initialize_json_body("EntityJsons/test1.json");
 
     // Create trajectory renderer and convert trajectories - Renderer is View
     TrajectoryRenderer trajectoryRenderer;

@@ -15,8 +15,12 @@ public:
     explicit SimulationController(QObject* parent = nullptr);
     ~SimulationController();
 
+
+
+    void initialize_json_body(std::string filepathjsonPath);
+    void saveEntitiesAsJson(std::string filepathjsonPath);
+
     void initializeThreeBody();
-    void loadJson(std::string filepathjsonPath);
 
     void startSimulation(int numSteps, float tickDuration);
     void resetSimulation();
