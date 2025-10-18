@@ -5,10 +5,10 @@
 using namespace std::chrono;
 
 
-PhysicalState::PhysicalState() 
-    : m_position{0.0, 0.0, 0.0}
-    , m_velocity{0.0, 0.0, 0.0}
-    , m_acceleration{0.0, 0.0, 0.0}
+PhysicalState::PhysicalState()
+    : m_position{ 0.0, 0.0, 0.0 }
+    , m_velocity{ 0.0, 0.0, 0.0 }
+    , m_acceleration{ 0.0, 0.0, 0.0 }
     , m_timestamp(0.0) //todo - make epoch
     , m_mass(0.0)
     , m_radius(0.0)
@@ -34,10 +34,10 @@ PhysicalState::~PhysicalState()
 float PhysicalState::getPosition(int index) const
 {
     switch (index) {
-        case X: return m_position.x;
-        case Y: return m_position.y;
-        case Z: return m_position.z;
-        default: return 0.0;
+    case X: return m_position.x;
+    case Y: return m_position.y;
+    case Z: return m_position.z;
+    default: return 0.0;
     }
 }
 
@@ -50,10 +50,10 @@ Vec3 PhysicalState::getPosition() const
 float PhysicalState::getVelocity(int index) const
 {
     switch (index) {
-        case X: return m_velocity.x;
-        case Y: return m_velocity.y;
-        case Z: return m_velocity.z;
-        default: return 0.0;
+    case X: return m_velocity.x;
+    case Y: return m_velocity.y;
+    case Z: return m_velocity.z;
+    default: return 0.0;
     }
 }
 
@@ -65,16 +65,21 @@ Vec3 PhysicalState::getVelocity() const
 float PhysicalState::getAcceleration(int index) const
 {
     switch (index) {
-        case X: return m_acceleration.x;
-        case Y: return m_acceleration.y;
-        case Z: return m_acceleration.z;
-        default: return 0.0;
+    case X: return m_acceleration.x;
+    case Y: return m_acceleration.y;
+    case Z: return m_acceleration.z;
+    default: return 0.0;
     }
 }
 
 Vec3 PhysicalState::getAcceleration() const
 {
     return m_acceleration;
+}
+
+float PhysicalState::getRadius() const
+{
+    return m_radius;
 }
 
 float PhysicalState::getTimestamp() const
@@ -100,10 +105,10 @@ void PhysicalState::setPosition(Vec3 pos)
 void PhysicalState::setPosition(int index, float value)
 {
     switch (index) {
-        case X: m_position.x = value; break;
-        case Y: m_position.y = value; break;
-        case Z: m_position.z = value; break;
-        default: break;
+    case X: m_position.x = value; break;
+    case Y: m_position.y = value; break;
+    case Z: m_position.z = value; break;
+    default: break;
     }
 }
 
@@ -115,10 +120,10 @@ void PhysicalState::setVelocity(Vec3 vel)
 void PhysicalState::setVelocity(int index, float value)
 {
     switch (index) {
-        case X: m_velocity.x = value; break;
-        case Y: m_velocity.y = value; break;
-        case Z: m_velocity.z = value; break;
-        default: break;
+    case X: m_velocity.x = value; break;
+    case Y: m_velocity.y = value; break;
+    case Z: m_velocity.z = value; break;
+    default: break;
     }
 }
 
@@ -130,10 +135,10 @@ void PhysicalState::setAcceleration(Vec3 acc)
 void PhysicalState::setAcceleration(int index, float value)
 {
     switch (index) {
-        case X: m_acceleration.x = value; break;
-        case Y: m_acceleration.y = value; break;
-        case Z: m_acceleration.z = value; break;
-        default: break;
+    case X: m_acceleration.x = value; break;
+    case Y: m_acceleration.y = value; break;
+    case Z: m_acceleration.z = value; break;
+    default: break;
     }
 }
 
@@ -149,19 +154,35 @@ void PhysicalState::setTimestamp(const float timestamp)
     m_timestamp = timestamp;
 }
 
-void PhysicalState::integrate(float timestep)
+void PhysicalState::eulerintegrate(float timestep)
 {
-	auto oldPosition = getPosition();
+    auto oldPosition = getPosition();
     auto vel = getVelocity();
     auto acc = getAcceleration();
 
-    setPosition({oldPosition.x + vel.x * timestep,
+    setPosition({ oldPosition.x + vel.x * timestep,
                  oldPosition.y + vel.y * timestep,
-				 oldPosition.z + vel.z * timestep });
-    
-    setVelocity({vel.x + acc.x * timestep,
-				 vel.y + acc.y * timestep,
-		         vel.z + acc.z * timestep });
+                 oldPosition.z + vel.z * timestep });
+
+    setVelocity({ vel.x + acc.x * timestep,
+                 vel.y + acc.y * timestep,
+                 vel.z + acc.z * timestep });
+
+}
+
+void PhysicalState::integrate(float timestep)
+{
+    auto oldPosition = getPosition();
+    auto vel = getVelocity();
+    auto acc = getAcceleration();
+
+    setPosition({ oldPosition.x + vel.x * timestep,
+                 oldPosition.y + vel.y * timestep,
+                 oldPosition.z + vel.z * timestep });
+
+    setVelocity({ vel.x + acc.x * timestep,
+                 vel.y + acc.y * timestep,
+                 vel.z + acc.z * timestep });
 
 }
 
@@ -173,23 +194,23 @@ void PhysicalState::printPosition() const
 void PhysicalState::writepositionCSV(const std::string& name)
 {
 
-        // if "name.csv" file does not exist, create it and add header
-        // else, append to it
-        std::string filename = name + ".csv";
-        std::ofstream file{};
+    // if "name.csv" file does not exist, create it and add header
+    // else, append to it
+    std::string filename = name + ".csv";
+    std::ofstream file{};
 
-        if (!file_opened) {
-            file.open(filename, std::ios::out);
-            file << "x,y,z\n";
-        }
-        else {
-            file.open(filename, std::ios::app);
-            file_opened = true;
-        }
-        file << m_position.x << "," << m_position.y << "," << m_position.z << "\n";
-        file.close();
+    if (!file_opened) {
+        file.open(filename, std::ios::out);
+        file << "x,y,z\n";
+    }
+    else {
+        file.open(filename, std::ios::app);
+        file_opened = true;
+    }
+    file << m_position.x << "," << m_position.y << "," << m_position.z << "\n";
+    file.close();
 
-    
+
 }
 
 bool PhysicalState::fileExists(const std::string& filename) const
@@ -214,9 +235,9 @@ bool PhysicalState::fileExists(const std::string& filename) const
 
 void PhysicalState::reset()
 {
-    m_position = {0.0, 0.0, 0.0};
-    m_velocity = {0.0, 0.0, 0.0};
-    m_acceleration = {0.0, 0.0, 0.0};
+    m_position = { 0.0, 0.0, 0.0 };
+    m_velocity = { 0.0, 0.0, 0.0 };
+    m_acceleration = { 0.0, 0.0, 0.0 };
     m_timestamp = 0.0;
 }
 

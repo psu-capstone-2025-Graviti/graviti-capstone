@@ -210,6 +210,25 @@ TEST(EntityTests, SimulateWithNullEngine)
     EXPECT_FALSE(result);
 }
 
+TEST(EntityTests, generic)
+{
+    std::unique_ptr<IPhysicsEngine> physicsEngine = std::make_unique<MockPhysicsEngine>();
+    Entity e(physicsEngine);
+
+    // Test that getPhysicalState returns a valid pointer
+    PhysicalState* state = e.getPhysicalState();
+    EXPECT_NE(state, nullptr);
+
+    // Test that we can modify the state through the returned pointer
+    state->setPosition({ 1.0f, 2.0f, 3.0f });
+    state->setVelocity({ 4.0f, 5.0f, 6.0f });
+
+    // Verify the changes were applied
+    e.setTickDuration(1);
+    e.getFutureTrajectory();
+	e.getPastTrajectory();
+}
+
 
 TEST(EntityTests, EntityWithNBodyPhysics)
 {
