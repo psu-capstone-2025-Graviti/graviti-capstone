@@ -29,6 +29,8 @@ private slots:
     void onResetSimulationClicked();
     void onClearEntitiesClicked();
     void onAddEntityClicked();
+    void onSaveEntitiesClicked();
+    void onLoadEntitiesClicked();
 
 public:
     // Public method to update entity list from external calls

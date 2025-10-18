@@ -170,6 +170,12 @@ void SimulationController::saveEntitiesAsJson(std::string filepathjsonPath)
 		obj.AddMember("velocityY", rapidjson::Value().SetString(std::to_string(state->getVelocity(Y)).c_str(), document.GetAllocator()), document.GetAllocator());
 		obj.AddMember("velocityZ", rapidjson::Value().SetString(std::to_string(state->getVelocity(Z)).c_str(), document.GetAllocator()), document.GetAllocator());
 		obj.AddMember("mass", rapidjson::Value().SetString(std::to_string(state->getMass()).c_str(), document.GetAllocator()), document.GetAllocator());
+		obj.AddMember("radius", rapidjson::Value().SetString(std::to_string(state->getRadius()).c_str(), document.GetAllocator()), document.GetAllocator());
+
+		// Add texture path if it exists
+		if (!entity.getTexturePath().empty()) {
+			obj.AddMember("texturePath", rapidjson::Value().SetString(entity.getTexturePath().c_str(), document.GetAllocator()), document.GetAllocator());
+		}
 
 		document.PushBack(obj, document.GetAllocator());
 	}

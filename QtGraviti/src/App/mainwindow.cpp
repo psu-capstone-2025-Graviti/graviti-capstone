@@ -8,6 +8,9 @@
 #include <QDebug>
 #include <QSizePolicy>
 #include <QString>
+#include <QFileDialog>
+#include <QMessageBox>
+#include <QAction>
 
 MainWindow::MainWindow(TrajectoryRenderer* trajectoryRenderer, SimulationController* controller, QWidget *parent)
     : QMainWindow(parent)
@@ -34,6 +37,9 @@ MainWindow::MainWindow(TrajectoryRenderer* trajectoryRenderer, SimulationControl
     connect(ui->pushButton_2, &QPushButton::clicked, this, &MainWindow::onResetSimulationClicked);
     connect(ui->pushButton_3, &QPushButton::clicked, this, &MainWindow::onClearEntitiesClicked);
     connect(ui->AddEntity, &QPushButton::clicked, this, &MainWindow::onAddEntityClicked);
+    connect(ui->actionSave_Entities, &QAction::triggered, this, &MainWindow::onSaveEntitiesClicked);
+    connect(ui->actionLoad_Entities, &QAction::triggered, this, &MainWindow::onLoadEntitiesClicked);
+
 
     //Setup entity list model
     m_entityModel = new QStandardItemModel(this);
@@ -153,4 +159,44 @@ void MainWindow::onAddEntityClicked()
     ui->lineEdit_8->clear();
     updateRender();
     updateEntityList();
+}
+
+void MainWindow::onSaveEntitiesClicked()
+{
+    if (!m_controller) {
+        return;
+    }
+
+    QString fileName = QFileDialog::getSaveFileName(this, "Save Entities", "", "JSON Files (*.json);;All Files (*)");
+
+    if (!fileName.isEmpty()) {
+        try {
+            m_controller->saveEntitiesAsJson(fileName.toStdString());
+            QMessageBox::information(this, "Success", "Entities saved successfully to " + fileName);
+        } catch (const std::exception& e) {
+            QMessageBox::critical(this, "Error", "Failed to save entities: " + QString::fromStdString(e.what()));
+        }
+    }
+}
+
+void MainWindow::onLoadEntitiesClicked()
+{
+    if (!m_controller) {
+        QMessageBox::warning(this, "Error", "Simulation controller not available.");
+        return;
+    }
+
+    QString fileName = QFileDialog::getOpenFileName(this, "Load Entities", "", "JSON Files (*.json);;All Files (*)");
+
+    if (!fileName.isEmpty()) {
+        try {
+            m_controller->clearEntities();
+            m_controller->initialize_json_body(fileName.toStdString());
+            updateEntityList();
+            updateRender();
+            QMessageBox::information(this, "Success", "Entities loaded successfully from " + fileName);
+        } catch (const std::exception& e) {
+            QMessageBox::critical(this, "Error", "Failed to load entities: " + QString::fromStdString(e.what()));
+        }
+    }
 }

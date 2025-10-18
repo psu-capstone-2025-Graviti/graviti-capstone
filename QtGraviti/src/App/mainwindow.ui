@@ -49,18 +49,20 @@
      <x>0</x>
      <y>0</y>
      <width>1600</width>
-     <height>21</height>
+     <height>24</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
     <property name="title">
      <string>Save</string>
     </property>
+    <addaction name="actionSave_Entities"/>
    </widget>
    <widget class="QMenu" name="menuLoad">
     <property name="title">
      <string>Load</string>
     </property>
+    <addaction name="actionLoad_Entities"/>
    </widget>
    <widget class="QMenu" name="menuPreferences">
     <property name="title">
@@ -386,6 +388,16 @@
     </layout>
    </widget>
   </widget>
+  <action name="actionLoad_Entities">
+   <property name="text">
+    <string>Load Entities</string>
+   </property>
+  </action>
+  <action name="actionSave_Entities">
+   <property name="text">
+    <string>Save Entities</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
