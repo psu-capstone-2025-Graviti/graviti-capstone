@@ -158,19 +158,19 @@ void SimulationController::saveEntitiesAsJson(std::string filepathjsonPath)
 
 	for (size_t i = 0; i < entities->size(); ++i) {
 		auto& entity = (*entities)[i];
-		PhysicalState* state = entity.getPhysicalState();
+		PhysicalState state = entity.getOrigin();
 
 		rapidjson::Value obj(rapidjson::kObjectType);
 
 		obj.AddMember("name", rapidjson::Value().SetString(entity.getEntityName().c_str(), document.GetAllocator()), document.GetAllocator());
-		obj.AddMember("positionX", rapidjson::Value().SetString(std::to_string(state->getPosition(X)).c_str(), document.GetAllocator()), document.GetAllocator());
-		obj.AddMember("positionY", rapidjson::Value().SetString(std::to_string(state->getPosition(Y)).c_str(), document.GetAllocator()), document.GetAllocator());
-		obj.AddMember("positionZ", rapidjson::Value().SetString(std::to_string(state->getPosition(Z)).c_str(), document.GetAllocator()), document.GetAllocator());
-		obj.AddMember("velocityX", rapidjson::Value().SetString(std::to_string(state->getVelocity(X)).c_str(), document.GetAllocator()), document.GetAllocator());
-		obj.AddMember("velocityY", rapidjson::Value().SetString(std::to_string(state->getVelocity(Y)).c_str(), document.GetAllocator()), document.GetAllocator());
-		obj.AddMember("velocityZ", rapidjson::Value().SetString(std::to_string(state->getVelocity(Z)).c_str(), document.GetAllocator()), document.GetAllocator());
-		obj.AddMember("mass", rapidjson::Value().SetString(std::to_string(state->getMass()).c_str(), document.GetAllocator()), document.GetAllocator());
-		obj.AddMember("radius", rapidjson::Value().SetString(std::to_string(state->getRadius()).c_str(), document.GetAllocator()), document.GetAllocator());
+		obj.AddMember("positionX", rapidjson::Value().SetString(std::to_string(state.getPosition(X)).c_str(), document.GetAllocator()), document.GetAllocator());
+		obj.AddMember("positionY", rapidjson::Value().SetString(std::to_string(state.getPosition(Y)).c_str(), document.GetAllocator()), document.GetAllocator());
+		obj.AddMember("positionZ", rapidjson::Value().SetString(std::to_string(state.getPosition(Z)).c_str(), document.GetAllocator()), document.GetAllocator());
+		obj.AddMember("velocityX", rapidjson::Value().SetString(std::to_string(state.getVelocity(X)).c_str(), document.GetAllocator()), document.GetAllocator());
+		obj.AddMember("velocityY", rapidjson::Value().SetString(std::to_string(state.getVelocity(Y)).c_str(), document.GetAllocator()), document.GetAllocator());
+		obj.AddMember("velocityZ", rapidjson::Value().SetString(std::to_string(state.getVelocity(Z)).c_str(), document.GetAllocator()), document.GetAllocator());
+		obj.AddMember("mass", rapidjson::Value().SetString(std::to_string(state.getMass()).c_str(), document.GetAllocator()), document.GetAllocator());
+		obj.AddMember("radius", rapidjson::Value().SetString(std::to_string(state.getRadius()).c_str(), document.GetAllocator()), document.GetAllocator());
 
 		// Add texture path if it exists
 		if (!entity.getTexturePath().empty()) {
