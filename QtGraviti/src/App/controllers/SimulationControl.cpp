@@ -27,7 +27,7 @@ void SimulationController::startSimulation(int numSteps, float tickDuration)
 
 void SimulationController::resetSimulation()
 {
-	m_env.clearSimulation();
+	m_env.resetSimulation();
 }
 void SimulationController::clearEntities()
 {

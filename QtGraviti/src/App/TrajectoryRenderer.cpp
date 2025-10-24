@@ -171,8 +171,6 @@ TrajectorySphere::TrajectorySphere(QObject *parent)
     : QObject(parent)
     , m_position(0, 0, 0)
     , m_scale(1, 1, 1)
-    , m_entityName("Unknown")
-    , m_timestamp(0.0f)
     , m_materialColor("#ffffff")
 {
 }
@@ -183,8 +181,6 @@ TrajectorySphere::TrajectorySphere(const QVector3D& position, const QVector3D& s
     : QObject(parent)
     , m_position(position)
     , m_scale(scale)
-    , m_entityName(entityName)
-    , m_timestamp(timestamp)
     , m_materialColor(materialColor)
 {
 }
@@ -197,16 +193,6 @@ QVector3D TrajectorySphere::position() const
 QVector3D TrajectorySphere::scale() const
 {
     return m_scale;
-}
-
-QString TrajectorySphere::entityName() const
-{
-    return m_entityName;
-}
-
-float TrajectorySphere::timestamp() const
-{
-    return m_timestamp;
 }
 
 QString TrajectorySphere::materialColor() const
@@ -229,7 +215,6 @@ void TrajectorySphere::setScale(const QVector3D& scale)
         emit scaleChanged();
     }
 }
-
 
 
 void TrajectorySphere::setMaterialColor(const QString& materialColor)

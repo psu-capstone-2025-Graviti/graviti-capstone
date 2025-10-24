@@ -10,6 +10,10 @@ BatchSimEnvironment::BatchSimEnvironment()
 	m_origin_time = 0.0f;
 }
 
+double BatchSimEnvironment::getOriginTime() const
+{
+	return m_origin_time;
+}
 
 void BatchSimEnvironment::run(const int totalTimeSteps, const float timeStep)
 {
@@ -46,7 +50,7 @@ void BatchSimEnvironment::run(const int totalTimeSteps, const float timeStep)
 	std::cout << "Batch simulation completed!" << std::endl;
 }
 
-void BatchSimEnvironment::clearSimulation()
+void BatchSimEnvironment::resetSimulation()
 {
 	auto entityManager = EntityManager::getInstance();
 	auto entities = entityManager->getAllEntities();

@@ -18,7 +18,6 @@ int main(int argc, char* argv[])
     qmlRegisterType<TrajectoryRenderer>("GravitiLib", 1, 0, "TrajectoryRenderer");
     qmlRegisterType<TrajectorySphere>("GravitiLib", 1, 0, "TrajectorySphere");
     qmlRegisterType<EntitySphere>("GravitiLib", 1, 0, "EntitySphere");
-    //qmlRegisterType<TextureSphere>("GravitiLib", 1, 0, "TextureSphere");
 
     // Run batch simulation
     SimulationController controller;

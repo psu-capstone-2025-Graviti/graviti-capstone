@@ -15,9 +15,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 ##THIS MUST BE MODIFIED BY EACH USER
 ##set(CMAKE_PREFIX_PATH "C:/Qt/6.9.2/msvc2022_64")
 
-
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Qml Core Gui QuickWidgets Test)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Qml Core Gui QuickWidgets Test)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Qml Core Gui QuickWidgets Quick3D Test)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Qml Core Gui QuickWidgets Quick3D Test)
 
 project (GravitiLib)
 
@@ -31,11 +30,6 @@ file(GLOB_RECURSE GRAVLIB_SRC_FILES
 )
 
 add_library(GravitiLib ${GRAVLIB_SRC_FILES} )
-
-
-# TODO: Add tests and install targets if needed.
-
-
 
 
 target_include_directories(GravitiLib
@@ -97,6 +91,11 @@ if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(Graviti)
 endif()
 
+#use windeployqt to deploy dlls for program
+add_custom_command(TARGET Graviti POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E env "PATH=$<TARGET_FILE_DIR:Qt${QT_VERSION_MAJOR}::Core>;$ENV{PATH}"
+          windeployqt --no-compiler-runtime --qmldir "${CMAKE_CURRENT_SOURCE_DIR}/src/App/qml" "$<TARGET_FILE:Graviti>"
+)
 
 ################################
 # GTest
@@ -116,24 +115,27 @@ include(GoogleTest)
 # CTest sets BUILD_TESTING to on. To disable tests add -DBUILD_TESTING=OFF when invoking cmake
 enable_testing()
 
-#Prile flags - needed for CTest code coverage?
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /PROFILE")
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /PROFILE")
-set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /PROFILE")
-
 # Code coverage flags for msvc
 add_compile_options(/Zi /Od)
 add_link_options(/PROFILE)
 
 file(GLOB_RECURSE TEST_SRC_FILES
-    "tests/gTest/*.cpp"
+    "tests/*.cpp"
+    "src/App/*.cpp"
+    "src/App/*.h"
 )
 
-add_executable(GravitiTests ${TEST_SRC_FILES})
-    
+if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
+    qt_add_executable(GravitiTests
+        MANUAL_FINALIZATION
+        ${TEST_SRC_FILES} ${APP_SRC_FILES_FOR_TESTS} qml.qrc
+    )
+endif()
+
 target_include_directories(GravitiTests
 PUBLIC
 $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/>
+$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/>
 $<INSTALL_INTERFACE:include/>)
 
 #Link libraries for testing
@@ -142,35 +144,24 @@ target_link_libraries(GravitiTests
     GravitiLib
     gtest
     gtest_main
+    Qt${QT_VERSION_MAJOR}::Core
+    Qt${QT_VERSION_MAJOR}::Widgets
+    Qt${QT_VERSION_MAJOR}::Qml
+    Qt${QT_VERSION_MAJOR}::Gui
+    Qt${QT_VERSION_MAJOR}::QuickWidgets
+    Qt${QT_VERSION_MAJOR}::Quick3D
+    Qt${QT_VERSION_MAJOR}::Test
 )
-
 
 # Set properties for code coverage on test executable
 set_target_properties(GravitiTests PROPERTIES
-    COMPILE_FLAGS "/Zi /Od"
-    LINK_FLAGS "/PROFILE"
+    LINK_FLAGS "/DEBUG /INCREMENTAL"
 )
 
 # Ensure the library is also instrumented for coverage
 set_target_properties(GravitiLib PROPERTIES
-    COMPILE_FLAGS "/Zi /Od"
-    LINK_FLAGS "/PROFILE"
+    LINK_FLAGS "/DEBUG"
 )
-
-
-# Create test results directory in build directory
-#file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/test-results")
-
-gtest_discover_tests(GravitiTests
-    XML_OUTPUT_DIR "${CMAKE_BINARY_DIR}/test-results"
-    DISCOVERY_TIMEOUT 60
-    PROPERTIES
-    ENVIRONMENT "GTEST_OUTPUT=xml:${CMAKE_BINARY_DIR}/test-results/"
-)
-
-# Set CTest properties for XML output
-set_property(DIRECTORY PROPERTY CTEST_CUSTOM_MAXIMUM_NUMBER_OF_ERRORS 1000)
-set_property(DIRECTORY PROPERTY CTEST_CUSTOM_MAXIMUM_NUMBER_OF_WARNINGS 1000)
 
 
 set_target_properties(GravitiTests PROPERTIES
@@ -191,4 +182,25 @@ set_target_properties(GravitiLib PROPERTIES
     COMPILE_PDB_NAME "GravitiLib"
     COMPILE_PDB_NAME_DEBUG "GravitiLib_debug"
     COMPILE_PDB_NAME_RELEASE "GravitiLib_release"
+)
+
+# Since the tests are now technically a qt executable, we need to put it into a different folder or else
+# some of the automagic that qt does for us will cause the tests to work but the main application break
+set_target_properties(GravitiTests PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/tests_bin
+    RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_BINARY_DIR}/tests_bin
+    RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR}/tests_bin
+)
+
+#use windeployqt to deploy dlls for tests
+add_custom_command(TARGET GravitiTests POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E env "PATH=$<TARGET_FILE_DIR:Qt${QT_VERSION_MAJOR}::Core>;$ENV{PATH}"
+          windeployqt --no-compiler-runtime "$<TARGET_FILE:GravitiTests>"
+)
+
+
+# Now discover at the very end - AFTER the dlls have been moved
+gtest_discover_tests(GravitiTests
+  DISCOVERY_MODE POST_BUILD
+  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/tests_bin
 )

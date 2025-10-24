@@ -70,15 +70,11 @@ public:
     // Getters
     QVector3D position() const;
     QVector3D scale() const;
-    QString entityName() const;
-    float timestamp() const;
     QString materialColor() const;
 
     // Setters
     void setPosition(const QVector3D& position);
     void setScale(const QVector3D& scale);
-    void setEntityName(const QString& entityName);
-    void setTimestamp(float timestamp);
     void setMaterialColor(const QString& materialColor);
 
 signals:
@@ -89,8 +85,6 @@ signals:
 private:
     QVector3D m_position;
     QVector3D m_scale;
-    QString m_entityName;
-    float m_timestamp;
     QString m_materialColor;
 };
 

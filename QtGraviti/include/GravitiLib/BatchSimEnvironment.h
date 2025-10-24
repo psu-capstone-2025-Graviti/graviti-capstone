@@ -12,10 +12,11 @@ public:
 
 	//After run is called, we cant add more stuff to environment
 	void run(const int totalTimeSteps, const float timeStep);
-	void clearSimulation();
+	void resetSimulation();
 
+	double getOriginTime() const;
 private:
-	float m_origin_time;
+	double m_origin_time;
 };
 
 #endif // BatchSimEnvironment_INCLUDE_GUARD_H
