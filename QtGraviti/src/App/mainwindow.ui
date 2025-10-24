@@ -56,11 +56,13 @@
     <property name="title">
      <string>Save</string>
     </property>
+    <addaction name="actionSave_Entities"/>
    </widget>
    <widget class="QMenu" name="menuLoad">
     <property name="title">
      <string>Load</string>
     </property>
+    <addaction name="actionLoad_Entities"/>
    </widget>
    <widget class="QMenu" name="menuPreferences">
     <property name="title">
@@ -81,7 +83,7 @@
    <property name="maximumSize">
     <size>
      <width>524287</width>
-     <height>857</height>
+     <height>524287</height>
     </size>
    </property>
    <property name="features">
@@ -104,6 +106,9 @@
      </sizepolicy>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
+     <property name="sizeConstraint">
+      <enum>QLayout::SizeConstraint::SetNoConstraint</enum>
+     </property>
      <item>
       <widget class="QTabWidget" name="tabWidget">
        <property name="currentIndex">
@@ -164,7 +169,11 @@
                   </widget>
                  </item>
                  <item row="0" column="1">
-                  <widget class="QLineEdit" name="lineEdit_9"/>
+                  <widget class="QLineEdit" name="lineEdit_9">
+                   <property name="text">
+                    <string>0.01</string>
+                   </property>
+                  </widget>
                  </item>
                  <item row="1" column="0">
                   <widget class="QLabel" name="label_12">
@@ -174,18 +183,50 @@
                   </widget>
                  </item>
                  <item row="1" column="1">
-                  <widget class="QLineEdit" name="lineEdit_10"/>
+                  <widget class="QLineEdit" name="lineEdit_10">
+                   <property name="text">
+                    <string>10000</string>
+                   </property>
+                  </widget>
                  </item>
-                 <item row="2" column="0">
+                 <item row="3" column="0">
                   <widget class="QLabel" name="label_13">
                    <property name="text">
                     <string/>
                    </property>
                   </widget>
                  </item>
+                 <item row="2" column="0">
+                  <widget class="QLabel" name="label_14">
+                   <property name="text">
+                    <string>Trajectory Sphere Count</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="1">
+                  <widget class="QLineEdit" name="lineEdit_11">
+                   <property name="text">
+                    <string>250</string>
+                   </property>
+                  </widget>
+                 </item>
                 </layout>
                </item>
               </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pushButton_3">
+              <property name="text">
+               <string>Reset Entities</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pushButton_2">
+              <property name="text">
+               <string>Reset Simulation</string>
+              </property>
              </widget>
             </item>
             <item>
@@ -347,6 +388,16 @@
     </layout>
    </widget>
   </widget>
+  <action name="actionLoad_Entities">
+   <property name="text">
+    <string>Load Entities</string>
+   </property>
+  </action>
+  <action name="actionSave_Entities">
+   <property name="text">
+    <string>Save Entities</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>

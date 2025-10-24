@@ -10,16 +10,19 @@
 
 using namespace std::chrono;
 
+
 class Entity
 {
 public:
-	Entity(std::unique_ptr<IPhysicsEngine>& engine);
+	Entity(std::shared_ptr<IPhysicsEngine>& engine);
 	~Entity();
 
 	void setTickDuration(float tick_duration);
 	void setTimestep(float timestep);
 	float getTimestep();
 	void setOrigin(PhysicalState origin);
+	PhysicalState getOrigin() const;
+	void resetToOrigin();
 	//void setPhysicsEngine(std::unique_ptr<IPhysicsEngine>& engine);
 
 	PhysicalState* getPhysicalState();
@@ -44,10 +47,17 @@ public:
 	std::vector<PhysicalState>& getFutureTrajectory();
 	std::vector<PhysicalState>& getPastTrajectory();
 
+	void setTexturePath(const std::string& texturePath);
+	std::string getTexturePath() const;
+
+	//void setFlatIconRepr(std::shared_ptr< FlatIcon > flatIcon);
+	//std::shared_ptr< FlatIcon > setFlatIconRepr();
 private:
 	std::ofstream* m_file;
 	std::string m_entity_name;
 
+	std::string m_texturePath;
+	//std::shared_ptr< FlatIcon > m_fi_repr;
 
 	std::shared_ptr<IPhysicsEngine> m_engine; //needs to be shared ptr?
 	float m_timestep;
@@ -55,6 +65,9 @@ private:
 	std::vector<PhysicalState> m_future_trajectory;
 	PhysicalState m_current_state;
 
+
+	PhysicalState m_origin;
+	bool m_origin_set;
 	long int m_entityid;
 };
 

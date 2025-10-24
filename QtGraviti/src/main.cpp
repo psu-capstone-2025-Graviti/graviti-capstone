@@ -7,6 +7,8 @@
 #include "App/TrajectoryRenderer.h"
 #include "GravitiLib/EntityManager.h"
 
+#include "App/controllers/SimulationControl.h"
+
 int main(int argc, char* argv[])
 {
     QApplication app(argc, argv);
@@ -15,22 +17,19 @@ int main(int argc, char* argv[])
     //Move this to its own file / class
     qmlRegisterType<TrajectoryRenderer>("GravitiLib", 1, 0, "TrajectoryRenderer");
     qmlRegisterType<TrajectorySphere>("GravitiLib", 1, 0, "TrajectorySphere");
+    qmlRegisterType<EntitySphere>("GravitiLib", 1, 0, "EntitySphere");
 
     // Run batch simulation
-    BatchSimEnvironment batch;
-    //batch.initialize_two_body();
-    //batch.initialize_three_body();
-    batch.initialize_json_body("EntityJsons/test1.json");
-    batch.run();
-	//batch.saveEntitiesAsJson("EntityJsons/test1_output.json");
-    // Create trajectory renderer and convert trajectories
+    SimulationController controller;
+    //controller.initializeThreeBody();
+    controller.initialize_json_body("EntityJsons/test1.json");
+
+    // Create trajectory renderer and convert trajectories - Renderer is View
     TrajectoryRenderer trajectoryRenderer;
-    //change first number to see more spheres, change second number to change sphere scale
-    trajectoryRenderer.convertTrajectoriesToSpheres(5, 0.1f);
+    //Entities are already in the env, so render them
+    trajectoryRenderer.addEntityOrigins(0.2f);
 
-    MainWindow window(&trajectoryRenderer);
-
+    MainWindow window(&trajectoryRenderer, &controller);
     window.show();
-
     return app.exec();
 }
