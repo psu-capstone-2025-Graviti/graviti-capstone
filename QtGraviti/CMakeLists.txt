@@ -192,6 +192,10 @@ set_target_properties(GravitiTests PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR}/tests_bin
 )
 
+#Copy entity JSONS for unit testing as well
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/include/EntityJsons
+     DESTINATION ${CMAKE_BINARY_DIR}/tests_bin)
+
 #use windeployqt to deploy dlls for tests
 add_custom_command(TARGET GravitiTests POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E env "PATH=$<TARGET_FILE_DIR:Qt${QT_VERSION_MAJOR}::Core>;$ENV{PATH}"
