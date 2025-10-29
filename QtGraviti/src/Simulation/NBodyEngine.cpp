@@ -47,7 +47,7 @@ void NBodyPhysics::calculateForces(float duration, Entity& callingEntity)
                 totalAcc.y += newAcc.y;
                 totalAcc.z += newAcc.z;
 
-                //rk4Step(callingEntity, *jt, 1);
+                rk4Step(callingEntity, *jt, 1);
             }
     }
 
@@ -123,8 +123,9 @@ void NBodyPhysics::updatePosition(float duration, Entity& callingEntity)
 
 void NBodyPhysics::rk4Step(Entity& entityA, Entity& entityB, float dt)
 {
-    Vec3 position = entityA.getPhysicalState()->getPosition();
-    Vec3 velocity = entityA.getPhysicalState()->getVelocity();
+    auto physState1 = entityA.getPhysicalState();
+    Vec3 position = physState1->getPosition();
+    Vec3 velocity = physState1->getVelocity();
 
     // k1
     Vec3 k1_v = gravitationalAcceleration(entityA, entityB);
@@ -134,7 +135,7 @@ void NBodyPhysics::rk4Step(Entity& entityA, Entity& entityB, float dt)
     Vec3 tempPos_k2 = { position.x + k1_p.x * (dt / 2), position.y + k1_p.y * (dt / 2), position.z + k1_p.z * (dt / 2) };
     Vec3 tempVel_k2 = { velocity.x + k1_v.x * (dt / 2), velocity.y + k1_v.y * (dt / 2), velocity.z + k1_v.z * (dt / 2) };
     // Create temporary PhysicalState for k2
-    PhysicalState tempState_k2(tempPos_k2, tempVel_k2, { 0,0,0 }, entityA.getPhysicalState()->getMass(), entityA.getPhysicalState()->getRadius(), entityA.getPhysicalState()->getTimestamp());
+    PhysicalState tempState_k2(tempPos_k2, tempVel_k2, { 0,0,0 }, physState1->getMass(), physState1->getRadius(), physState1->getTimestamp());
     Entity tempEntityA_k2 = entityA; // Copy entityA
     tempEntityA_k2.setOrigin(tempState_k2);
     Vec3 k2_v = gravitationalAcceleration(tempEntityA_k2, entityB);
@@ -143,7 +144,7 @@ void NBodyPhysics::rk4Step(Entity& entityA, Entity& entityB, float dt)
     // k3
     Vec3 tempPos_k3 = { position.x + k2_p.x * (dt / 2), position.y + k2_p.y * (dt / 2), position.z + k2_p.z * (dt / 2) };
     Vec3 tempVel_k3 = { velocity.x + k2_v.x * (dt / 2), velocity.y + k2_v.y * (dt / 2), velocity.z + k2_v.z * (dt / 2) };
-    PhysicalState tempState_k3(tempPos_k3, tempVel_k3, { 0,0,0 }, entityA.getPhysicalState()->getMass(), entityA.getPhysicalState()->getRadius(), entityA.getPhysicalState()->getTimestamp());
+    PhysicalState tempState_k3(tempPos_k3, tempVel_k3, { 0,0,0 }, physState1->getMass(), physState1->getRadius(), physState1->getTimestamp());
     Entity tempEntityA_k3 = entityA;
     tempEntityA_k3.setOrigin(tempState_k3);
     Vec3 k3_v = gravitationalAcceleration(tempEntityA_k3, entityB);
@@ -152,7 +153,7 @@ void NBodyPhysics::rk4Step(Entity& entityA, Entity& entityB, float dt)
     // k4
     Vec3 tempPos_k4 = { position.x + k3_p.x * dt, position.y + k3_p.y * dt, position.z + k3_p.z * dt };
     Vec3 tempVel_k4 = { velocity.x + k3_v.x * dt, velocity.y + k3_v.y * dt, velocity.z + k3_v.z * dt };
-    PhysicalState tempState_k4(tempPos_k4, tempVel_k4, { 0,0,0 }, entityA.getPhysicalState()->getMass(), entityA.getPhysicalState()->getRadius(), entityA.getPhysicalState()->getTimestamp());
+    PhysicalState tempState_k4(tempPos_k4, tempVel_k4, { 0,0,0 }, physState1->getMass(), physState1->getRadius(), physState1->getTimestamp());
     Entity tempEntityA_k4 = entityA;
     tempEntityA_k4.setOrigin(tempState_k4);
     Vec3 k4_v = gravitationalAcceleration(tempEntityA_k4, entityB);
@@ -166,6 +167,7 @@ void NBodyPhysics::rk4Step(Entity& entityA, Entity& entityB, float dt)
     velocity.x += (k1_v.x + 2 * k2_v.x + 2 * k3_v.x + k4_v.x) * (dt / 6.0);
     velocity.y += (k1_v.y + 2 * k2_v.y + 2 * k3_v.y + k4_v.y) * (dt / 6.0);
     velocity.z += (k1_v.z + 2 * k2_v.z + 2 * k3_v.z + k4_v.z) * (dt / 6.0);
+
 
     entityA.getPhysicalState()->setPosition(position);
     entityA.getPhysicalState()->setVelocity(velocity);
