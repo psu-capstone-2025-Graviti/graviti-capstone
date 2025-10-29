@@ -35,3 +35,8 @@ std::shared_ptr<std::vector<Entity>> EntityManager::getAllEntities()
     return entities;
 }
 
+void EntityManager::clearEntities()
+{
+    entities->clear();
+}
+

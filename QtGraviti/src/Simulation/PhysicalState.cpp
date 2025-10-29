@@ -11,7 +11,7 @@ PhysicalState::PhysicalState()
     , m_acceleration{0.0, 0.0, 0.0}
     , m_timestamp(0.0) //todo - make epoch
     , m_mass(0.0)
-    , m_radius(0.0)
+    , m_radius(1.0)
 {
 }
 
@@ -87,9 +87,19 @@ void PhysicalState::setMass(float mass)
     m_mass = mass;
 }
 
+void PhysicalState::setRadius(float rad)
+{
+    m_radius = rad;
+}
+
 float PhysicalState::getMass() const
 {
     return m_mass;
+}
+
+float PhysicalState::getRadius() const
+{
+    return m_radius;
 }
 
 void PhysicalState::setPosition(Vec3 pos)

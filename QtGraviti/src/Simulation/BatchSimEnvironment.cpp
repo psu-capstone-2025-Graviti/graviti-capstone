@@ -2,11 +2,6 @@
 #include "GravitiLib/Entity.h"
 #include "GravitiLib/NBodyEngine.h"
 #include "GravitiLib/EntityManager.h"
-#include "rapidjson/document.h"
-#include "rapidjson/filereadstream.h"
-#include "rapidjson/filewritestream.h"
-#include "rapidjson/writer.h"
-#include <string>
 #include <memory>
 #include <iostream>
 
@@ -15,173 +10,18 @@ BatchSimEnvironment::BatchSimEnvironment()
 	m_origin_time = 0.0f;
 }
 
-void BatchSimEnvironment::initialize_two_body()
+double BatchSimEnvironment::getOriginTime() const
 {
-	// Create entities
-	auto entityManager = EntityManager::getInstance();
-
-
-	std::unique_ptr<IPhysicsEngine> physicsEngine = std::make_unique<NBodyPhysics>();
-	Entity earth = Entity(physicsEngine);
-	earth.setEntityName("Earth");
-	earth.getPhysicalState()->setMass(100.0e10f);
-	entityManager->addEntity(earth);
-
-	physicsEngine = std::make_unique<NBodyPhysics>();
-	Entity moon = Entity(physicsEngine);
-	moon.setEntityName("Moon");
-	PhysicalState moonState;
-	moonState.setPosition(X, 25);
-	moonState.setVelocity(Z, 2);
-	moonState.setVelocity(Y, 0.3);
-	moonState.setMass(1.0e10f);
-	moon.setOrigin(moonState);
-	entityManager->addEntity(moon);
-
-
+	return m_origin_time;
 }
 
-void BatchSimEnvironment::initialize_three_body()
+void BatchSimEnvironment::run(const int totalTimeSteps, const float timeStep)
 {
-	// Create entities
-	auto entityManager = EntityManager::getInstance();
-
-
-	std::unique_ptr<IPhysicsEngine> physicsEngine = std::make_unique<NBodyPhysics>();
-	Entity earth = Entity(physicsEngine);
-	earth.setEntityName("Earth");
-	earth.getPhysicalState()->setMass(100.0e10f);
-	entityManager->addEntity(earth);
-
-	physicsEngine = std::make_unique<NBodyPhysics>();
-	Entity moon = Entity(physicsEngine);
-	moon.setEntityName("Moon");
-	PhysicalState moonState;
-	moonState.setPosition(X, 25);
-	moonState.setVelocity(Z, 2);
-	moonState.setVelocity(Y, 0.3);
-	moonState.setMass(1.0e10f);
-	moon.setOrigin(moonState);
-	entityManager->addEntity(moon);
-
-	physicsEngine = std::make_unique<NBodyPhysics>();
-	Entity moon2 = Entity(physicsEngine);
-	moon2.setEntityName("moon2");
-	PhysicalState moon2State;
-	moon2State.setPosition(X, 250);
-	moon2State.setVelocity(Y, 0.4);
-	moon2State.setMass(1.0e10f);
-	moon2.setOrigin(moon2State);
-	entityManager->addEntity(moon2);
-}
-
-float BatchSimEnvironment::cleanFloat(std::string value)
-{
-	if (value.back() == 'f') {
-		value.pop_back();
-	}
-	return std::strtof(value.c_str(), nullptr);
-}
-
-void BatchSimEnvironment::initialize_json_body(std::string filepathjsonPath)
-{
-	// Create entities
 	auto entityManager = EntityManager::getInstance();
 	auto entities = entityManager->getAllEntities();
 
-	FILE* fp = fopen(filepathjsonPath.c_str(), "r");
-	if (!fp) {
-		// Handle file open error (optional: log or throw)
-		return;
-	}
-
-	// Move the large buffer to the heap to avoid stack overflow
-	std::unique_ptr<char[]> readBuffer(new char[65536]);
-	rapidjson::FileReadStream is(fp, readBuffer.get(), 65536);
-
-	rapidjson::Document d;
-	d.ParseStream(is);
-
-	fclose(fp);
-	std::unique_ptr<IPhysicsEngine> physicsEngine = std::make_unique<NBodyPhysics>();
-	rapidjson::Value::ConstValueIterator itr;
-
-	for (auto itr = d.Begin(); itr != d.End(); ++itr) {
-
-
-		physicsEngine = std::make_unique<NBodyPhysics>();
-		Entity jsonEntity = Entity(physicsEngine);
-		PhysicalState jsonEntityState;
-		auto obj = itr->GetObject();
-		jsonEntity.setEntityName(obj["name"].GetString());
-
-
-		jsonEntityState.setPosition(X, cleanFloat(obj["positionX"].GetString()));
-		jsonEntityState.setPosition(Y, cleanFloat(obj["positionY"].GetString()));
-		jsonEntityState.setPosition(Z, cleanFloat(obj["positionZ"].GetString()));
-
-		jsonEntityState.setVelocity(X, cleanFloat(obj["velocityX"].GetString()));
-		jsonEntityState.setVelocity(Y, cleanFloat(obj["velocityY"].GetString()));
-		jsonEntityState.setVelocity(Z, cleanFloat(obj["velocityZ"].GetString()));
-		jsonEntityState.setMass(cleanFloat(obj["mass"].GetString()));
-
-
-		jsonEntity.setOrigin(jsonEntityState);
-		entityManager->addEntity(jsonEntity);
-
-
-	}
-
-}
-
-void BatchSimEnvironment::saveEntitiesAsJson(std::string filepathjsonPath)
-{
-	// Create entities
-	auto entityManager = EntityManager::getInstance();
-	auto entities = entityManager->getAllEntities();
-
-	// Create a JSON array
-	rapidjson::Document document;
-	document.SetArray();
-
-	for (size_t i = 0; i < entities->size(); ++i) {
-		auto& entity = (*entities)[i];
-		PhysicalState* state = entity.getPhysicalState();
-
-		rapidjson::Value obj(rapidjson::kObjectType);
-
-		obj.AddMember("name", rapidjson::Value().SetString(entity.getEntityName().c_str(), document.GetAllocator()), document.GetAllocator());
-		obj.AddMember("positionX", rapidjson::Value().SetString(std::to_string(state->getPosition(X)).c_str(), document.GetAllocator()), document.GetAllocator());
-		obj.AddMember("positionY", rapidjson::Value().SetString(std::to_string(state->getPosition(Y)).c_str(), document.GetAllocator()), document.GetAllocator());
-		obj.AddMember("positionZ", rapidjson::Value().SetString(std::to_string(state->getPosition(Z)).c_str(), document.GetAllocator()), document.GetAllocator());
-		obj.AddMember("velocityX", rapidjson::Value().SetString(std::to_string(state->getVelocity(X)).c_str(), document.GetAllocator()), document.GetAllocator());
-		obj.AddMember("velocityY", rapidjson::Value().SetString(std::to_string(state->getVelocity(Y)).c_str(), document.GetAllocator()), document.GetAllocator());
-		obj.AddMember("velocityZ", rapidjson::Value().SetString(std::to_string(state->getVelocity(Z)).c_str(), document.GetAllocator()), document.GetAllocator());
-		obj.AddMember("mass", rapidjson::Value().SetString(std::to_string(state->getMass()).c_str(), document.GetAllocator()), document.GetAllocator());
-
-		document.PushBack(obj, document.GetAllocator());
-	}
-
-	// Write to file
-	FILE* fp = fopen(filepathjsonPath.c_str(), "w");
-	if (fp) {
-		char writeBuffer[65536];
-		rapidjson::FileWriteStream os(fp, writeBuffer, sizeof(writeBuffer));
-		rapidjson::Writer<rapidjson::FileWriteStream> writer(os);
-		document.Accept(writer);
-		fclose(fp);
-	}
-}
-
-
-void BatchSimEnvironment::run()
-{
-	auto entityManager = EntityManager::getInstance();
-	auto entities = entityManager->getAllEntities();
 
 	// Configure simulation parameters
-	const int totalTimeSteps = 2000;  // Total number of simulation steps
-	const float timeStep = 1.0f;      // Time step in seconds
 	float time = 0.0f;
 	// Set timestep for all entities
 	for (auto& entity : *entities) {
@@ -200,16 +40,21 @@ void BatchSimEnvironment::run()
 		for (auto& entity : *entities) {
 			entity.TickForward();
 			entity.saveCurrentStateToCSV();
-
 		}
 		// Optional: Add progress output
-		if (step % 10 == 0) {
+		if (step % 200 == 0) {
 			std::cout << "Simulation step: " << step << "/" << totalTimeSteps << " at time" << time << std::endl;
 		}
 		time += timeStep;
 	}
-	for (auto& entity : *entities) {
-		entity.savePastTrajectoryToCSV();
-	}
 	std::cout << "Batch simulation completed!" << std::endl;
+}
+
+void BatchSimEnvironment::resetSimulation()
+{
+	auto entityManager = EntityManager::getInstance();
+	auto entities = entityManager->getAllEntities();
+	for (auto& entity : *entities) {
+		entity.resetToOrigin(); //Reset its current state back to origin
+	}
 }
