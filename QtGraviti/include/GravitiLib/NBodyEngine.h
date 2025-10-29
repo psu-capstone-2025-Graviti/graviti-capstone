@@ -12,10 +12,9 @@ private:
 public:
 	Vec3 gravitationalAcceleration(Entity& A, Entity& B);
 	void calculateForces(float duration, Entity& callingEntity);
-	void updatePositionRk4(float duration, Entity& callingEntity);
 	void calculateForces2(float duration, Entity& callingEntity);
 	void updatePosition(float duration, Entity& callingEntity);
-	void rk4Step(Entity& entityA, Entity& entityB, float dt);
+	void rk4UpdatePosition(float duration, Entity& callingEntity);
 };
 
 #endif // NBodyEngine_INCLUDE_GUARD_H

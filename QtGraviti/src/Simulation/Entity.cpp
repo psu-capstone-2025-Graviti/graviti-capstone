@@ -97,7 +97,9 @@ bool Entity::TickForward()
     //}
     //m_current_state = m_future_trajectory[0];
     //m_future_trajectory.erase(m_future_trajectory.begin());
+    
     m_engine->updatePosition(m_timestep, *this);
+    //m_engine->rk4UpdatePosition(m_timestep, *this);
     return true;
 }
 

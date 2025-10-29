@@ -253,7 +253,7 @@ TEST(NBodyEngineTests, TestCalculateForces2)
     // Run simulation on entity1
     physicsEngine.calculateForces2(1.0f, entity1);
     physicsEngine.updatePosition(1.0f, entity1);
-    physicsEngine.rk4Step(entity1, entity2, 1);
+    //physicsEngine.rk4Step(entity1, entity2, 1);
 
     // Calculate expected acceleration with larger mass
     float G = 6.67430e-11f;
