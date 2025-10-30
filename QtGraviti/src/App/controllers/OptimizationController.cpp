@@ -1,7 +1,7 @@
 #include "SimulationControl.h"
 #include "GravitiLib/Entity.h"
 #include "GravitiLib/NBodyEngine.h"
-#include "GravitiLib/EntityManager.h"
+#include "GravitiLib/OptimizationEntityManager.h"
 #include "rapidjson/document.h"
 #include "rapidjson/filereadstream.h"
 #include "rapidjson/filewritestream.h"
