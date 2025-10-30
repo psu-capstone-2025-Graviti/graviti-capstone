@@ -160,12 +160,13 @@ void Entity::saveCurrentStateToCSV(void)
     if (!m_file) {
         m_file = new std::ofstream(filename);
         if (m_file->is_open()) {
-            *m_file << "x,y,z\n";
+            *m_file << "time,x,y,z\n";
         }
     }
 
     if (m_file && m_file->is_open()) {
-        *m_file << getPhysicalState()->getPosition(X) << ","
+		*m_file << getPhysicalState()->getTimestamp() << ","
+                << getPhysicalState()->getPosition(X) << ","
                 << getPhysicalState()->getPosition(Y) << ","
                 << getPhysicalState()->getPosition(Z) << "\n";
         m_file->flush();
