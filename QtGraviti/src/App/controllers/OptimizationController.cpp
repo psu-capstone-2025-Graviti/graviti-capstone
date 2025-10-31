@@ -1,7 +1,7 @@
 #include "SimulationControl.h"
 #include "GravitiLib/Entity.h"
 #include "GravitiLib/NBodyEngine.h"
-#include "GravitiLib/EntityManager.h"
+#include "GravitiLib/OptimizationEntityManager.h"
 #include "rapidjson/document.h"
 #include "rapidjson/filereadstream.h"
 #include "rapidjson/filewritestream.h"
@@ -9,50 +9,32 @@
 #include "OptimizationController.h"
 
 
-SimulationController::SimulationController(QObject* parent)
-    : QObject(parent),
-	m_env()
+OptimizationController::OptimizationController(QObject* parent)
 {
-    //m_entityList = new EntityListGUI(); //new? shared ptr?
+	//m_entityList = new EntityListGUI(); //new? shared ptr?
 
 }
 
-SimulationController::~SimulationController()
+OptimizationController::~OptimizationController()
 {
 }
 
-void SimulationController::startSimulation(int numSteps, float tickDuration)
+void OptimizationController::startSimulation(int numSteps, float tickDuration)
 {
 	m_env.run(numSteps, tickDuration);
 }
 
-void SimulationController::resetSimulation()
+void OptimizationController::resetSimulation()
 {
 	m_env.resetSimulation();
 }
-void SimulationController::clearEntities()
+void OptimizationController::clearEntities()
 {
 	auto entityManager = EntityManager::getInstance();
 	entityManager->clearEntities();
 }
 
-
-void optimizeTrajectory(Entity projectile, Vec3 targetPosition, int numSteps, float tickDuration)
-{
-	auto entitiesPtr = EntityManager::getInstance()->getAllEntities();
-	const std::vector<Entity>& Entities = *entitiesPtr;
-
-	OptimizationController optimizer;
-	optimizer.LoadEntities(Entities);
-	optimizer.LoadProjectile(projectile);
-	optimizer.LoadTarget(targetPosition);
-
-	optimizer.optimize();
-
-	// Placeholder for trajectory optimization logic
-}
-
-void SimulationController::createEntity(const std::string& name, float posX, float posY, float posZ, 
+void OptimizationController::createEntity(const std::string& name, float posX, float posY, float posZ, 
                                      float velX, float velY, float velZ, float mass)
 {
 	auto entityManager = EntityManager::getInstance();
@@ -75,9 +57,38 @@ void SimulationController::createEntity(const std::string& name, float posX, flo
 	entityManager->addEntity(newEntity);
 }
 
+void OptimizationController::LoadProjectile(Entity projectile)
+{
+	//initialEntity = projectile;
+	//the projectile entity should be taken
+}
+
+void OptimizationController::LoadEntities(const std::vector<Entity>& entities)
+{
+   
+    auto entityManager = OptimizationEntityManager();
+    for (const auto& entity : entities) {
+        auto entityCopy = entity; // Make a copy to avoid modifying the original
+        entityManager.addEntity(entityCopy);
+    }
+    coreEntityManager = entityManager;
+}
 
 
-void SimulationController::initialize_json_body(std::string filepathjsonPath)
+void OptimizationController::LoadTarget(Vec3 targetPosition)
+{
+
+}
+
+void OptimizationController::optimize()
+{
+    // TODO: Implement optimization logic here
+    return;
+}
+
+
+
+void OptimizationController::initialize_json_body(std::string filepathjsonPath)
 {
 	// Create entities
 	auto entityManager = EntityManager::getInstance();
@@ -130,7 +141,7 @@ void SimulationController::initialize_json_body(std::string filepathjsonPath)
 	}
 }
 
-void SimulationController::initializeThreeBody()
+void OptimizationController::initializeThreeBody()
 {
 	// Create entities
 	auto entityManager = EntityManager::getInstance();
@@ -164,7 +175,7 @@ void SimulationController::initializeThreeBody()
 	entityManager->addEntity(moon2);
 }
 
-void SimulationController::saveEntitiesAsJson(std::string filepathjsonPath)
+void OptimizationController::saveEntitiesAsJson(std::string filepathjsonPath)
 {
 	// Create entities
 	auto entityManager = EntityManager::getInstance();
@@ -209,7 +220,7 @@ void SimulationController::saveEntitiesAsJson(std::string filepathjsonPath)
 	}
 }
 
-float SimulationController::cleanFloat(std::string value)
+float OptimizationController::cleanFloat(std::string value)
 {
 	if (value.back() == 'f') {
 		value.pop_back();

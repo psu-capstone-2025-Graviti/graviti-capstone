@@ -1,9 +1,11 @@
 #pragma once
 
 #include <QObject>
+#include "GravitiLib/OptimizationEntityManager.h"
 #include "GravitiLib/BatchSimEnvironment.h"
+#include "GravitiLib/Entity.h"
 
-class SimulationController : public QObject
+class OptimizationController : public QObject
 {
     Q_OBJECT
     //Q_PROPERTY(QQmlListProperty<TrajectorySphere> trajectorySpheres READ trajectorySpheres NOTIFY trajectorySpheresChanged)
@@ -12,8 +14,11 @@ class SimulationController : public QObject
     //Q_PROPERTY(int entitySphereCount READ entitySphereCount NOTIFY entitySpheresChanged)
 
 public:
-    explicit SimulationController(QObject* parent = nullptr);
-    ~SimulationController();
+    explicit OptimizationController(QObject* parent = nullptr);
+    ~OptimizationController();
+    //Entity initialEntity;
+    OptimizationEntityManager coreEntityManager;
+
 
 
 
@@ -21,12 +26,19 @@ public:
     void saveEntitiesAsJson(std::string filepathjsonPath);
 
     void initializeThreeBody();
-	void optimizeTrajectory(int entityID, Vec3 targetPosition, int numSteps, float tickDuration);
+
     void startSimulation(int numSteps, float tickDuration);
     void resetSimulation();
     void clearEntities();
     void createEntity(const std::string& name, float posX, float posY, float posZ,
                    float velX, float velY, float velZ, float mass);
+
+
+    void LoadEntities(const std::vector<Entity>& entities);
+    void LoadProjectile(Entity projectile);
+    void LoadTarget(Vec3 targetPosition);
+
+    void optimize();
 
 private:
 
