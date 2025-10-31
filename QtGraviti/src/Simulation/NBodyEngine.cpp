@@ -45,6 +45,7 @@ void NBodyPhysics::calculateForces(float duration, Entity& callingEntity)
 
 void NBodyPhysics::updatePosition(float duration, Entity& callingEntity)
 {
+	auto oldtime = callingEntity.getPhysicalState()->getTimestamp();
     auto state = callingEntity.getPhysicalState();
     auto oldPosition = state->getPosition();
     auto vel = state->getVelocity();
@@ -63,5 +64,7 @@ void NBodyPhysics::updatePosition(float duration, Entity& callingEntity)
     state->setVelocity({ vel.x + acc.x * duration,
                          vel.y + acc.y * duration,
                          vel.z + acc.z * duration });
+
+	state->setTimestamp(oldtime + duration);
 }
 
