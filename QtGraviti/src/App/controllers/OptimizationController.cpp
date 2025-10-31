@@ -10,10 +10,8 @@
 
 
 OptimizationController::OptimizationController(QObject* parent)
-    : QObject(parent),
-	m_env()
 {
-    //m_entityList = new EntityListGUI(); //new? shared ptr?
+	//m_entityList = new EntityListGUI(); //new? shared ptr?
 
 }
 
@@ -61,11 +59,19 @@ void OptimizationController::createEntity(const std::string& name, float posX, f
 
 void OptimizationController::LoadProjectile(Entity projectile)
 {
-
+	//initialEntity = projectile;
+	//the projectile entity should be taken
 }
 
 void OptimizationController::LoadEntities(const std::vector<Entity>& entities)
 {
+   
+    auto entityManager = OptimizationEntityManager();
+    for (const auto& entity : entities) {
+        auto entityCopy = entity; // Make a copy to avoid modifying the original
+        entityManager.addEntity(entityCopy);
+    }
+    coreEntityManager = entityManager;
 }
 
 

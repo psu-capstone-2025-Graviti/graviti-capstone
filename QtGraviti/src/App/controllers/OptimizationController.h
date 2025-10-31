@@ -1,7 +1,9 @@
 #pragma once
 
 #include <QObject>
+#include "GravitiLib/OptimizationEntityManager.h"
 #include "GravitiLib/BatchSimEnvironment.h"
+#include "GravitiLib/Entity.h"
 
 class OptimizationController : public QObject
 {
@@ -14,6 +16,9 @@ class OptimizationController : public QObject
 public:
     explicit OptimizationController(QObject* parent = nullptr);
     ~OptimizationController();
+    //Entity initialEntity;
+    OptimizationEntityManager coreEntityManager;
+
 
 
 
