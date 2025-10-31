@@ -15,6 +15,7 @@ using namespace std::chrono;
 class Entity
 {
 public:
+	Entity();
 	Entity(std::shared_ptr<IPhysicsEngine>& engine);
 	~Entity();
 

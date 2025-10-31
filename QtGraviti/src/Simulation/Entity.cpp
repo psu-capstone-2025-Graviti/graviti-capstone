@@ -4,6 +4,21 @@
 #include <string>
 
 
+Entity::Entity()
+    : m_current_state(),
+    m_entity_name("TEST"),
+    m_future_trajectory(),
+    m_past_trajectory(),
+    m_entityid(0),
+    m_timestep(0.0f),
+    m_file(nullptr),
+    m_origin(),
+    m_origin_set(false)
+{
+	//if entity not specified, no physics engine; assume inherit from another entity
+    m_engine = NULL;
+}
+
 Entity::Entity(std::shared_ptr<IPhysicsEngine>& engine)
     : m_current_state(),
     m_entity_name("TEST"),

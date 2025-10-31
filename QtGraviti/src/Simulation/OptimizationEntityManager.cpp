@@ -6,6 +6,9 @@
 OptimizationEntityManager::OptimizationEntityManager()
 {
     std::vector<Entity> entities;
+	minimumDistancePoint = { 0.0f, 0.0f, 0.0f };
+	m_nextID = 0;
+	targetPoint = { 0.0f, 0.0f, 0.0f };
 
 }
 

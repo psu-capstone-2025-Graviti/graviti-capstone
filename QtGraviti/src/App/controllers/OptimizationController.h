@@ -5,6 +5,7 @@
 #include "GravitiLib/BatchSimEnvironment.h"
 #include "GravitiLib/Entity.h"
 
+
 class OptimizationController : public QObject
 {
     Q_OBJECT
@@ -14,10 +15,9 @@ class OptimizationController : public QObject
     //Q_PROPERTY(int entitySphereCount READ entitySphereCount NOTIFY entitySpheresChanged)
 
 public:
-    explicit OptimizationController(QObject* parent = nullptr);
+    OptimizationController(QObject* parent = nullptr);
     ~OptimizationController();
     //Entity initialEntity;
-    OptimizationEntityManager coreEntityManager;
 
 
 
@@ -29,7 +29,7 @@ public:
 
     void startSimulation(int numSteps, float tickDuration);
     void resetSimulation();
-    void clearEntities();
+    void clearEntities(OptimizationEntityManager ToClear);
     void createEntity(const std::string& name, float posX, float posY, float posZ,
                    float velX, float velY, float velZ, float mass);
 
@@ -41,10 +41,12 @@ public:
     void optimize();
 
 private:
-
-
-    float cleanFloat(std::string value);
-
     BatchSimEnvironment m_env;
 
+    Entity initialEntity = Entity();
+    Vec3 targetPoint = { 0.0f, 0.0f, 0.0f };
+
+    std::vector<OptimizationEntityManager> EntityManagers;
+
+    float cleanFloat(std::string value);
 };
