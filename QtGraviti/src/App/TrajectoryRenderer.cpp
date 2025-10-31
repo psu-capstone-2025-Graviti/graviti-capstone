@@ -182,6 +182,7 @@ TrajectorySphere::TrajectorySphere(const QVector3D& position, const QVector3D& s
     , m_position(position)
     , m_scale(scale)
     , m_materialColor(materialColor)
+    , m_entityName(entityName)
 {
 }
 
@@ -198,6 +199,11 @@ QVector3D TrajectorySphere::scale() const
 QString TrajectorySphere::materialColor() const
 {
     return m_materialColor;
+}
+
+QString TrajectorySphere::entityName() const
+{
+    return m_entityName;
 }
 
 void TrajectorySphere::setPosition(const QVector3D& position)
@@ -269,6 +275,76 @@ EntitySphere::EntitySphere(const QVector3D& position, const QVector3D& scale,
     : TrajectorySphere(position, scale, entityName, timestamp, materialColor, parent)
     , m_texturePath(texturePath)
 {
+}
+
+void TrajectoryRenderer::updateEntitySpheres()
+{
+    EntityManager* entityManager = EntityManager::getInstance();
+    auto entities = entityManager->getAllEntities();
+    if (!entities) {
+        return;
+    }
+
+    // Colors are still basic defaults
+    QStringList entityColors = { "#6f0000", "#006f6f", "#6f006f" };
+    int colorIndex = 0;
+
+    bool createdAny = false;
+
+    for (auto& entity : *entities) {
+        const QString name = QString::fromStdString(entity.getEntityName());
+
+        // Compute position and scale from current state
+        PhysicalState* statePtr = entity.getPhysicalState();
+        Vec3 position = statePtr ? statePtr->getPosition() : entity.getOrigin().getPosition();
+        float downscale = 0.2f;
+        float rad = (entity.getPhysicalState()->getRadius()) * downscale;
+        QVector3D qpos(position.x, position.y, position.z);
+        QVector3D qscale(rad, rad, rad);
+
+        // Try to find existing sphere by name
+        EntitySphere* found = nullptr;
+        for (auto* s : m_entitySpheres) {
+            if (s && s->entityName() == name) { found = s; break; }
+        }
+
+        if (found) {
+            // Update position and (if changed) scale
+            found->setPosition(qpos);
+            found->setScale(qscale);
+            // Update texture if needed
+            const auto texturePath = QString::fromStdString(entity.getTexturePath());
+            if (!texturePath.isEmpty()) {
+                found->setMaterialColor("#ffffff");
+                found->setTexturePath(texturePath);
+            }
+            // No list change signal needed; property signals fire from setters
+        } else {
+            // Create new sphere for this entity
+            QString materialColor = entityColors[colorIndex % entityColors.size()];
+            colorIndex++;
+            const auto texturePath = QString::fromStdString(entity.getTexturePath());
+            if (!texturePath.isEmpty()) {
+                materialColor = "#ffffff";
+            }
+
+            auto* sphere = new EntitySphere(
+                qpos,
+                qscale,
+                name,
+                statePtr ? statePtr->getTimestamp() : entity.getOrigin().getTimestamp(),
+                materialColor,
+                texturePath,
+                this
+            );
+            m_entitySpheres.append(sphere);
+            createdAny = true;
+        }
+    }
+
+    if (createdAny) {
+        emit entitySpheresChanged();
+    }
 }
 
 QString EntitySphere::texturePath() const

@@ -42,6 +42,8 @@ public:
     QString changeColor(const QString& baseColor, float timeProgress) const;
 
     void addEntityOrigins(float originScale);
+    // Create a sphere per entity if missing; otherwise update its position/scale
+    void updateEntitySpheres();
 
 signals:
     void trajectorySpheresChanged();
@@ -60,6 +62,7 @@ class TrajectorySphere : public QObject
     Q_PROPERTY(QVector3D position READ position WRITE setPosition NOTIFY positionChanged)
     Q_PROPERTY(QVector3D scale READ scale WRITE setScale NOTIFY scaleChanged)
     Q_PROPERTY(QString materialColor READ materialColor WRITE setMaterialColor NOTIFY materialColorChanged)
+    Q_PROPERTY(QString entityName READ entityName CONSTANT)
 
 public:
     explicit TrajectorySphere(QObject *parent = nullptr);
@@ -71,6 +74,7 @@ public:
     QVector3D position() const;
     QVector3D scale() const;
     QString materialColor() const;
+    QString entityName() const;
 
     // Setters
     void setPosition(const QVector3D& position);
@@ -86,6 +90,7 @@ private:
     QVector3D m_position;
     QVector3D m_scale;
     QString m_materialColor;
+    QString m_entityName;
 };
 
 class EntitySphere : public TrajectorySphere

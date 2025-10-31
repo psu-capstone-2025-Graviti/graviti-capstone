@@ -49,7 +49,7 @@
      <x>0</x>
      <y>0</y>
      <width>1600</width>
-     <height>24</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -69,9 +69,9 @@
      <string>Preferences</string>
     </property>
    </widget>
-   <addaction name="menuPreferences"/>
    <addaction name="menuFile"/>
    <addaction name="menuLoad"/>
+   <addaction name="menuPreferences"/>
   </widget>
   <widget class="QDockWidget" name="dockWidget_2">
    <property name="sizePolicy">
@@ -189,7 +189,7 @@
                    </property>
                   </widget>
                  </item>
-                 <item row="3" column="0">
+                 <item row="4" column="0">
                   <widget class="QLabel" name="label_13">
                    <property name="text">
                     <string/>
@@ -203,10 +203,24 @@
                    </property>
                   </widget>
                  </item>
+                 <item row="3" column="0">
+                  <widget class="QLabel" name="label_15">
+                   <property name="text">
+                    <string>Simulation Scalar</string>
+                   </property>
+                  </widget>
+                 </item>
                  <item row="2" column="1">
                   <widget class="QLineEdit" name="lineEdit_11">
                    <property name="text">
                     <string>250</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="3" column="1">
+                  <widget class="QLineEdit" name="lineEdit_12">
+                   <property name="text">
+                    <string>1</string>
                    </property>
                   </widget>
                  </item>
