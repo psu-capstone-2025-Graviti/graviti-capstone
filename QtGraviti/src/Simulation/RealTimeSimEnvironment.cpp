@@ -2,6 +2,8 @@
 
 #include <thread>
 #include <chrono>
+#include <mutex>
+#include <iostream>
 /*
 Current thinking is that the raltimesim will create a thread on construction
 All public functions will "send signals" to that thread
@@ -37,14 +39,15 @@ run
 RealTimeSimEnvironment::RealTimeSimEnvironment()
 {
 	m_origin_time = 0.0f;
+	m_accumulated_time = 0.0f;
 	thread_enabled = true; //Enable thread before running or else it would immidiately end
 	run_simulation = false;
-	accumulated_time = std::chrono::milliseconds(0);
+	accumulated_time = std::chrono::milliseconds(0); //No accumulated time at the start
 
-	time_step_size = std::chrono::milliseconds(100);
+	time_step_size = std::chrono::milliseconds(20);//20 updates per second
 	simulation_time_scalar = 1.0f;
 
-	update_function_ptr = nullptr;
+    update_function = {};
 
 	sim_thread = std::thread(&RealTimeSimEnvironment::run_realtimeSim, this);
 }
@@ -71,46 +74,67 @@ void RealTimeSimEnvironment::run_realtimeSim()
 		if (run_simulation)
 		{
 			// Accumulate real elapsed time (unscaled)
-			double elapsed_ms_double = std::chrono::duration<double, std::milli>(elapsed).count();
-			if (elapsed_ms_double > 0.0)
+			double elapsed_ms = elapsed.count();
+			if (elapsed_ms > 1)
 			{
-				auto add_ms = std::chrono::milliseconds(static_cast<long long>(elapsed_ms_double));
-				if (add_ms.count() > 0)
-				{
-					auto current_accum = accumulated_time.load();
-					accumulated_time.store(current_accum + add_ms);
-				}
+				auto current_accum = accumulated_time.load();
+				accumulated_time.store(current_accum + elapsed);
 			}
 
 			auto step = time_step_size.load();
 			while (accumulated_time.load() >= step)
 			{
-				//Lock calculationg mutex
-				std::scoped_lock m(calculating);
-				if (update_function_ptr)
 				{
+					// Lock calculating mutex while mutating simulation state
+					std::scoped_lock m(calculating);
+
+					// Use a for loop here to run multiple ticks if we've selected 2x, 4x, etc time scalar
 					for (int i = 0; i < simulation_time_scalar.load(); i++)
 					{
-						//TODO - Simulation logic here
-						update_function_ptr();
+						auto ms = step.count();
+						double simTime = (double)ms / 1000.0f;
+						step_simulation(simTime);
+						m_accumulated_time += simTime;
+						std::cout << "accumulated time = " << m_accumulated_time << std::endl;
 					}
 				}
-				auto current_accum2 = accumulated_time.load();
-				accumulated_time.store(current_accum2 - step);
+
+				// Decrement time by the step we consumed
+				auto current_accum = accumulated_time.load();
+				accumulated_time.store(current_accum - step);
+				// Signal GUI that the contents have updated (no sim lock held)
+				if (update_function)
+				{
+					update_function();
+				}
 			}
 		}
 
 		//todo - dynamic sleeps so that we can call one sleep rather than semi-busy waiting
-		std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
 	}
 	std::cout << "Real Time simulation completed!" << std::endl;
 
 }
 
-void RealTimeSimEnvironment::setUpdateFunction(void (*updatefunc)(void))
+void RealTimeSimEnvironment::step_simulation(double simTime)
 {
-	//I *think* this is thread safe enough - but if need be I can always add a mutex
-	update_function_ptr = updatefunc;
+	auto entities = EntityManager::getInstance()->getAllEntities();
+	for (auto& entity : *entities) {
+		if (!entity.Simulate(simTime)) {
+			// Handle simulation error if needed
+			std::cout << "Simulation failed for entity: " << entity.getEntityID() << std::endl;
+		}
+	}
+	for (auto& entity : *entities) {
+		entity.TickForward();
+	}
+}
+
+void RealTimeSimEnvironment::setUpdateFunction(std::function<void()> updatefunc)
+{
+    // I think this is thread-safe enough; add a mutex if needed
+    update_function = std::move(updatefunc);
 }
 
 void RealTimeSimEnvironment::run()

@@ -3,8 +3,13 @@
 
 #include "EntityManager.h"
 #include <atomic>
+#include <thread>
+#include <mutex>
+#include <chrono>
+#include <cstdint>
+#include <functional>
 
-using namespace std::chrono;
+ 
 
 class RealTimeSimEnvironment
 {
@@ -15,18 +20,21 @@ public:
 	void run();   //Sets m_run = true
 	void pause(); //Sets m_run = false
 
-	void setUpdateFunction(void (*updatefunc)(void));
+    void setUpdateFunction(std::function<void()> updatefunc);
 
 	void resetSimulation(); //Resets time back to origin, resets entities to origins, pauses sim
 
 	double getOriginTime() const;
 
+	double setTimestepSize(/*TODO - chrono or double?*/);
 
 private:
 	//Actual thread function - starts running on construction
 	void run_realtimeSim();
+	void step_simulation(double simTime);
 	//Sim values
 	double m_origin_time;
+	double m_accumulated_time;
 	std::thread sim_thread;
 	//Thread communication fields
 	std::atomic<bool> thread_enabled;
@@ -38,13 +46,13 @@ private:
 	std::atomic<int> simulation_time_scalar;
 
 	std::atomic<std::chrono::milliseconds> time_step_size;
-	std::atomic<std::chrono::milliseconds> accumulated_time;
+
+	std::atomic<std::chrono::nanoseconds> accumulated_time;
 	
 
-	//Simulation needs to be able to flag the GUI to update
-	//Easiest way to do this is to set a function pointer that creates the QT message
-	//When the sim finishes a tick, it calls that function and generates the update
-	void (*update_function_ptr)(void);
+    // Simulation needs to be able to flag the GUI to update
+    // When the sim finishes a tick, it calls this function and generates the update
+    std::function<void()> update_function;
 
 };
 
