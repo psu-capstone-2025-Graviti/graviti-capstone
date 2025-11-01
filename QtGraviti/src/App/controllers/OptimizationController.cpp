@@ -73,7 +73,7 @@ void OptimizationController::optimize()
 	// evaluate which got closest to the target point
 	// 
 	// repeat 
-    return;
+    return ;
 }
 
 

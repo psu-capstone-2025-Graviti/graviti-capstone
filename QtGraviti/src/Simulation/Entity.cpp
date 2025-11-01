@@ -36,10 +36,10 @@ Entity::Entity(std::shared_ptr<IPhysicsEngine>& engine)
 
 Entity::~Entity()
 {
-    if (m_file) {
+    /*if (m_file) {
         m_file->close();
         delete m_file;
-    }
+    }*/
 }
 
 void Entity::setEntityName(std::string entity_name)

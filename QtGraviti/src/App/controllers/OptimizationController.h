@@ -20,7 +20,7 @@ public:
     //Entity initialEntity;
 
 
-
+    int entityManagerCount();
 
     void initialize_json_body(std::string filepathjsonPath);
     void saveEntitiesAsJson(std::string filepathjsonPath);
@@ -40,11 +40,12 @@ public:
 
     void optimize();
 
+    Entity initialEntity = Entity();
+    Vec3 targetPoint = { 0.0f, 0.0f, 0.0f };
+
 private:
     BatchSimEnvironment m_env;
 
-    Entity initialEntity = Entity();
-    Vec3 targetPoint = { 0.0f, 0.0f, 0.0f };
 
     std::vector<OptimizationEntityManager> EntityManagers;
 

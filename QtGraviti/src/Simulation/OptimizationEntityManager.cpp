@@ -35,3 +35,8 @@ void OptimizationEntityManager::clearEntities()
     entities.clear();
 }
 
+int OptimizationEntityManager::entityManagerCount()
+{
+    return entities.size();
+}
+

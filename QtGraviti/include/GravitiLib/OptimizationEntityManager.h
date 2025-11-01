@@ -16,7 +16,7 @@ public:
 	Vec3 minimumDistancePoint;
     
 	OptimizationEntityManager();
-
+    int entityManagerCount();
 
     void addEntity(Entity& entity);
 
