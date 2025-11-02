@@ -99,7 +99,12 @@ TEST(OptimizationControllerTest, LoadTargetLoadsVec3ToTargetPoint) {
     // in case the controller accepts an aggregate with matching fields.
     Vec3 target{1.5, -2.25, 3.75};
 #endif
+    auto stored = controller.targetPoint;
 
+    // Try to access x/y/z members; compare approximately.
+    EXPECT_EQ(stored.x, 0);
+    EXPECT_EQ(stored.y, 0);
+    EXPECT_EQ(stored.z, 0);
     controller.LoadTarget(target);
     // Retrieve the stored target point
     auto stored = controller.targetPoint;
