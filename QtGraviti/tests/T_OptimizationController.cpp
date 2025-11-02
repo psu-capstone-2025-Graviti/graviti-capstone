@@ -135,12 +135,6 @@ TEST(OptimizationControllerTest, DestructorClearsEntityManager) {
         } // controller destroyed here
     } // mgr goes out of scope; but we still use weakRef to check ownership semantics
 
-    // After controller is destroyed, if it released its shared_ptr, the weakRef should be expired
-    // or have use_count == 1 (only local mgr holder). Since mgr local went out of scope too,
-    // the shared object may have been destroyed, so check that the controller didn't keep a reference.
-    // Two acceptable final states:
-    //  - weakRef.expired() == true (object destroyed)
-    //  - weakRef.use_count() <= 1 (controller no longer holds a reference)
     EXPECT_TRUE(weakRef.entityManagerCount() <= 1u);
 }
 
