@@ -6,6 +6,7 @@
 #include "rapidjson/filereadstream.h"
 #include "rapidjson/filewritestream.h"
 #include "rapidjson/writer.h"
+#include "OptimizationController.h"
 
 
 SimulationController::SimulationController(QObject* parent)
@@ -35,6 +36,22 @@ void SimulationController::clearEntities()
 	entityManager->clearEntities();
 }
 
+
+void optimizeTrajectory(Entity projectile, Vec3 targetPosition, int numSteps, float tickDuration)
+{
+	auto entitiesPtr = EntityManager::getInstance()->getAllEntities();
+	const std::vector<Entity>& Entities = *entitiesPtr;
+
+	OptimizationController optimizer;
+	optimizer.LoadEntities(Entities);
+	optimizer.LoadProjectile(projectile);
+	optimizer.LoadTarget(targetPosition);
+
+	optimizer.optimize();
+
+	// Placeholder for trajectory optimization logic
+}
+
 void SimulationController::createEntity(const std::string& name, float posX, float posY, float posZ, 
                                      float velX, float velY, float velZ, float mass)
 {
@@ -57,6 +74,7 @@ void SimulationController::createEntity(const std::string& name, float posX, flo
 	newEntity.setOrigin(entityState);
 	entityManager->addEntity(newEntity);
 }
+
 
 
 void SimulationController::initialize_json_body(std::string filepathjsonPath)

@@ -23,6 +23,9 @@ int main(int argc, char* argv[])
     SimulationController controller;
     //controller.initializeThreeBody();
     controller.initialize_json_body("EntityJsons/test1.json");
+    //controller.startSimulation(10000, 0.01);
+    // csvs written to C:\Users\shado\source\repos\PSU-Graviti\QtGraviti\out\build\debug
+
 
     // Create trajectory renderer and convert trajectories - Renderer is View
     TrajectoryRenderer trajectoryRenderer;
