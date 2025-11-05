@@ -13,14 +13,13 @@ class OptimizationEntityManager
 {
 public:
 	Vec3 targetPoint;
-	Vec3 minimumDistancePoint;
 	Entity targetEntity = Entity();
     
 	OptimizationEntityManager();
     int entityManagerCount();
 
     void addEntity(Entity& entity);
-    void addTargetEntity(Entity& entity);
+    void addTargetEntity(Entity entity);
 
     std::vector<Entity> getAllEntities();
 

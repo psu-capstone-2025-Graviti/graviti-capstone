@@ -83,14 +83,16 @@ void OptimizationController::optimize(int numberOfSteps, float timestepSize)
 	for (int i = 0; i < EntityManagers.size(); i = i+1)
 	{
 		entityToOptimize.getPhysicalState()->setVelocity({
-			entityToOptimize.getPhysicalState()->getVelocity().x + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / 2.0f)) - 1.0f,
-			entityToOptimize.getPhysicalState()->getVelocity().y + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / 2.0f)) - 1.0f,
-			entityToOptimize.getPhysicalState()->getVelocity().z + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / 2.0f)) - 1.0f
+			entityToOptimize.getPhysicalState()->getVelocity().x + i*5,
+			entityToOptimize.getPhysicalState()->getVelocity().y + i*5,
+			entityToOptimize.getPhysicalState()->getVelocity().z + i*5
 			});
 		EntityManagers[i].loadTargetPoint(targetPoint);
 		EntityManagers[i].addTargetEntity(entityToOptimize);
 		EntityManagers[i].run(numberOfSteps, timestepSize);
 		bestPosition = EntityManagers[i].DetermineMinimumDistancePoint();
+		std::cout << " listing best position " << bestPosition.x << bestPosition.y << bestPosition.z << std::endl;
+
 		
 	}
 	int bestIndex = 0;

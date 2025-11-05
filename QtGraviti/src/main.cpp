@@ -31,7 +31,7 @@ int main(int argc, char* argv[])
     std::shared_ptr<IPhysicsEngine> physicsEngine = std::make_shared<NBodyPhysics>();
 
     Entity test(physicsEngine);
-    test.setEntityName("Name");
+    test.setEntityName("ToOptimize");
     PhysicalState entityState;
     entityState.setPosition(X, 1000);
     entityState.setPosition(Y, 0);
@@ -42,7 +42,10 @@ int main(int argc, char* argv[])
     entityState.setMass(1);
     entityState.setRadius(0.2f);
 
-	controller.optimizeTrajectory(test, Vec3{ 100.0f, 100.0f, 100.0f }, 5000, 0.01f);
+	Vec3 targetPosition = { 100.0f, 100.0f, 100.0f };
+	int timeSteps = 5000;
+	float timeStepSize = 0.01f;
+	controller.optimizeTrajectory(test, targetPosition, timeSteps, timeStepSize);
 
 
     // Create trajectory renderer and convert trajectories - Renderer is View
