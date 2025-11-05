@@ -34,7 +34,7 @@ public:
                    float velX, float velY, float velZ, float mass);
 
 
-    void LoadEntities(const std::vector<Entity>& entities);
+    void LoadEntities(const std::vector<Entity>& entities, int iterations);
     void LoadProjectile(Entity projectile);
     void LoadTarget(Vec3 targetPosition);
 

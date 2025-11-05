@@ -65,11 +65,11 @@ TEST(OptimizationControllerTest, LoadEntitiesExtendsListOfEntityManagers) {
 	mgr2.addEntity(projectile2);
 
     // First load: count increases to 1
-    controller.LoadEntities(mgr1.getAllEntities());
+    controller.LoadEntities(mgr1.getAllEntities(),1);
     //EXPECT_EQ(controller.entityManagerCount(), 1);
 
     // Second load: count increases to 2 (extends)
-    controller.LoadEntities(mgr2.getAllEntities());
+    controller.LoadEntities(mgr2.getAllEntities(),1);
     //EXPECT_EQ(controller.entityManagerCount(), 2);
 }
 
@@ -107,12 +107,12 @@ TEST(OptimizationControllerTest, LoadTargetLoadsVec3ToTargetPoint) {
     EXPECT_EQ(stored.z, 0);
     controller.LoadTarget(target);
     // Retrieve the stored target point
-    auto stored = controller.targetPoint;
+    auto stored2 = controller.targetPoint;
 
     // Try to access x/y/z members; compare approximately.
-    EXPECT_EQ(stored.x,1.5);
-    EXPECT_EQ(stored.y, -2.25);
-    EXPECT_EQ(stored.z, 3.75);
+    EXPECT_EQ(stored2.x,1.5);
+    EXPECT_EQ(stored2.y, -2.25);
+    EXPECT_EQ(stored2.z, 3.75);
 }
 
 TEST(OptimizationControllerTest, OptimizeReturnsZero) {
@@ -133,7 +133,7 @@ TEST(OptimizationControllerTest, DestructorClearsEntityManager) {
         // Create controller in an inner scope so destructor runs when leaving scope.
         {
             OptimizationController controller;
-            controller.LoadEntities(mgr.getAllEntities());
+            controller.LoadEntities(mgr.getAllEntities(),1);
 
             // While controller is alive, use_count should be at least 2 (mgr + controller)
             EXPECT_GE(weakRef.entityManagerCount(), 0);

@@ -45,15 +45,20 @@ void OptimizationController::LoadProjectile(Entity projectile)
 	initialEntity = projectile;
 }
 
-void OptimizationController::LoadEntities(const std::vector<Entity>& entities)
+void OptimizationController::LoadEntities(const std::vector<Entity>& entities, int iterations)
 {
-   
-    auto entityManager = OptimizationEntityManager();
-    for (const auto& entity : entities) {
-        auto entityCopy = entity; // Make a copy to avoid modifying the original
-        entityManager.addEntity(entityCopy);
-    }
-	EntityManagers.push_back(entityManager);
+	for (int i = 0; i < iterations; i = i + 1)
+
+	{
+		auto entityManager = OptimizationEntityManager();
+		for (const auto& entity : entities) {
+			auto entityCopy = entity; // Make a copy to avoid modifying the original
+			entityManager.addEntity(entityCopy);
+		}
+		EntityManagers.push_back(entityManager);
+	}
+
+    
 }
 
 
@@ -64,7 +69,14 @@ void OptimizationController::LoadTarget(Vec3 targetPosition)
 
 void OptimizationController::optimize()
 {
-    // TODO: Implement optimization logic here
+	
+	for (int i = 0; i < EntityManagers.size(); i = i+1)
+	{
+		EntityManagers[i].loadTargetPoint(targetPoint);
+		EntityManagers[i].addTargetEntity(initialEntity);
+		EntityManagers[i].run(1000, 0.1f);
+		
+	}
 	// create 3 entity managers, each with a different initial velocity for the projectile and all other entities the same
 	// 
 	// 
