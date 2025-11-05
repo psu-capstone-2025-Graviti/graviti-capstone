@@ -6,10 +6,10 @@
 OptimizationEntityManager::OptimizationEntityManager()
 {
     std::vector<Entity> entities;
-	Vec3 minimumDistancePoint = { 0.0f, 0.0f, 0.0f };
-	float ShortestMagnitude = 0;
-	m_nextID = 0;
-	targetPoint = { 0.0f, 0.0f, 0.0f };
+    minimumDistancePoint = { 0.0f, 0.0f, 0.0f };
+    float ShortestMagnitude = 0;
+    m_nextID = 0;
+    targetPoint = { 0.0f, 0.0f, 0.0f };
 	
 
 }
