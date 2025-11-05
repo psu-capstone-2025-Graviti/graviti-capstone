@@ -38,13 +38,16 @@ public:
     void LoadProjectile(Entity projectile);
     void LoadTarget(Vec3 targetPosition);
 
-    void optimize();
+    void optimize(int numberOfSteps, float timestepSize);
 
     Entity initialEntity = Entity();
     Vec3 targetPoint = { 0.0f, 0.0f, 0.0f };
 
+	Entity getBestEntity() const { return bestEntity; }
+
 private:
     BatchSimEnvironment m_env;
+    Entity bestEntity = Entity();
 
 
     std::vector<OptimizationEntityManager> EntityManagers;

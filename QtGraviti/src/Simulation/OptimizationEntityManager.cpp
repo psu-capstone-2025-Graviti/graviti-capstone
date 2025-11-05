@@ -7,6 +7,7 @@ OptimizationEntityManager::OptimizationEntityManager()
 {
     std::vector<Entity> entities;
 	Vec3 minimumDistancePoint = { 0.0f, 0.0f, 0.0f };
+	float ShortestMagnitude = 0;
 	m_nextID = 0;
 	targetPoint = { 0.0f, 0.0f, 0.0f };
 	
@@ -83,9 +84,32 @@ void OptimizationEntityManager::run(const int totalTimeSteps, const float timeSt
 	std::cout << "Batch simulation completed!" << std::endl;
 }
 
+float OptimizationEntityManager::calculateDistance(Vec3 a, Vec3 b)
+{
+	Vec3 distance;
+	distance.x = b.x - a.x;
+	distance.y = b.y - a.y;
+	distance.z = b.z - a.z;
+	float magnitude = sqrt(distance.x * distance.x + distance.y * distance.y + distance.z * distance.z);
+
+	return magnitude;
+}
+
+
 Vec3 OptimizationEntityManager::DetermineMinimumDistancePoint()
 {
-
-
+	std::vector<PhysicalState> history = targetEntity.getPastTrajectory();
+	for (auto& state : history)
+	{
+		Vec3 position = state.getPosition();
+		float distance = calculateDistance(position, targetPoint);
+		Vec3 currentMinimum = minimumDistancePoint;
+		float currentMinDistance = calculateDistance(currentMinimum, targetPoint);
+		if (distance < currentMinDistance)
+		{
+			minimumDistancePoint = position;
+		}
+	}
+	ShortestMagnitude = calculateDistance(minimumDistancePoint, targetPoint);
 	return minimumDistancePoint;
 }

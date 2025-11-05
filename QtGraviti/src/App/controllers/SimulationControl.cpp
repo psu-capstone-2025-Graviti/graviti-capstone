@@ -36,8 +36,7 @@ void SimulationController::clearEntities()
 	entityManager->clearEntities();
 }
 
-
-void optimizeTrajectory(Entity projectile, Vec3 targetPosition, int numSteps, float tickDuration)
+void SimulationController::optimizeTrajectory(Entity projectile, Vec3 targetPosition, int numSteps, float tickDuration)
 {
 	auto entitiesPtr = EntityManager::getInstance()->getAllEntities();
 	const std::vector<Entity>& Entities = *entitiesPtr;
@@ -47,7 +46,7 @@ void optimizeTrajectory(Entity projectile, Vec3 targetPosition, int numSteps, fl
 	optimizer.LoadProjectile(projectile);
 	optimizer.LoadTarget(targetPosition);
 
-	optimizer.optimize();
+	optimizer.optimize(numSteps, tickDuration);
 
 	// Placeholder for trajectory optimization logic
 }
@@ -163,6 +162,8 @@ void SimulationController::initializeThreeBody()
 	moon2.setOrigin(moon2State);
 	entityManager->addEntity(moon2);
 }
+
+
 
 void SimulationController::saveEntitiesAsJson(std::string filepathjsonPath)
 {

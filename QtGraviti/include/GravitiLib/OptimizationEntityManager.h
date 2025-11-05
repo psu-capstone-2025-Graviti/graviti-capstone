@@ -29,9 +29,13 @@ public:
     void run(const int totalTimeSteps, const float timeStep);
 	
 	Vec3 DetermineMinimumDistancePoint();
+
+	float calculateDistance(Vec3 a, Vec3 b);
+	float getShortestMagnitude() const { return ShortestMagnitude; }
 private:
     //OptimizationEntityManager* entity_manager;
     long int m_nextID;
+    float ShortestMagnitude = 0;
 
 
     std::vector<Entity> entities;

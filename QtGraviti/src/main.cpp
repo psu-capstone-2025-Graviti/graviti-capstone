@@ -8,6 +8,8 @@
 #include "GravitiLib/EntityManager.h"
 
 #include "App/controllers/SimulationControl.h"
+#include "GravitiLib/Entity.h"
+#include "GravitiLib/NBodyEngine.h"
 
 int main(int argc, char* argv[])
 {
@@ -26,13 +28,29 @@ int main(int argc, char* argv[])
     //controller.startSimulation(10000, 0.01);
     // csvs written to C:\Users\shado\source\repos\PSU-Graviti\QtGraviti\out\build\debug
 
+    std::shared_ptr<IPhysicsEngine> physicsEngine = std::make_shared<NBodyPhysics>();
+
+    Entity test(physicsEngine);
+    test.setEntityName("Name");
+    PhysicalState entityState;
+    entityState.setPosition(X, 1000);
+    entityState.setPosition(Y, 0);
+    entityState.setPosition(Z, 1000);
+    entityState.setVelocity(X, 0);
+    entityState.setVelocity(Y, 0);
+    entityState.setVelocity(Z, 1);
+    entityState.setMass(1);
+    entityState.setRadius(0.2f);
+
+	controller.optimizeTrajectory(test, Vec3{ 100.0f, 100.0f, 100.0f }, 5000, 0.01f);
+
 
     // Create trajectory renderer and convert trajectories - Renderer is View
-    TrajectoryRenderer trajectoryRenderer;
-    //Entities are already in the env, so render them
-    trajectoryRenderer.addEntityOrigins(0.2f);
+    //TrajectoryRenderer trajectoryRenderer;
+    ////Entities are already in the env, so render them
+    //trajectoryRenderer.addEntityOrigins(0.2f);
 
-    MainWindow window(&trajectoryRenderer, &controller);
-    window.show();
-    return app.exec();
+    //MainWindow window(&trajectoryRenderer, &controller);
+    //window.show();
+    //return app.exec();
 }

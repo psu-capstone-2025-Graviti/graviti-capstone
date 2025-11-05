@@ -67,16 +67,10 @@ void OptimizationController::LoadTarget(Vec3 targetPosition)
 	targetPoint = targetPosition;
 }
 
-void OptimizationController::optimize()
+void OptimizationController::optimize(int numberOfSteps, float timestepSize)
 {
-	
-	for (int i = 0; i < EntityManagers.size(); i = i+1)
-	{
-		EntityManagers[i].loadTargetPoint(targetPoint);
-		EntityManagers[i].addTargetEntity(initialEntity);
-		EntityManagers[i].run(1000, 0.1f);
-		
-	}
+	auto entityToOptimize = initialEntity;
+
 	// create 3 entity managers, each with a different initial velocity for the projectile and all other entities the same
 	// 
 	// 
@@ -85,6 +79,36 @@ void OptimizationController::optimize()
 	// evaluate which got closest to the target point
 	// 
 	// repeat 
+	Vec3 bestPosition = { 0.0f, 0.0f, 0.0f };
+	for (int i = 0; i < EntityManagers.size(); i = i+1)
+	{
+		entityToOptimize.getPhysicalState()->setVelocity({
+			entityToOptimize.getPhysicalState()->getVelocity().x + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / 2.0f)) - 1.0f,
+			entityToOptimize.getPhysicalState()->getVelocity().y + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / 2.0f)) - 1.0f,
+			entityToOptimize.getPhysicalState()->getVelocity().z + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / 2.0f)) - 1.0f
+			});
+		EntityManagers[i].loadTargetPoint(targetPoint);
+		EntityManagers[i].addTargetEntity(entityToOptimize);
+		EntityManagers[i].run(numberOfSteps, timestepSize);
+		bestPosition = EntityManagers[i].DetermineMinimumDistancePoint();
+		
+	}
+	int bestIndex = 0;
+	float closestMagnitude = std::numeric_limits<float>::max();
+	std::cout << " ==== listing out magnitudes of optimized values====" << std::endl;
+	for (int i = 0; i < EntityManagers.size(); i = i + 1)
+	{
+		std::cout << "magnitude " << EntityManagers[i].getShortestMagnitude() << std::endl;
+		if (EntityManagers[i].getShortestMagnitude() > closestMagnitude)
+		{
+			closestMagnitude = EntityManagers[i].getShortestMagnitude();
+			bestIndex = i;
+		}
+	}
+	std::cout << "best option was " << EntityManagers[bestIndex].getShortestMagnitude() << std::endl;
+
+	//bestEntity = EntityManagers[bestIndex].targetEntity;
+
     return ;
 }
 

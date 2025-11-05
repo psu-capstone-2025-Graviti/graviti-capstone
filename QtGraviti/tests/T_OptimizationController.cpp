@@ -119,7 +119,7 @@ TEST(OptimizationControllerTest, OptimizeReturnsZero) {
     OptimizationController controller;
 
     // Call optimize and expect a 0 return code for success.
-    controller.optimize();
+    controller.optimize(100,1.0f);
     
 }
 
