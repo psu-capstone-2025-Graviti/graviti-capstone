@@ -81,6 +81,14 @@ void OptimizationEntityManager::run(const int totalTimeSteps, const float timeSt
 		}
 		time += timeStep;
 	}
+
+	for (auto i : entities) 
+	{
+		if (i.getEntityID() == targetEntity.getEntityID())
+		{
+			targetEntity = i;
+		}
+	}
 	std::cout << "Batch simulation completed!" << std::endl;
 }
 
