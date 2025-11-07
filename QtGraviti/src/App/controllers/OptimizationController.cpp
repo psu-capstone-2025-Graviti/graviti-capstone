@@ -7,7 +7,9 @@
 #include "rapidjson/filewritestream.h"
 #include "rapidjson/writer.h"
 #include "OptimizationController.h"
+#include <cmath>
 
+const double PI = 3.141592653589793;
 
 OptimizationController::OptimizationController(QObject* parent)
 	: QObject(parent),
@@ -66,6 +68,80 @@ void OptimizationController::LoadTarget(Vec3 targetPosition)
 {
 	targetPoint = targetPosition;
 }
+
+
+std::vector<Vec3> OptimizationController::GenerateDefaultAxes(Entity DefaultEntity) 
+{
+	Vec3 defaultVelVector=DefaultEntity.getPhysicalState()->getPosition();
+	std::vector<Vec3> AxesVectors;
+	AxesVectors.push_back(defaultVelVector);
+	AxesVectors.push_back({ -1*defaultVelVector.x,-1 * defaultVelVector.y,-1 * defaultVelVector.z });
+
+	Vec3 rotateYVector = { 
+		defaultVelVector.x* cos(PI/2)+ defaultVelVector.z*sin(PI/2),
+		defaultVelVector.y ,
+		-defaultVelVector.x*sin(PI/2)+defaultVelVector.z*cos(PI/2)};
+	AxesVectors.push_back(rotateYVector);
+	AxesVectors.push_back(
+		{
+		-1 * rotateYVector.x,
+		-1 * rotateYVector.y,
+		-1 * rotateYVector.z 
+		});
+
+	Vec3 rotateZVector = 
+	{ 
+		defaultVelVector.x, 
+		defaultVelVector.y*cos(PI/2)- defaultVelVector.z*sin(PI/2),
+		defaultVelVector.y*sin(PI/2)+ defaultVelVector.z*cos(PI/2)
+	};
+	AxesVectors.push_back(rotateZVector);
+	AxesVectors.push_back(
+		{	
+		-1 * rotateZVector.x,
+		-1 * rotateZVector.y,
+		-1 * rotateZVector.z 
+		});
+
+	return AxesVectors;
+
+}
+
+double OptimizationController::vectorMagnitude(Vec3 vector)
+{
+	return sqrt(vector.x * vector.x + vector.y * vector.y + vector.z * vector.z);
+}
+
+std::vector<Vec3> OptimizationController::TriangulationVectors(Vec3 Best, Vec3 SecondBest, Vec3 ThirdBest)
+{
+	std::vector<Vec3> TriangulatedVectors;
+	TriangulatedVectors.push_back(Best);
+	
+	
+	Vec3 SBNormalized = {
+		(Best.x + SecondBest.x) * vectorMagnitude(Best) / (vectorMagnitude(SecondBest)),
+		(Best.y + SecondBest.y) * vectorMagnitude(Best) / (vectorMagnitude(SecondBest)),
+		(Best.z + SecondBest.z) * vectorMagnitude(Best) / (vectorMagnitude(SecondBest))
+	};
+
+	TriangulatedVectors.push_back(SBNormalized);
+
+
+	Vec3 TBNormalized = {
+		(Best.x + ThirdBest.x) * vectorMagnitude(Best) / (vectorMagnitude(ThirdBest)),
+		(Best.y + ThirdBest.y) * vectorMagnitude(Best) / (vectorMagnitude(ThirdBest)),
+		(Best.z + ThirdBest.z) * vectorMagnitude(Best) / (vectorMagnitude(ThirdBest))
+	};
+
+	TriangulatedVectors.push_back(TBNormalized);
+
+	return TriangulatedVectors;
+
+
+
+}
+
+
 
 void OptimizationController::optimize(int numberOfSteps, float timestepSize)
 {
