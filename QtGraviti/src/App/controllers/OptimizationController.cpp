@@ -117,20 +117,31 @@ std::vector<Vec3> OptimizationController::TriangulationVectors(Vec3 Best, Vec3 S
 	std::vector<Vec3> TriangulatedVectors;
 	TriangulatedVectors.push_back(Best);
 	
+	Vec3 bsb = {
+		(Best.x + SecondBest.x) ,
+		(Best.y + SecondBest.y) ,
+		(Best.z + SecondBest.z) 
+	};
 	
 	Vec3 SBNormalized = {
-		(Best.x + SecondBest.x) * vectorMagnitude(Best) / (vectorMagnitude(SecondBest)),
-		(Best.y + SecondBest.y) * vectorMagnitude(Best) / (vectorMagnitude(SecondBest)),
-		(Best.z + SecondBest.z) * vectorMagnitude(Best) / (vectorMagnitude(SecondBest))
+		(bsb.x) * vectorMagnitude(Best) / (vectorMagnitude(bsb)),
+		(bsb.y) * vectorMagnitude(Best) / (vectorMagnitude(bsb)),
+		(bsb.z) * vectorMagnitude(Best) / (vectorMagnitude(bsb))
 	};
 
 	TriangulatedVectors.push_back(SBNormalized);
 
+	Vec3 tsb = {
+		(Best.x + ThirdBest.x) ,
+		(Best.y + ThirdBest.y) ,
+		(Best.z + ThirdBest.z)
+	};
+
 
 	Vec3 TBNormalized = {
-		(Best.x + ThirdBest.x) * vectorMagnitude(Best) / (vectorMagnitude(ThirdBest)),
-		(Best.y + ThirdBest.y) * vectorMagnitude(Best) / (vectorMagnitude(ThirdBest)),
-		(Best.z + ThirdBest.z) * vectorMagnitude(Best) / (vectorMagnitude(ThirdBest))
+		(tsb.x) * vectorMagnitude(Best) / (vectorMagnitude(tsb)),
+		(tsb.y) * vectorMagnitude(Best) / (vectorMagnitude(tsb)),
+		(tsb.z) * vectorMagnitude(Best) / (vectorMagnitude(tsb))
 	};
 
 	TriangulatedVectors.push_back(TBNormalized);
