@@ -198,6 +198,7 @@ void OptimizationController::exampleoptimize(int numberOfSteps, float timestepSi
 
 void OptimizationController::optimize(int numberOfSteps, float timestepSize, int numberOfIterations)
 {
+	totaliterations = numberOfIterations;
 	// get initial velocity vector
 	Vec3 x = initialEntity.getPhysicalState()->getVelocity();
 
@@ -304,7 +305,7 @@ void OptimizationController::optimize(int numberOfSteps, float timestepSize, int
 	}
 	else
 	{
-		std::cout << "more iterations!" << std::endl;
+		std::cout << "more iterations! " << totaliterations  <<" to be exact" <<std::endl;
 	}
 
 	return;
