@@ -29,12 +29,12 @@ public:
 	
 	Vec3 DetermineMinimumDistancePoint();
 
-	float calculateDistance(Vec3 a, Vec3 b);
-	float getShortestMagnitude() const { return ShortestMagnitude; }
+	double calculateDistance(Vec3 a, Vec3 b);
+	double getShortestMagnitude() const { return ShortestMagnitude; }
 private:
     //OptimizationEntityManager* entity_manager;
     long int m_nextID;
-    float ShortestMagnitude = 0;
+    double ShortestMagnitude = 0;
     Vec3 minimumDistancePoint;
 
     std::vector<Entity> entities;

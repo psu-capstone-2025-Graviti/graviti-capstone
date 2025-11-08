@@ -92,7 +92,7 @@ void OptimizationEntityManager::run(const int totalTimeSteps, const float timeSt
 	std::cout << "Batch simulation completed!" << std::endl;
 }
 
-float OptimizationEntityManager::calculateDistance(Vec3 a, Vec3 b)
+double OptimizationEntityManager::calculateDistance(Vec3 a, Vec3 b)
 {
 	Vec3 distance;
 	distance.x = b.x - a.x;

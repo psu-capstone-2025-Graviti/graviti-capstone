@@ -9,7 +9,7 @@
 #include "OptimizationController.h"
 #include <cmath>
 
-const double PI = 3.141592653589793;
+const float PI = 3.141592653589793;
 
 OptimizationController::OptimizationController(QObject* parent)
 	: QObject(parent),
@@ -305,9 +305,115 @@ void OptimizationController::optimize(int numberOfSteps, float timestepSize, int
 	}
 	else
 	{
-		std::cout << "more iterations! " << totaliterations  <<" to be exact" <<std::endl;
-	}
+		//std::cout << "more iterations! " << totaliterations  <<" to be exact" <<std::endl;
 
+
+		for (int remaining = 2; remaining <= totaliterations; remaining=remaining+1)
+		{
+			std::cout << "======================Iteration: " << remaining << " of "<< totaliterations <<"======================" << std::endl;
+
+			//clear entity  managers
+			EntityManagers.clear();
+			//generate triangulation vectors from best 3 velocities
+			std::vector<Vec3> triangulatedVectors = TriangulationVectors(closestVelocity, secondclosestVelocity, thirdclosestVelocity);
+
+			//create new entity managers based on triangulated vectors
+			for (const auto& triVector : triangulatedVectors)
+			{
+				auto entityManager = OptimizationEntityManager();
+				auto entityCopy = initialEntity; // Make a copy to avoid modifying the original
+				entityCopy.getPhysicalState()->setVelocity(triVector);
+				entityManager.loadTargetPoint(targetPoint);
+				entityManager.addTargetEntity(entityCopy);
+				for (Entity body : SurroundingBodies)
+				{
+					entityManager.addEntity(body);
+				}
+				if (optimizationLogging == true)
+				{
+					std::cout << " listing tri vector" <<
+						triVector.x << ", " <<
+						triVector.y << ", " <<
+						triVector.z <<
+						std::endl;
+				}
+
+				EntityManagers.push_back(entityManager);
+			}
+			std::cout << EntityManagers.size() << std::endl;
+
+
+			for (int i = 0; i < EntityManagers.size(); i++)
+			{
+				EntityManagers.at(i).run(numberOfSteps, timestepSize);
+
+				auto bestPosition = EntityManagers.at(i).DetermineMinimumDistancePoint();
+				if (optimizationLogging == true)
+				{
+					std::cout << " listing best position " <<
+						bestPosition.x << ", " <<
+						bestPosition.y << ", " <<
+						bestPosition.z <<
+						std::endl;
+				}
+				double currentMagnitude = EntityManagers.at(i).getShortestMagnitude();
+				std::cout << " magnitude is " << currentMagnitude << std::endl;
+
+				Vec3 currentVelocity = EntityManagers.at(i).targetEntity.getPhysicalState()->getVelocity();
+				if (currentMagnitude < closestMagnitude)
+				{
+					thirdClosestMagnitude = secondClosestMagnitude;
+					thirdclosestVelocity = secondclosestVelocity;
+					secondClosestMagnitude = closestMagnitude;
+					secondclosestVelocity = closestVelocity;
+					closestMagnitude = currentMagnitude;
+					closestVelocity = currentVelocity;
+
+				}
+				else if (currentMagnitude < secondClosestMagnitude)
+				{
+					thirdClosestMagnitude = secondClosestMagnitude;
+					thirdclosestVelocity = secondclosestVelocity;
+					secondClosestMagnitude = currentMagnitude;
+					secondclosestVelocity = currentVelocity;
+
+				}
+				else if (currentMagnitude < thirdClosestMagnitude)
+				{
+					thirdClosestMagnitude = currentMagnitude;
+					thirdclosestVelocity = currentVelocity;
+
+				}
+			}
+			if (optimizationLogging == true)
+			{
+				std::cout << " listing best 3 magnitudes" <<
+					closestMagnitude << ", " <<
+					secondClosestMagnitude << ", " <<
+					thirdClosestMagnitude <<
+					std::endl;
+				std::cout << " listing best velocity " <<
+					closestVelocity.x << ", " <<
+					closestVelocity.y << ", " <<
+					closestVelocity.z <<
+					std::endl;
+				std::cout << " listing secondbest velocity " <<
+					secondclosestVelocity.x << ", " <<
+					secondclosestVelocity.y << ", " <<
+					secondclosestVelocity.z <<
+					std::endl;
+				std::cout << " listing thirdbest velocity " <<
+					thirdclosestVelocity.x << ", " <<
+					thirdclosestVelocity.y << ", " <<
+					thirdclosestVelocity.z <<
+					std::endl;
+			}
+			
+
+		}
+	}
+	initialEntity.getPhysicalState()->setVelocity(closestVelocity);
+	bestEntity = initialEntity;
 	return;
 }
 

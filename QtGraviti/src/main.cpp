@@ -30,7 +30,7 @@ int main(int argc, char* argv[])
 
     std::shared_ptr<IPhysicsEngine> physicsEngine = std::make_shared<NBodyPhysics>();
 
-    Entity test(physicsEngine);
+    /*Entity test(physicsEngine);
     test.setEntityName("ToOptimize");
     auto entityState = test.getPhysicalState();
     entityState->setPosition(X, 150);
@@ -56,12 +56,31 @@ int main(int argc, char* argv[])
         << OptEnt.getPhysicalState()->getVelocity().y << ", "
         << OptEnt.getPhysicalState()->getVelocity().z << ")\n";
 
-    // Create trajectory renderer and convert trajectories - Renderer is View
-    //TrajectoryRenderer trajectoryRenderer;
-    ////Entities are already in the env, so render them
-    //trajectoryRenderer.addEntityOrigins(0.2f);
+    controller.createEntity("OptimizedEntity",
+        OptEnt.getPhysicalState()->getPosition().x,
+        OptEnt.getPhysicalState()->getPosition().y,
+        OptEnt.getPhysicalState()->getPosition().z,
+        OptEnt.getPhysicalState()->getVelocity().x,
+        OptEnt.getPhysicalState()->getVelocity().y,
+        OptEnt.getPhysicalState()->getVelocity().z,
+        OptEnt.getPhysicalState()->getMass()
+	);
+    controller.createEntity("Target",
+        100,
+        100,
+        100,
+        0,
+        0,
+        0,
+        0
+    );*/
 
-    //MainWindow window(&trajectoryRenderer, &controller);
-    //window.show();
-    //return app.exec();
+    // Create trajectory renderer and convert trajectories - Renderer is View
+    TrajectoryRenderer trajectoryRenderer;
+    //Entities are already in the env, so render them
+    trajectoryRenderer.addEntityOrigins(0.2f);
+
+    MainWindow window(&trajectoryRenderer, &controller);
+    window.show();
+    return app.exec();
 }
