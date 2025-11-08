@@ -34,17 +34,26 @@ public:
                    float velX, float velY, float velZ, float mass);
 
 
-    void LoadEntities(const std::vector<Entity>& entities);
+    void LoadEntities(const std::vector<Entity>& entities, int iterations);
     void LoadProjectile(Entity projectile);
     void LoadTarget(Vec3 targetPosition);
 
-    void optimize();
+    std::vector<Vec3> GenerateDefaultAxes(Entity DefaultEntity);
+
+    double vectorMagnitude(Vec3 vector);
+
+    std::vector<Vec3> TriangulationVectors(Vec3 Best, Vec3 SecondBest, Vec3 ThirdBest);
+
+    void optimize(int numberOfSteps, float timestepSize);
 
     Entity initialEntity = Entity();
     Vec3 targetPoint = { 0.0f, 0.0f, 0.0f };
 
+	Entity getBestEntity() const { return bestEntity; }
+
 private:
     BatchSimEnvironment m_env;
+    Entity bestEntity = Entity();
 
 
     std::vector<OptimizationEntityManager> EntityManagers;

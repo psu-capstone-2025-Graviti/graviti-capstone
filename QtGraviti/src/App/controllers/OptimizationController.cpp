@@ -7,7 +7,9 @@
 #include "rapidjson/filewritestream.h"
 #include "rapidjson/writer.h"
 #include "OptimizationController.h"
+#include <cmath>
 
+const double PI = 3.141592653589793;
 
 OptimizationController::OptimizationController(QObject* parent)
 	: QObject(parent),
@@ -45,15 +47,20 @@ void OptimizationController::LoadProjectile(Entity projectile)
 	initialEntity = projectile;
 }
 
-void OptimizationController::LoadEntities(const std::vector<Entity>& entities)
+void OptimizationController::LoadEntities(const std::vector<Entity>& entities, int iterations)
 {
-   
-    auto entityManager = OptimizationEntityManager();
-    for (const auto& entity : entities) {
-        auto entityCopy = entity; // Make a copy to avoid modifying the original
-        entityManager.addEntity(entityCopy);
-    }
-	EntityManagers.push_back(entityManager);
+	for (int i = 0; i < iterations; i = i + 1)
+
+	{
+		auto entityManager = OptimizationEntityManager();
+		for (const auto& entity : entities) {
+			auto entityCopy = entity; // Make a copy to avoid modifying the original
+			entityManager.addEntity(entityCopy);
+		}
+		EntityManagers.push_back(entityManager);
+	}
+
+    
 }
 
 
@@ -62,9 +69,95 @@ void OptimizationController::LoadTarget(Vec3 targetPosition)
 	targetPoint = targetPosition;
 }
 
-void OptimizationController::optimize()
+
+std::vector<Vec3> OptimizationController::GenerateDefaultAxes(Entity DefaultEntity) 
 {
-    // TODO: Implement optimization logic here
+	Vec3 defaultVelVector=DefaultEntity.getPhysicalState()->getVelocity();
+	std::vector<Vec3> AxesVectors;
+	AxesVectors.push_back(defaultVelVector);
+	AxesVectors.push_back({ -1*defaultVelVector.x,-1 * defaultVelVector.y,-1 * defaultVelVector.z });
+
+	Vec3 rotateYVector = { 
+		defaultVelVector.x* cos(PI/2)+ defaultVelVector.z*sin(PI/2),
+		defaultVelVector.y ,
+		-defaultVelVector.x*sin(PI/2)+defaultVelVector.z*cos(PI/2)};
+	AxesVectors.push_back(rotateYVector);
+	AxesVectors.push_back(
+		{
+		-1 * rotateYVector.x,
+		-1 * rotateYVector.y,
+		-1 * rotateYVector.z 
+		});
+
+	Vec3 rotateZVector = 
+	{ 
+		defaultVelVector.x, 
+		defaultVelVector.y*cos(PI/2)- defaultVelVector.z*sin(PI/2),
+		defaultVelVector.y*sin(PI/2)+ defaultVelVector.z*cos(PI/2)
+	};
+	AxesVectors.push_back(rotateZVector);
+	AxesVectors.push_back(
+		{	
+		-1 * rotateZVector.x,
+		-1 * rotateZVector.y,
+		-1 * rotateZVector.z 
+		});
+
+	return AxesVectors;
+
+}
+
+double OptimizationController::vectorMagnitude(Vec3 vector)
+{
+	return sqrt(vector.x * vector.x + vector.y * vector.y + vector.z * vector.z);
+}
+
+std::vector<Vec3> OptimizationController::TriangulationVectors(Vec3 Best, Vec3 SecondBest, Vec3 ThirdBest)
+{
+	std::vector<Vec3> TriangulatedVectors;
+	TriangulatedVectors.push_back(Best);
+	
+	Vec3 bsb = {
+		(Best.x + SecondBest.x) ,
+		(Best.y + SecondBest.y) ,
+		(Best.z + SecondBest.z) 
+	};
+	
+	Vec3 SBNormalized = {
+		(bsb.x) * vectorMagnitude(Best) / (vectorMagnitude(bsb)),
+		(bsb.y) * vectorMagnitude(Best) / (vectorMagnitude(bsb)),
+		(bsb.z) * vectorMagnitude(Best) / (vectorMagnitude(bsb))
+	};
+
+	TriangulatedVectors.push_back(SBNormalized);
+
+	Vec3 tsb = {
+		(Best.x + ThirdBest.x) ,
+		(Best.y + ThirdBest.y) ,
+		(Best.z + ThirdBest.z)
+	};
+
+
+	Vec3 TBNormalized = {
+		(tsb.x) * vectorMagnitude(Best) / (vectorMagnitude(tsb)),
+		(tsb.y) * vectorMagnitude(Best) / (vectorMagnitude(tsb)),
+		(tsb.z) * vectorMagnitude(Best) / (vectorMagnitude(tsb))
+	};
+
+	TriangulatedVectors.push_back(TBNormalized);
+
+	return TriangulatedVectors;
+
+
+
+}
+
+
+
+void OptimizationController::optimize(int numberOfSteps, float timestepSize)
+{
+	auto entityToOptimize = initialEntity;
+
 	// create 3 entity managers, each with a different initial velocity for the projectile and all other entities the same
 	// 
 	// 
@@ -73,6 +166,38 @@ void OptimizationController::optimize()
 	// evaluate which got closest to the target point
 	// 
 	// repeat 
+	Vec3 bestPosition = { 0.0f, 0.0f, 0.0f };
+	for (int i = 0; i < EntityManagers.size(); i = i+1)
+	{
+		entityToOptimize.getPhysicalState()->setVelocity({
+			entityToOptimize.getPhysicalState()->getVelocity().x + i*5,
+			entityToOptimize.getPhysicalState()->getVelocity().y + i*5,
+			entityToOptimize.getPhysicalState()->getVelocity().z + i*5
+			});
+		EntityManagers[i].loadTargetPoint(targetPoint);
+		EntityManagers[i].addTargetEntity(entityToOptimize);
+		EntityManagers[i].run(numberOfSteps, timestepSize);
+		bestPosition = EntityManagers[i].DetermineMinimumDistancePoint();
+		std::cout << " listing best position " << bestPosition.x << bestPosition.y << bestPosition.z << std::endl;
+
+		
+	}
+	int bestIndex = 0;
+	float closestMagnitude = std::numeric_limits<float>::max();
+	std::cout << " ==== listing out magnitudes of optimized values====" << std::endl;
+	for (int i = 0; i < EntityManagers.size(); i = i + 1)
+	{
+		std::cout << "magnitude " << EntityManagers[i].getShortestMagnitude() << std::endl;
+		if (EntityManagers[i].getShortestMagnitude() > closestMagnitude)
+		{
+			closestMagnitude = EntityManagers[i].getShortestMagnitude();
+			bestIndex = i;
+		}
+	}
+	std::cout << "best option was " << EntityManagers[bestIndex].getShortestMagnitude() << std::endl;
+
+	//bestEntity = EntityManagers[bestIndex].targetEntity;
+
     return ;
 }
 
