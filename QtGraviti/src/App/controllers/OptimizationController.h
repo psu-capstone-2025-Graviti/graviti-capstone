@@ -58,8 +58,8 @@ public:
 private:
     BatchSimEnvironment m_env;
     Entity bestEntity = Entity();
-
-
+	bool optimizationLogging = false;
+    std::vector<Entity> SurroundingBodies;
     std::vector<OptimizationEntityManager> EntityManagers;
 
     float cleanFloat(std::string value);

@@ -33,9 +33,9 @@ int main(int argc, char* argv[])
     Entity test(physicsEngine);
     test.setEntityName("ToOptimize");
     auto entityState = test.getPhysicalState();
-    entityState->setPosition(X, 1000);
-    entityState->setPosition(Y, 0);
-    entityState->setPosition(Z, 1000);
+    entityState->setPosition(X, 150);
+    entityState->setPosition(Y, 150);
+    entityState->setPosition(Z, 150);
     entityState->setVelocity(X, 1);
     entityState->setVelocity(Y, 10);
     entityState->setVelocity(Z, 1);
