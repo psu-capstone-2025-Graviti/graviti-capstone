@@ -55,6 +55,8 @@ Item {
             PerspectiveCamera {
                 id: sceneCamera
                 z: 350
+                clipFar: 1000000000000000000000000
+                clipNear: 0.01
             }
 
 
@@ -74,7 +76,7 @@ Item {
                         materials: [
                             PrincipledMaterial {
                                 baseColor: modelData.materialColor
-                                opacity: 0.5
+                                opacity: modelData.opacity
                             }
                         ]
                     }
@@ -124,6 +126,7 @@ Item {
                                 baseColor: modelData.materialColor
                                 baseColorMap: modelData.texturePath && modelData.texturePath !== "" ? textureMap : null
                                 roughness: 0.5
+                                opacity: modelData.opacity
 
                                 property Texture textureMap: Texture {
                                     source: modelData.texturePath || ""
@@ -154,6 +157,7 @@ Item {
                     target: trajectoryRenderer
                     function onEntitySpheresChanged() {
                         entitySphereContainer.createEntitySpheres()
+                        root.updateCameraPosition()
                     }
                 }
             }
@@ -171,7 +175,6 @@ Item {
     
     property bool isMousePressed: false
     property point lastMousePos: Qt.point(0, 0)
-    property bool isPanning: false
 
     property real cameraOffsetX: 0
     property real cameraOffsetY: 0
@@ -236,7 +239,7 @@ Item {
         anchors.fill: parent
         acceptedButtons: Qt.LeftButton | Qt.RightButton
         
-        onPressed: {
+        onPressed: function(mouse) {
             isMousePressed = true
             lastMousePos = Qt.point(mouse.x, mouse.y)
         }
@@ -245,7 +248,7 @@ Item {
             isMousePressed = false
         }
         
-        onPositionChanged: {
+        onPositionChanged: function(mouse) {
             if (!isMousePressed) return
             
             var deltaX = mouse.x - lastMousePos.x
@@ -259,14 +262,13 @@ Item {
 
             updateCameraPosition()
             
-            
             lastMousePos = Qt.point(mouse.x, mouse.y)
         }
         
-        onWheel: {
+        onWheel: function(wheel) {
             var zoomFactor = wheel.angleDelta.y > 0 ? (1 - zoomSpeed) : (1 + zoomSpeed)
             cameraDistance *= zoomFactor
-            cameraDistance = Math.max(10, Math.min(1000, cameraDistance))
+            cameraDistance = Math.max(1, Math.min(1e24, cameraDistance))
             
             updateCameraPosition()
         }
@@ -287,7 +289,25 @@ Item {
         var dy = cameraOffsetY
         var dz = cameraOffsetZ
 
-        sceneCamera.position = Qt.vector3d(x + dx, y + dy, z + dz)
-        sceneCamera.lookAt(Qt.vector3d(0 + dx, 0 + dy, 0 + dz))
+        var target = Qt.vector3d(0 + dx, 0 + dy, 0 + dz)
+
+        var emptyPos = Qt.vector3d(0, 0, 0)
+
+        if(trajectoryRenderer.camPosition != emptyPos)
+        {
+            target = trajectoryRenderer.camPosition
+        }
+
+        sceneCamera.position = Qt.vector3d(target.x + x, target.y + y, target.z + z)
+        sceneCamera.lookAt(target)
+
+    }
+
+    // Connect to trajectoryRenderer changes to cameraposition
+    Connections {
+        target: trajectoryRenderer
+        function onCamPositionChanged() {
+            updateCameraPosition()
+        }
     }
 }

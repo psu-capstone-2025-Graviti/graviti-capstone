@@ -91,10 +91,16 @@ void RealTimeSimEnvironment::run_realtimeSim()
 					// Use a for loop here to run multiple ticks if we've selected 2x, 4x, etc time scalar
 					for (int i = 0; i < simulation_time_scalar.load(); i++)
 					{
+						if (!run_simulation)
+						{
+							//early exit
+							break;
+						}
 						auto ms = step.count();
 						double simTime = (double)ms / 1000.0f;
 						step_simulation(simTime);
 						m_accumulated_time += simTime;
+						std::cout << "Scalar = " << simulation_time_scalar << std::endl;
 						std::cout << "accumulated time = " << m_accumulated_time << std::endl;
 					}
 				}
@@ -157,4 +163,20 @@ void RealTimeSimEnvironment::resetSimulation()
 		entity.resetToOrigin(); //Reset its current state back to origin
 	}
 
+}
+
+void RealTimeSimEnvironment::setTimestepSize(double timeStepSize)
+{
+	double ms = timeStepSize * 1000.0f; //Convert seconds to milliseconds
+	int asInt = int(std::round(ms));
+	if (asInt < 1)
+	{
+		asInt = 1;
+	}
+	time_step_size.store(std::chrono::milliseconds(asInt));
+}
+
+void RealTimeSimEnvironment::setSimulationScalar(int scalar)
+{
+	simulation_time_scalar.store(scalar);
 }

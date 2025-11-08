@@ -23,6 +23,7 @@ class TrajectoryRenderer : public QObject
     Q_PROPERTY(int count READ trajectorySphereCount NOTIFY trajectorySpheresChanged)
     Q_PROPERTY(QQmlListProperty<EntitySphere> entitySpheres READ entitySpheres NOTIFY entitySpheresChanged)
     Q_PROPERTY(int entitySphereCount READ entitySphereCount NOTIFY entitySpheresChanged)
+    Q_PROPERTY(QVector3D camPosition READ camPosition NOTIFY camPositionChanged)
 
 public:
     explicit TrajectoryRenderer(QObject *parent = nullptr);
@@ -42,16 +43,30 @@ public:
     QString changeColor(const QString& baseColor, float timeProgress) const;
 
     void addEntityOrigins(float originScale);
+
+    void lockCameraEntity(std::string EntityName);
+    void clearCameraEntity();
+    QVector3D camPosition();
+
     // Create a sphere per entity if missing; otherwise update its position/scale
     void updateEntitySpheres();
+    // Clear all dynamically created entity spheres and notify QML
+    void clearEntitySpheres();
+
+
+
 
 signals:
     void trajectorySpheresChanged();
     void entitySpheresChanged();
+    void camPositionChanged();
 private:
     QList<TrajectorySphere*> m_trajectorySpheres;
     QList<EntitySphere*> m_entitySpheres;
     void resetSpheres();
+
+    std::string locked_entity;
+    QVector3D m_camPosition;
 };
 
 //TODO - we will need different classes for the different types of rendering. We will probably want a base
@@ -97,23 +112,28 @@ class EntitySphere : public TrajectorySphere
 {
     Q_OBJECT
     Q_PROPERTY(QString texturePath READ texturePath WRITE setTexturePath NOTIFY texturePathChanged)
+    Q_PROPERTY(qreal opacity READ opacity WRITE setOpacity NOTIFY opacityChanged)
 
 public:
     explicit EntitySphere(QObject *parent = nullptr);
     EntitySphere(const QVector3D& position, const QVector3D& scale,
                  const QString& entityName, float timestamp,
                  const QString& materialColor = "#ffffff",
-                 const QString& texturePath = "", QObject *parent = nullptr);
+                 const QString& texturePath = "", const qfloat16& opacity = 1.0f, QObject *parent = nullptr);
 
     // Getters
     QString texturePath() const;
+    qreal opacity() const;
 
     // Setters
     void setTexturePath(const QString& texturePath);
+    void setOpacity(qreal opacity);
 
 signals:
     void texturePathChanged();
+    void opacityChanged();
 
 private:
     QString m_texturePath;
+    qfloat16 m_opacity;
 };

@@ -1,7 +1,9 @@
 #pragma once
 
 #include <QObject>
-#include "GravitiLib/BatchSimEnvironment.h"
+#include <functional>
+//#include "GravitiLib/BatchSimEnvironment.h"
+#include "GravitiLib/RealTimeSimEnvironment.h"
 
 class SimulationController : public QObject
 {
@@ -22,17 +24,23 @@ public:
 
     void initializeThreeBody();
 
-    void startSimulation(int numSteps, float tickDuration);
+    void startSimulation(int numSteps, float tickDuration, int simulationScalar = 1);
     void resetSimulation();
     void clearEntities();
     void createEntity(const std::string& name, float posX, float posY, float posZ,
                    float velX, float velY, float velZ, float mass);
+
+    void setUpdateFunction(std::function<void()> updateFunc);
+
+    void pauseSimulation();
+    void resumeSimulation();
 
 private:
 
 
     float cleanFloat(std::string value);
 
-    BatchSimEnvironment m_env;
+    //BatchSimEnvironment m_env;
+    RealTimeSimEnvironment m_env;
 
 };

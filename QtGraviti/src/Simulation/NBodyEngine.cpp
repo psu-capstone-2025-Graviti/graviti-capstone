@@ -17,7 +17,11 @@ void NBodyPhysics::calculateForces(float duration, Entity& callingEntity)
 
     for (auto jt = m_entities->begin(); jt != m_entities->end(); ++jt) {
         if (jt->getEntityID() != callingID) { // Avoid self-interaction
-                
+            if (jt->isunAlive())
+            {
+                continue; //Don't calculate forces from a dead entity
+            }
+
             auto other_state = jt->getPhysicalState();
 
             float dx = other_state->getPosition().x - self_state->getPosition().x;
@@ -25,6 +29,19 @@ void NBodyPhysics::calculateForces(float duration, Entity& callingEntity)
             float dz = other_state->getPosition().z - self_state->getPosition().z;
 
             float distance = std::sqrt(dx * dx + dy * dy + dz * dz);
+
+            if (distance < (other_state->getRadius() + self_state->getRadius()))
+            {
+                if (other_state->getMass() >= self_state->getMass())
+                { //Other is bigger, we unalive
+                    callingEntity.setEntityForDistruction();
+                }
+                else
+                { //We're bigger, other unalives
+                    jt->setEntityForDistruction();
+                }
+            }
+
             if (distance > std::numeric_limits<float>::epsilon()) { // Prevent division by zero
                 float accMagnitude = G * jt->getPhysicalState()->getMass() / (distance * distance);
                 totalAcc.x += (accMagnitude * (dx / distance));
@@ -45,6 +62,12 @@ void NBodyPhysics::calculateForces(float duration, Entity& callingEntity)
 
 void NBodyPhysics::updatePosition(float duration, Entity& callingEntity)
 {
+    callingEntity.updateEntityDistruction();
+    if (callingEntity.isunAlive())
+    {
+        return;
+    }
+
     auto state = callingEntity.getPhysicalState();
     auto oldPosition = state->getPosition();
     auto vel = state->getVelocity();
@@ -63,5 +86,7 @@ void NBodyPhysics::updatePosition(float duration, Entity& callingEntity)
     state->setVelocity({ vel.x + acc.x * duration,
                          vel.y + acc.y * duration,
                          vel.z + acc.z * duration });
+
+    
 }
 

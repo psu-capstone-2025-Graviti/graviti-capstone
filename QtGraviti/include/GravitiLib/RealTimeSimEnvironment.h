@@ -26,7 +26,8 @@ public:
 
 	double getOriginTime() const;
 
-	double setTimestepSize(/*TODO - chrono or double?*/);
+	void setTimestepSize(double timeStepSize);
+	void setSimulationScalar(int scalar);
 
 private:
 	//Actual thread function - starts running on construction

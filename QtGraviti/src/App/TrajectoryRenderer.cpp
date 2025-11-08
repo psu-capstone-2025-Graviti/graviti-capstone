@@ -1,6 +1,11 @@
 #include "TrajectoryRenderer.h"
 #include <QList>
 
+const double RENDER_DOWNSCALE = 10000.0f;
+
+//Determined by trial and error. The default sphere in QT seems to be much larger than 2 units accross
+const float downScale = 0.0205f;
+
 TrajectoryRenderer::TrajectoryRenderer(QObject *parent)
     : QObject(parent)
 {
@@ -44,8 +49,7 @@ void TrajectoryRenderer::convertTrajectoriesToSpheres(int numSpheresToRender,flo
             Vec3 position = state.getPosition();
 
             
-            int scale_up = 1; //mostly for debugging - allows us to scale up the position rendering  - Keep at 1
-            QVector3D QspherePosition = QVector3D(position.x * scale_up, position.y * scale_up, position.z * scale_up);
+            QVector3D QspherePosition = QVector3D(position.x / RENDER_DOWNSCALE, position.y / RENDER_DOWNSCALE, position.z / RENDER_DOWNSCALE);
             QVector3D QsphereScale = QVector3D(sphereScale, sphereScale, sphereScale);
 
             // Calculate time-based color gradient (lighter to darker over time)
@@ -97,14 +101,9 @@ void TrajectoryRenderer::addEntityOrigins(float originScale)
         auto state = entity.getOrigin();
         Vec3 position = state.getPosition();
 
+        QVector3D QspherePosition = QVector3D(position.x, position.y, position.z);
 
-        int scale_up = 1; //mostly for debugging - allows us to scale up the position rendering  - Keep at 1
-        QVector3D QspherePosition = QVector3D(position.x * scale_up, position.y * scale_up, position.z * scale_up);
-
-        auto new_scale = originScale;// *entity.getPhysicalState()->getMass();
-
-        float downscale = 0.2;
-        float rad = (entity.getPhysicalState()->getRadius())* downscale;
+        float rad = (entity.getPhysicalState()->getRadius())* downScale;
         QVector3D QsphereScale = QVector3D(rad, rad, rad);
 
         // Create gradient from light to dark
@@ -121,8 +120,9 @@ void TrajectoryRenderer::addEntityOrigins(float originScale)
             QString::fromStdString(entity.getEntityName()),
             state.getTimestamp(),
             materialColor,
-            QString::fromStdString(texturePath),  // texturePath - empty for now
-            this  // Set parent to this TrajectoryRenderer
+            QString::fromStdString(texturePath),
+            1.0f,
+            this
         );
 
         
@@ -271,17 +271,42 @@ EntitySphere::EntitySphere(QObject *parent)
 EntitySphere::EntitySphere(const QVector3D& position, const QVector3D& scale,
                            const QString& entityName, float timestamp,
                            const QString& materialColor,
-                           const QString& texturePath, QObject *parent)
+                           const QString& texturePath,
+                           const qfloat16& opacity, QObject *parent)
     : TrajectorySphere(position, scale, entityName, timestamp, materialColor, parent)
-    , m_texturePath(texturePath)
+    , m_texturePath(texturePath), m_opacity(opacity)
 {
+}
+
+void TrajectoryRenderer::lockCameraEntity(std::string EntityName)
+{
+    if (locked_entity != EntityName)
+    {
+        locked_entity = EntityName;
+    }
+}
+
+void TrajectoryRenderer::clearCameraEntity()
+{
+    locked_entity = "";
+}
+
+QVector3D TrajectoryRenderer::camPosition()
+{
+    return m_camPosition;
 }
 
 void TrajectoryRenderer::updateEntitySpheres()
 {
     EntityManager* entityManager = EntityManager::getInstance();
     auto entities = entityManager->getAllEntities();
+
+    //If the entity vector is empty
     if (!entities) {
+        if (!m_entitySpheres.isEmpty()) {
+            m_entitySpheres.clear();
+            emit entitySpheresChanged();
+        }
         return;
     }
 
@@ -290,22 +315,38 @@ void TrajectoryRenderer::updateEntitySpheres()
     int colorIndex = 0;
 
     bool createdAny = false;
+    //If we go over the whole list, and don't find the entity, reset the posotion so that control can be returned to the keyboard.
+    bool camEntityFound = false;
 
     for (auto& entity : *entities) {
-        const QString name = QString::fromStdString(entity.getEntityName());
+        std::string ename = entity.getEntityName();
+        const QString qname = QString::fromStdString(ename);
 
         // Compute position and scale from current state
         PhysicalState* statePtr = entity.getPhysicalState();
         Vec3 position = statePtr ? statePtr->getPosition() : entity.getOrigin().getPosition();
-        float downscale = 0.2f;
-        float rad = (entity.getPhysicalState()->getRadius()) * downscale;
-        QVector3D qpos(position.x, position.y, position.z);
+
+        float rad = ((entity.getPhysicalState()->getRadius()) * downScale) / RENDER_DOWNSCALE;
+
+        if (rad < 0.001) //Nothing smaller than 1 meter across
+        {
+            rad = 0.001f;
+        }
+        QVector3D qpos(position.x / RENDER_DOWNSCALE, position.y / RENDER_DOWNSCALE, position.z / RENDER_DOWNSCALE);
+
+        if (ename == locked_entity)
+        {
+            m_camPosition = qpos;
+            camEntityFound = true;
+            emit camPositionChanged();
+        }
+
         QVector3D qscale(rad, rad, rad);
 
         // Try to find existing sphere by name
         EntitySphere* found = nullptr;
         for (auto* s : m_entitySpheres) {
-            if (s && s->entityName() == name) { found = s; break; }
+            if (s && s->entityName() == qname) { found = s; break; }
         }
 
         if (found) {
@@ -318,7 +359,8 @@ void TrajectoryRenderer::updateEntitySpheres()
                 found->setMaterialColor("#ffffff");
                 found->setTexturePath(texturePath);
             }
-            // No list change signal needed; property signals fire from setters
+            // Update opacity based on alive state
+            found->setOpacity(entity.isunAlive() ? 0.5f : 1.0f);
         } else {
             // Create new sphere for this entity
             QString materialColor = entityColors[colorIndex % entityColors.size()];
@@ -331,10 +373,11 @@ void TrajectoryRenderer::updateEntitySpheres()
             auto* sphere = new EntitySphere(
                 qpos,
                 qscale,
-                name,
+                qname,
                 statePtr ? statePtr->getTimestamp() : entity.getOrigin().getTimestamp(),
                 materialColor,
                 texturePath,
+                entity.isunAlive() ? 0.5f : 1.0f,
                 this
             );
             m_entitySpheres.append(sphere);
@@ -345,8 +388,22 @@ void TrajectoryRenderer::updateEntitySpheres()
     if (createdAny) {
         emit entitySpheresChanged();
     }
+
+    if (!camEntityFound)
+    {
+        m_camPosition = QVector3D(0, 0, 0);
+    }
+
 }
 
+void TrajectoryRenderer::clearEntitySpheres()
+{
+    if (m_entitySpheres.isEmpty()) {
+        return;
+    }
+    m_entitySpheres.clear();
+    emit entitySpheresChanged();
+}
 QString EntitySphere::texturePath() const
 {
     return m_texturePath;
@@ -358,6 +415,27 @@ void EntitySphere::setTexturePath(const QString& texturePath)
         m_texturePath = texturePath;
         emit texturePathChanged();
     }
+}
+
+qreal EntitySphere::opacity() const
+{
+    return static_cast<qreal>(m_opacity);
+}
+
+void EntitySphere::setOpacity(qreal opacity)
+{
+    // Clamp between 0 and 1
+    if (opacity < 0.0)
+        opacity = 0.0;
+    else if (opacity > 1.0)
+        opacity = 1.0;
+
+    const qreal current = static_cast<qreal>(m_opacity);
+    if (current == opacity)
+        return;
+
+    m_opacity = static_cast<qfloat16>(opacity);
+    emit opacityChanged();
 }
 
 
