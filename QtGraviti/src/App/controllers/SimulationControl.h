@@ -21,7 +21,7 @@ public:
     void saveEntitiesAsJson(std::string filepathjsonPath);
 
     void initializeThreeBody();
-	void optimizeTrajectory(Entity Projectile, Vec3 targetPosition, int numSteps, float tickDuration);
+	Entity optimizeTrajectory(Entity Projectile, Vec3 targetPosition, int numSteps, float tickDuration);
     void startSimulation(int numSteps, float tickDuration);
     void resetSimulation();
     void clearEntities();

@@ -33,9 +33,9 @@ int main(int argc, char* argv[])
     Entity test(physicsEngine);
     test.setEntityName("ToOptimize");
     auto entityState = test.getPhysicalState();
-    entityState->setPosition(X, 1000);
-    entityState->setPosition(Y, 0);
-    entityState->setPosition(Z, 1000);
+    entityState->setPosition(X, 150);
+    entityState->setPosition(Y, 150);
+    entityState->setPosition(Z, 150);
     entityState->setVelocity(X, 1);
     entityState->setVelocity(Y, 10);
     entityState->setVelocity(Z, 1);
@@ -46,8 +46,15 @@ int main(int argc, char* argv[])
     Vec3 targetPosition = { 100.0f, 100.0f, 100.0f };
     int timeSteps = 5000;
     float timeStepSize = 0.1f;
-    controller.optimizeTrajectory(test, targetPosition, timeSteps, timeStepSize);
-
+    Entity OptEnt = controller.optimizeTrajectory(test, targetPosition, timeSteps, timeStepSize);
+    std::cout << "Optimized Entity Position: (" 
+              << OptEnt.getPhysicalState()->getPosition().x << ", "
+              << OptEnt.getPhysicalState()->getPosition().y << ", "
+              << OptEnt.getPhysicalState()->getPosition().z << ")\n";
+    std::cout << "Optimized Entity velocity: ("
+        << OptEnt.getPhysicalState()->getVelocity().x << ", "
+        << OptEnt.getPhysicalState()->getVelocity().y << ", "
+        << OptEnt.getPhysicalState()->getVelocity().z << ")\n";
 
     // Create trajectory renderer and convert trajectories - Renderer is View
     //TrajectoryRenderer trajectoryRenderer;

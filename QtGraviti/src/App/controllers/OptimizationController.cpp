@@ -49,17 +49,13 @@ void OptimizationController::LoadProjectile(Entity projectile)
 
 void OptimizationController::LoadEntities(const std::vector<Entity>& entities, int iterations)
 {
-	for (int i = 0; i < iterations; i = i + 1)
-
-	{
-		auto entityManager = OptimizationEntityManager();
+	
 		for (const auto& entity : entities) {
 			auto entityCopy = entity; // Make a copy to avoid modifying the original
-			entityManager.addEntity(entityCopy);
+			SurroundingBodies.push_back(entityCopy);
 		}
-		EntityManagers.push_back(entityManager);
-	}
 
+		totaliterations = iterations;
     
 }
 
@@ -203,7 +199,109 @@ void OptimizationController::exampleoptimize(int numberOfSteps, float timestepSi
 
 void OptimizationController::optimize(int numberOfSteps, float timestepSize)
 {
-	auto x = initialEntity.getPhysicalState()->getVelocity();
+	// get initial velocity vector
+	Vec3 x = initialEntity.getPhysicalState()->getVelocity();
+
+	// generate default axes from initial velocity vector
+	std::vector<Vec3> axes = GenerateDefaultAxes(initialEntity);
+
+	// create new entity managers based on axes, and populate with existing entities too
+	for (const auto& axis : axes)
+	{
+		auto entityManager = OptimizationEntityManager();
+		auto entityCopy = initialEntity; // Make a copy to avoid modifying the original
+		entityCopy.getPhysicalState()->setVelocity(axis);
+		entityManager.loadTargetPoint(targetPoint);
+
+		entityManager.addTargetEntity(entityCopy);
+		for (Entity body : SurroundingBodies)
+		{
+			entityManager.addEntity(body);
+		}
+		EntityManagers.push_back(entityManager);
+	}
+
+	// run EntityManagers and evaluate best 3 results
+	double closestMagnitude = 999999999999999999;
+	Vec3 closestVelocity= { 0.0f, 0.0f, 0.0f };
+	double secondClosestMagnitude = 999999999999999999;
+	Vec3 secondclosestVelocity = { 0.0f, 0.0f, 0.0f };
+	double thirdClosestMagnitude = 999999999999999999;
+	Vec3 thirdclosestVelocity = { 0.0f, 0.0f, 0.0f };
+
+	for (int i = 0; i<EntityManagers.size();i++)
+	{
+		EntityManagers.at(i).run(numberOfSteps, timestepSize);
+
+		auto bestPosition=EntityManagers.at(i).DetermineMinimumDistancePoint();
+		if (optimizationLogging == true)
+		{
+			std::cout << " listing best position " <<
+				bestPosition.x << ", " <<
+				bestPosition.y << ", " <<
+				bestPosition.z <<
+				std::endl;
+		}
+		double currentMagnitude = EntityManagers.at(i).getShortestMagnitude();
+		std::cout << " magnitude is " <<currentMagnitude << std::endl;
+
+		Vec3 currentVelocity = EntityManagers.at(i).targetEntity.getPhysicalState()->getVelocity();
+		if (currentMagnitude < closestMagnitude)
+		{
+			thirdClosestMagnitude = secondClosestMagnitude;
+			thirdclosestVelocity = secondclosestVelocity;
+			secondClosestMagnitude = closestMagnitude;
+			secondclosestVelocity = closestVelocity;
+			closestMagnitude = currentMagnitude;
+			closestVelocity = currentVelocity;
+
+		}
+		else if (currentMagnitude < secondClosestMagnitude)
+		{
+			thirdClosestMagnitude = secondClosestMagnitude;
+			thirdclosestVelocity = secondclosestVelocity;
+			secondClosestMagnitude = currentMagnitude;
+			secondclosestVelocity = currentVelocity;
+
+		}
+		else if (currentMagnitude < thirdClosestMagnitude)
+		{
+			thirdClosestMagnitude = currentMagnitude;
+			thirdclosestVelocity = currentVelocity;
+
+		}
+
+
+	}
+
+	if (optimizationLogging == true)
+	{
+		std::cout << " listing best 3 magnitudes" <<
+			closestMagnitude << ", " <<
+			secondClosestMagnitude << ", " <<
+			thirdClosestMagnitude <<
+			std::endl;
+		std::cout << " listing best velocity " <<
+			closestVelocity.x << ", " <<
+			closestVelocity.y << ", " <<
+			closestVelocity.z <<
+			std::endl;
+		std::cout << " listing secondbest velocity " <<
+			secondclosestVelocity.x << ", " <<
+			secondclosestVelocity.y << ", " <<
+			secondclosestVelocity.z <<
+			std::endl;
+		std::cout << " listing thirdbest velocity " <<
+			thirdclosestVelocity.x << ", " <<
+			thirdclosestVelocity.y << ", " <<
+			thirdclosestVelocity.z <<
+			std::endl;
+	}
+	initialEntity.getPhysicalState()->setVelocity(closestVelocity);
+	bestEntity = initialEntity;
+	return;
+
+
 }
 
 
