@@ -46,7 +46,7 @@ Entity SimulationController::optimizeTrajectory(Entity projectile, Vec3 targetPo
 	optimizer.LoadProjectile(projectile);
 	optimizer.LoadTarget(targetPosition);
 
-	int numberofIterations = 5;
+	int numberofIterations =1;
 
 	optimizer.optimize(numSteps, tickDuration, numberofIterations);
 
