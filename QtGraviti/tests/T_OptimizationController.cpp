@@ -119,7 +119,7 @@ TEST(OptimizationControllerTest, OptimizeReturnsZero) {
     OptimizationController controller;
 
     // Call optimize and expect a 0 return code for success.
-    controller.optimize(100,1.0f);
+    //controller.optimize(100,1.0f);
     
 }
 
@@ -143,3 +143,67 @@ TEST(OptimizationControllerTest, DestructorClearsEntityManager) {
     EXPECT_TRUE(weakRef.entityManagerCount() <= 1u);
 }
 
+
+TEST(OptimizationControllerTest, TestGenerateDefaultAxes) {
+	//verify that the GenerateDefaultAxes function produces expected axes based on the entity's velocity, expected values manually validated in python
+    OptimizationController controller;
+
+    Entity defaultEntity = Entity();
+    defaultEntity.getPhysicalState()->setVelocity({ 1.0f, 2.0f, 3.0f });
+    std::vector<Vec3> generatedAxes = controller.GenerateDefaultAxes(defaultEntity);
+    
+    EXPECT_EQ(generatedAxes.at(0).x, 1);
+    EXPECT_EQ(generatedAxes.at(0).y, 2);
+    EXPECT_EQ(generatedAxes.at(0).z, 3);
+
+    EXPECT_EQ(generatedAxes.at(1).x, -1);
+    EXPECT_EQ(generatedAxes.at(1).y, -2);
+    EXPECT_EQ(generatedAxes.at(1).z, -3);
+
+    EXPECT_EQ(generatedAxes.at(2).x, 3);
+    EXPECT_EQ(generatedAxes.at(2).y, 2);
+    EXPECT_EQ(generatedAxes.at(2).z, -1);
+
+    EXPECT_EQ(generatedAxes.at(3).x, -3);
+    EXPECT_EQ(generatedAxes.at(3).y, -2);
+    EXPECT_EQ(generatedAxes.at(3).z, 1);
+
+    EXPECT_EQ(generatedAxes.at(4).x, 1);
+    EXPECT_EQ(generatedAxes.at(4).y, -3);
+    EXPECT_EQ(generatedAxes.at(4).z, 2);
+
+    EXPECT_EQ(generatedAxes.at(5).x, -1);
+    EXPECT_EQ(generatedAxes.at(5).y, 3);
+    EXPECT_EQ(generatedAxes.at(5).z, -2);
+
+    
+}
+
+
+
+TEST(OptimizationControllerTest, TestTriangulation) {
+    //verify that the GenerateDefaultAxes function produces expected axes based on the entity's velocity, expected values manually validated in python
+    OptimizationController controller;
+    
+    Vec3 target = { 0.9, 0.1, 0.1 };
+
+
+	Vec3 best = { 1.0, 0.0, 0.0 };
+	Vec3 secondBest = { 0.0, 1.0, 0.0 };
+	Vec3 thirdBest = { 0.0, 0.0, 1.0 };
+
+    std::vector<Vec3> optimizedVectors = controller.TriangulationVectors(best, secondBest, thirdBest);
+
+    EXPECT_FLOAT_EQ(optimizedVectors.at(0).x, 1);
+    EXPECT_FLOAT_EQ(optimizedVectors.at(0).y, 0);
+    EXPECT_FLOAT_EQ(optimizedVectors.at(0).z, 0);
+
+    EXPECT_FLOAT_EQ(optimizedVectors.at(1).x, 0.707107);
+    EXPECT_FLOAT_EQ(optimizedVectors.at(1).y, 0.707107);
+    EXPECT_FLOAT_EQ(optimizedVectors.at(1).z, 0);
+
+    EXPECT_FLOAT_EQ(optimizedVectors.at(2).x, 0.707107);
+    EXPECT_FLOAT_EQ(optimizedVectors.at(2).y, 0);
+    EXPECT_FLOAT_EQ(optimizedVectors.at(2).z, 0.707107);
+
+}

@@ -72,7 +72,7 @@ void OptimizationController::LoadTarget(Vec3 targetPosition)
 
 std::vector<Vec3> OptimizationController::GenerateDefaultAxes(Entity DefaultEntity) 
 {
-	Vec3 defaultVelVector=DefaultEntity.getPhysicalState()->getPosition();
+	Vec3 defaultVelVector=DefaultEntity.getPhysicalState()->getVelocity();
 	std::vector<Vec3> AxesVectors;
 	AxesVectors.push_back(defaultVelVector);
 	AxesVectors.push_back({ -1*defaultVelVector.x,-1 * defaultVelVector.y,-1 * defaultVelVector.z });
