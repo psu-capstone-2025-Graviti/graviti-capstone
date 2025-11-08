@@ -15,6 +15,7 @@ class OptimizationController : public QObject
     //Q_PROPERTY(int entitySphereCount READ entitySphereCount NOTIFY entitySpheresChanged)
 
 public:
+    int totaliterations = 3;
     OptimizationController(QObject* parent = nullptr);
     ~OptimizationController();
     //Entity initialEntity;
@@ -38,15 +39,27 @@ public:
     void LoadProjectile(Entity projectile);
     void LoadTarget(Vec3 targetPosition);
 
-    void optimize();
+    std::vector<Vec3> GenerateDefaultAxes(Entity DefaultEntity);
+
+    double vectorMagnitude(Vec3 vector);
+
+    std::vector<Vec3> TriangulationVectors(Vec3 Best, Vec3 SecondBest, Vec3 ThirdBest);
+
+    void exampleoptimize(int numberOfSteps, float timestepSize);
+
+
+    void optimize(int numberOfSteps, float timestepSize, int numberOfIterations);
 
     Entity initialEntity = Entity();
     Vec3 targetPoint = { 0.0f, 0.0f, 0.0f };
 
+	Entity getBestEntity() const { return bestEntity; }
+
 private:
     BatchSimEnvironment m_env;
-
-
+    Entity bestEntity = Entity();
+	bool optimizationLogging = false;
+    std::vector<Entity> SurroundingBodies;
     std::vector<OptimizationEntityManager> EntityManagers;
 
     float cleanFloat(std::string value);
