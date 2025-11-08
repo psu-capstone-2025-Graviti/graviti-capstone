@@ -297,7 +297,9 @@ void OptimizationController::optimize(int numberOfSteps, float timestepSize)
 			thirdclosestVelocity.z <<
 			std::endl;
 	}
-
+	initialEntity.getPhysicalState()->setVelocity(closestVelocity);
+	bestEntity = initialEntity;
+	return;
 
 
 }

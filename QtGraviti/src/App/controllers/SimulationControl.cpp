@@ -36,17 +36,20 @@ void SimulationController::clearEntities()
 	entityManager->clearEntities();
 }
 
-void SimulationController::optimizeTrajectory(Entity projectile, Vec3 targetPosition, int numSteps, float tickDuration)
+Entity SimulationController::optimizeTrajectory(Entity projectile, Vec3 targetPosition, int numSteps, float tickDuration)
 {
 	auto entitiesPtr = EntityManager::getInstance()->getAllEntities();
 	const std::vector<Entity>& Entities = *entitiesPtr;
 
 	OptimizationController optimizer;
-	optimizer.LoadEntities(Entities, 3);
+	optimizer.LoadEntities(Entities, 1);
 	optimizer.LoadProjectile(projectile);
 	optimizer.LoadTarget(targetPosition);
 
 	optimizer.optimize(numSteps, tickDuration);
+
+	return optimizer.getBestEntity();
+
 
 	// Placeholder for trajectory optimization logic
 }

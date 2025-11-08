@@ -46,8 +46,15 @@ int main(int argc, char* argv[])
     Vec3 targetPosition = { 100.0f, 100.0f, 100.0f };
     int timeSteps = 5000;
     float timeStepSize = 0.1f;
-    controller.optimizeTrajectory(test, targetPosition, timeSteps, timeStepSize);
-
+    Entity OptEnt = controller.optimizeTrajectory(test, targetPosition, timeSteps, timeStepSize);
+    std::cout << "Optimized Entity Position: (" 
+              << OptEnt.getPhysicalState()->getPosition().x << ", "
+              << OptEnt.getPhysicalState()->getPosition().y << ", "
+              << OptEnt.getPhysicalState()->getPosition().z << ")\n";
+    std::cout << "Optimized Entity velocity: ("
+        << OptEnt.getPhysicalState()->getVelocity().x << ", "
+        << OptEnt.getPhysicalState()->getVelocity().y << ", "
+        << OptEnt.getPhysicalState()->getVelocity().z << ")\n";
 
     // Create trajectory renderer and convert trajectories - Renderer is View
     //TrajectoryRenderer trajectoryRenderer;

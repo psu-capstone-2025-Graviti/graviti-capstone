@@ -58,7 +58,7 @@ public:
 private:
     BatchSimEnvironment m_env;
     Entity bestEntity = Entity();
-	bool optimizationLogging = false;
+	bool optimizationLogging = true;
     std::vector<Entity> SurroundingBodies;
     std::vector<OptimizationEntityManager> EntityManagers;
 
