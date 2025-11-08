@@ -7,6 +7,9 @@
 #include "rapidjson/filewritestream.h"
 #include "rapidjson/writer.h"
 #include "OptimizationController.h"
+#include <cmath>
+
+const double PI = 3.141592653589793;
 
 OptimizationController::OptimizationController(QObject* parent)
 	: QObject(parent),
@@ -66,7 +69,45 @@ void OptimizationController::LoadTarget(Vec3 targetPosition)
 	targetPoint = targetPosition;
 }
 
-void OptimizationController::exampleoptimize(int numberOfSteps, float timestepSize)
+
+std::vector<Vec3> OptimizationController::GenerateDefaultAxes(Entity DefaultEntity) 
+{
+	Vec3 defaultVelVector=DefaultEntity.getPhysicalState()->getVelocity();
+	std::vector<Vec3> AxesVectors;
+	AxesVectors.push_back(defaultVelVector);
+	AxesVectors.push_back({ -1*defaultVelVector.x,-1 * defaultVelVector.y,-1 * defaultVelVector.z });
+
+	Vec3 rotateYVector = { 
+		defaultVelVector.x* cos(PI/2)+ defaultVelVector.z*sin(PI/2),
+		defaultVelVector.y ,
+		-defaultVelVector.x*sin(PI/2)+defaultVelVector.z*cos(PI/2)};
+	AxesVectors.push_back(rotateYVector);
+	AxesVectors.push_back(
+		{
+		-1 * rotateYVector.x,
+		-1 * rotateYVector.y,
+		-1 * rotateYVector.z 
+		});
+
+	Vec3 rotateZVector = 
+	{ 
+		defaultVelVector.x, 
+		defaultVelVector.y*cos(PI/2)- defaultVelVector.z*sin(PI/2),
+		defaultVelVector.y*sin(PI/2)+ defaultVelVector.z*cos(PI/2)
+	};
+	AxesVectors.push_back(rotateZVector);
+	AxesVectors.push_back(
+		{	
+		-1 * rotateZVector.x,
+		-1 * rotateZVector.y,
+		-1 * rotateZVector.z 
+		});
+
+	return AxesVectors;
+
+}
+
+void OptimizationController::optimize(int numberOfSteps, float timestepSize)
 {
 	auto entityToOptimize = initialEntity;
 

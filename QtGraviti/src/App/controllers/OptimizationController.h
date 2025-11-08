@@ -39,7 +39,14 @@ public:
     void LoadProjectile(Entity projectile);
     void LoadTarget(Vec3 targetPosition);
 
+    std::vector<Vec3> GenerateDefaultAxes(Entity DefaultEntity);
+
+    double vectorMagnitude(Vec3 vector);
+
+    std::vector<Vec3> TriangulationVectors(Vec3 Best, Vec3 SecondBest, Vec3 ThirdBest);
+
     void exampleoptimize(int numberOfSteps, float timestepSize);
+
 
     void optimize(int numberOfSteps, float timestepSize);
 
