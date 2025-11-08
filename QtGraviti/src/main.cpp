@@ -32,20 +32,21 @@ int main(int argc, char* argv[])
 
     Entity test(physicsEngine);
     test.setEntityName("ToOptimize");
-    PhysicalState entityState;
-    entityState.setPosition(X, 1000);
-    entityState.setPosition(Y, 0);
-    entityState.setPosition(Z, 1000);
-    entityState.setVelocity(X, 0);
-    entityState.setVelocity(Y, 0);
-    entityState.setVelocity(Z, 1);
-    entityState.setMass(1);
-    entityState.setRadius(0.2f);
+    auto entityState = test.getPhysicalState();
+    entityState->setPosition(X, 1000);
+    entityState->setPosition(Y, 0);
+    entityState->setPosition(Z, 1000);
+    entityState->setVelocity(X, 1);
+    entityState->setVelocity(Y, 10);
+    entityState->setVelocity(Z, 1);
+    entityState->setMass(1);
+    entityState->setRadius(0.2f);
 
-	Vec3 targetPosition = { 100.0f, 100.0f, 100.0f };
-	int timeSteps = 5000;
-	float timeStepSize = 0.01f;
-	controller.optimizeTrajectory(test, targetPosition, timeSteps, timeStepSize);
+
+    Vec3 targetPosition = { 100.0f, 100.0f, 100.0f };
+    int timeSteps = 5000;
+    float timeStepSize = 0.1f;
+    controller.optimizeTrajectory(test, targetPosition, timeSteps, timeStepSize);
 
 
     // Create trajectory renderer and convert trajectories - Renderer is View

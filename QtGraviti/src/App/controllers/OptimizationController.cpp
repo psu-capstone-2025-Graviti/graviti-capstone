@@ -8,7 +8,6 @@
 #include "rapidjson/writer.h"
 #include "OptimizationController.h"
 
-
 OptimizationController::OptimizationController(QObject* parent)
 	: QObject(parent),
 	m_env()
@@ -67,7 +66,7 @@ void OptimizationController::LoadTarget(Vec3 targetPosition)
 	targetPoint = targetPosition;
 }
 
-void OptimizationController::optimize(int numberOfSteps, float timestepSize)
+void OptimizationController::exampleoptimize(int numberOfSteps, float timestepSize)
 {
 	auto entityToOptimize = initialEntity;
 
@@ -114,7 +113,10 @@ void OptimizationController::optimize(int numberOfSteps, float timestepSize)
     return ;
 }
 
-
+void OptimizationController::optimize(int numberOfSteps, float timestepSize)
+{
+	auto x = initialEntity.getPhysicalState()->getVelocity();
+}
 
 
 float OptimizationController::cleanFloat(std::string value)

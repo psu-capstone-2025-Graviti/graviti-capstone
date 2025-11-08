@@ -15,6 +15,7 @@ class OptimizationController : public QObject
     //Q_PROPERTY(int entitySphereCount READ entitySphereCount NOTIFY entitySpheresChanged)
 
 public:
+    int totaliterations = 3;
     OptimizationController(QObject* parent = nullptr);
     ~OptimizationController();
     //Entity initialEntity;
@@ -37,6 +38,8 @@ public:
     void LoadEntities(const std::vector<Entity>& entities, int iterations);
     void LoadProjectile(Entity projectile);
     void LoadTarget(Vec3 targetPosition);
+
+    void exampleoptimize(int numberOfSteps, float timestepSize);
 
     void optimize(int numberOfSteps, float timestepSize);
 
