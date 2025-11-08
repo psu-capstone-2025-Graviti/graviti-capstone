@@ -98,7 +98,7 @@ float OptimizationEntityManager::calculateDistance(Vec3 a, Vec3 b)
 	distance.x = b.x - a.x;
 	distance.y = b.y - a.y;
 	distance.z = b.z - a.z;
-	float magnitude = sqrt(distance.x * distance.x + distance.y * distance.y + distance.z * distance.z);
+	double magnitude = sqrt(distance.x * distance.x + distance.y * distance.y + distance.z * distance.z);
 
 	return magnitude;
 }
