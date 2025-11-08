@@ -47,7 +47,7 @@ void OptimizationController::LoadProjectile(Entity projectile)
 	initialEntity = projectile;
 }
 
-void OptimizationController::LoadEntities(const std::vector<Entity>& entities, int iterations)
+void OptimizationController::LoadEntities(const std::vector<Entity>& entities)
 {
 	
 		for (const auto& entity : entities) {
@@ -55,7 +55,6 @@ void OptimizationController::LoadEntities(const std::vector<Entity>& entities, i
 			SurroundingBodies.push_back(entityCopy);
 		}
 
-		totaliterations = iterations;
     
 }
 
@@ -197,8 +196,9 @@ void OptimizationController::exampleoptimize(int numberOfSteps, float timestepSi
     return ;
 }
 
-void OptimizationController::optimize(int numberOfSteps, float timestepSize)
+void OptimizationController::optimize(int numberOfSteps, float timestepSize, int numberOfIterations)
 {
+	totaliterations = numberOfIterations;
 	// get initial velocity vector
 	Vec3 x = initialEntity.getPhysicalState()->getVelocity();
 
@@ -299,9 +299,16 @@ void OptimizationController::optimize(int numberOfSteps, float timestepSize)
 	}
 	initialEntity.getPhysicalState()->setVelocity(closestVelocity);
 	bestEntity = initialEntity;
+	if (totaliterations == 1)
+	{
+		return;
+	}
+	else
+	{
+		std::cout << "more iterations! " << totaliterations  <<" to be exact" <<std::endl;
+	}
+
 	return;
-
-
 }
 
 

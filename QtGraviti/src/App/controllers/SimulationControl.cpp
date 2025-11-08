@@ -42,11 +42,13 @@ Entity SimulationController::optimizeTrajectory(Entity projectile, Vec3 targetPo
 	const std::vector<Entity>& Entities = *entitiesPtr;
 
 	OptimizationController optimizer;
-	optimizer.LoadEntities(Entities, 1);
+	optimizer.LoadEntities(Entities);
 	optimizer.LoadProjectile(projectile);
 	optimizer.LoadTarget(targetPosition);
 
-	optimizer.optimize(numSteps, tickDuration);
+	int numberofIterations = 5;
+
+	optimizer.optimize(numSteps, tickDuration, numberofIterations);
 
 	return optimizer.getBestEntity();
 

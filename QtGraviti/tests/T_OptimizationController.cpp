@@ -65,11 +65,11 @@ TEST(OptimizationControllerTest, LoadEntitiesExtendsListOfEntityManagers) {
 	mgr2.addEntity(projectile2);
 
     // First load: count increases to 1
-    controller.LoadEntities(mgr1.getAllEntities(),1);
+    controller.LoadEntities(mgr1.getAllEntities());
     //EXPECT_EQ(controller.entityManagerCount(), 1);
 
     // Second load: count increases to 2 (extends)
-    controller.LoadEntities(mgr2.getAllEntities(),1);
+    controller.LoadEntities(mgr2.getAllEntities());
     //EXPECT_EQ(controller.entityManagerCount(), 2);
 }
 
@@ -133,7 +133,7 @@ TEST(OptimizationControllerTest, DestructorClearsEntityManager) {
         // Create controller in an inner scope so destructor runs when leaving scope.
         {
             OptimizationController controller;
-            controller.LoadEntities(mgr.getAllEntities(),1);
+            controller.LoadEntities(mgr.getAllEntities());
 
             // While controller is alive, use_count should be at least 2 (mgr + controller)
             EXPECT_GE(weakRef.entityManagerCount(), 0);

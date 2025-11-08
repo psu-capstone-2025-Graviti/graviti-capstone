@@ -35,7 +35,7 @@ public:
                    float velX, float velY, float velZ, float mass);
 
 
-    void LoadEntities(const std::vector<Entity>& entities, int iterations);
+    void LoadEntities(const std::vector<Entity>& entities);
     void LoadProjectile(Entity projectile);
     void LoadTarget(Vec3 targetPosition);
 
@@ -48,7 +48,7 @@ public:
     void exampleoptimize(int numberOfSteps, float timestepSize);
 
 
-    void optimize(int numberOfSteps, float timestepSize);
+    void optimize(int numberOfSteps, float timestepSize, int numberOfIterations);
 
     Entity initialEntity = Entity();
     Vec3 targetPoint = { 0.0f, 0.0f, 0.0f };
