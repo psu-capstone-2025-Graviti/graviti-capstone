@@ -42,7 +42,7 @@ void SimulationController::optimizeTrajectory(Entity projectile, Vec3 targetPosi
 	const std::vector<Entity>& Entities = *entitiesPtr;
 
 	OptimizationController optimizer;
-	optimizer.LoadEntities(Entities, 3);
+	optimizer.LoadEntities(Entities, 5);
 	optimizer.LoadProjectile(projectile);
 	optimizer.LoadTarget(targetPosition);
 

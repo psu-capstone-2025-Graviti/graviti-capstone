@@ -77,7 +77,7 @@ void OptimizationEntityManager::run(const int totalTimeSteps, const float timeSt
 		}
 		// Optional: Add progress output
 		if (step % 200 == 0) {
-			std::cout << "Simulation step: " << step << "/" << totalTimeSteps << " at time " << time << std::endl;
+			//std::cout << "Simulation step: " << step << "/" << totalTimeSteps << " at time " << time << std::endl;
 		}
 		time += timeStep;
 	}

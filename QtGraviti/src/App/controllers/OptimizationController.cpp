@@ -10,6 +10,7 @@
 #include <cmath>
 
 const double PI = 3.141592653589793;
+int totaliterations = 3;
 
 OptimizationController::OptimizationController(QObject* parent)
 	: QObject(parent),
@@ -49,16 +50,16 @@ void OptimizationController::LoadProjectile(Entity projectile)
 
 void OptimizationController::LoadEntities(const std::vector<Entity>& entities, int iterations)
 {
-	for (int i = 0; i < iterations; i = i + 1)
 
-	{
-		auto entityManager = OptimizationEntityManager();
-		for (const auto& entity : entities) {
-			auto entityCopy = entity; // Make a copy to avoid modifying the original
-			entityManager.addEntity(entityCopy);
-		}
-		EntityManagers.push_back(entityManager);
+	auto entityManager = OptimizationEntityManager();
+	for (const auto& entity : entities) {
+		auto entityCopy = entity; // Make a copy to avoid modifying the original
+		entityManager.addEntity(entityCopy);
 	}
+	EntityManagers.push_back(entityManager);
+
+	totaliterations = iterations;
+
 
     
 }
@@ -154,7 +155,7 @@ std::vector<Vec3> OptimizationController::TriangulationVectors(Vec3 Best, Vec3 S
 
 
 
-void OptimizationController::optimize(int numberOfSteps, float timestepSize)
+void OptimizationController::exampleoptimize(int numberOfSteps, float timestepSize)
 {
 	auto entityToOptimize = initialEntity;
 
@@ -174,10 +175,10 @@ void OptimizationController::optimize(int numberOfSteps, float timestepSize)
 			entityToOptimize.getPhysicalState()->getVelocity().y + i*5,
 			entityToOptimize.getPhysicalState()->getVelocity().z + i*5
 			});
-		EntityManagers[i].loadTargetPoint(targetPoint);
-		EntityManagers[i].addTargetEntity(entityToOptimize);
-		EntityManagers[i].run(numberOfSteps, timestepSize);
-		bestPosition = EntityManagers[i].DetermineMinimumDistancePoint();
+		EntityManagers.at(i).loadTargetPoint(targetPoint);
+		EntityManagers.at(i).addTargetEntity(entityToOptimize);
+		EntityManagers.at(i).run(numberOfSteps, timestepSize);
+		bestPosition = EntityManagers.at(i).DetermineMinimumDistancePoint();
 		std::cout << " listing best position " << bestPosition.x << bestPosition.y << bestPosition.z << std::endl;
 
 		
@@ -187,10 +188,10 @@ void OptimizationController::optimize(int numberOfSteps, float timestepSize)
 	std::cout << " ==== listing out magnitudes of optimized values====" << std::endl;
 	for (int i = 0; i < EntityManagers.size(); i = i + 1)
 	{
-		std::cout << "magnitude " << EntityManagers[i].getShortestMagnitude() << std::endl;
-		if (EntityManagers[i].getShortestMagnitude() > closestMagnitude)
+		std::cout << "magnitude " << EntityManagers.at(i).getShortestMagnitude() << std::endl;
+		if (EntityManagers.at(i).getShortestMagnitude() > closestMagnitude)
 		{
-			closestMagnitude = EntityManagers[i].getShortestMagnitude();
+			closestMagnitude = EntityManagers.at(i).getShortestMagnitude();
 			bestIndex = i;
 		}
 	}
@@ -201,7 +202,124 @@ void OptimizationController::optimize(int numberOfSteps, float timestepSize)
     return ;
 }
 
+void OptimizationController::optimize(int numberOfSteps, float timestepSize)
+{
+	auto entityToOptimize = initialEntity;
+	std::vector<Vec3> defaultAxes = GenerateDefaultAxes(entityToOptimize);
+	
+	// initialize first 6 cases, 
+	for (const auto& axis : defaultAxes)
+	{
+		auto entityCopy = entityToOptimize; // Make a copy to avoid modifying the original
+		entityCopy.getPhysicalState()->setVelocity(axis);
+		auto entityManager = OptimizationEntityManager();
+		entityManager.loadTargetPoint(targetPoint);
 
+		//eventually need to add load all entities as well
+		entityManager.addTargetEntity(entityCopy);
+		EntityManagers.push_back(entityManager);
+	}
+	// run all 6 cases
+	for (int i = 0; i < EntityManagers.size(); i = i + 1)
+	{
+		EntityManagers.at(i).run(numberOfSteps, timestepSize);
+		auto bestPosition = EntityManagers.at(i).DetermineMinimumDistancePoint();
+		std::cout << " listing best position " << bestPosition.x << "," << bestPosition.y << "," << bestPosition.z << std::endl;
+	}
+
+	// for all managers, find best 3, delete all cases except best 3
+	for (int j = 0; j < totaliterations; j = j + 1)
+	{
+		std::cout << " ==== Optimization Iteration " << j << "====" << std::endl;
+
+		// generate default axes for entity manager and add each to a new optimization entity manager
+		// solve all 6, find the best 3
+		// triangulate new vectors from best 3
+		
+		//find best 3
+		int bestIndex = -1;
+		float closestMagnitude = std::numeric_limits<float>::max();
+
+		// find best vector
+		std::vector<Vec3> bestVectors;
+		for (int i = 0; i < EntityManagers.size(); i = i + 1)
+		{
+			if ((EntityManagers.at(i).getShortestMagnitude() < closestMagnitude) && (EntityManagers.at(i).getShortestMagnitude() != 0))
+			{
+				closestMagnitude = EntityManagers.at(i).getShortestMagnitude();
+				bestIndex = i;
+			}
+		}
+
+		Vec3 bestVelocity = EntityManagers[bestIndex].targetEntity.getPhysicalState()->getVelocity();
+		//EntityManagers.erase(EntityManagers.begin() + bestIndex);
+		//delete best from list so we can find second best
+
+		//store best vector in new list
+		bestVectors.push_back(bestVelocity);
+		closestMagnitude = std::numeric_limits<float>::max();
+		for (int i = 0; i < EntityManagers.size(); i = i + 1)
+		{
+			if (i != bestIndex && (EntityManagers.at(i).getShortestMagnitude() < closestMagnitude) && (EntityManagers.at(i).getShortestMagnitude() != 0))
+			{
+				closestMagnitude = EntityManagers.at(i).getShortestMagnitude();
+				bestIndex = i;
+			}
+		}
+		Vec3 secondBest = EntityManagers[bestIndex].targetEntity.getPhysicalState()->getVelocity();
+		//EntityManagers.erase(EntityManagers.begin() + bestIndex);
+		//delete second best from list so we can find third best
+
+		//store second best vector in new list
+		bestVectors.push_back(secondBest);
+		closestMagnitude = std::numeric_limits<float>::max();
+		for (int i = 0; i < EntityManagers.size(); i = i + 1)
+		{
+			if ((EntityManagers.at(i).getShortestMagnitude() < closestMagnitude) && (EntityManagers.at(i).getShortestMagnitude() != 0))
+			{
+				closestMagnitude = EntityManagers.at(i).getShortestMagnitude();
+				bestIndex = i;
+			}
+		}
+		Vec3 thirdBest = EntityManagers[bestIndex].targetEntity.getPhysicalState()->getVelocity();
+		//EntityManagers.erase(EntityManagers.begin() + bestIndex);
+		//delete second best from list so we can find third best
+
+		//store second best vector in new list
+		bestVectors.push_back(thirdBest);
+
+		std::cout << " best 3 indices "
+			<< bestVectors.at(0).x << ", "
+			<< bestVectors.at(0).y << ", "
+			<< bestVectors.at(0).z << std::endl;
+
+		std::cout << " best 3 indices "
+			<< bestVectors.at(1).x << ", "
+			<< bestVectors.at(1).y << ", "
+			<< bestVectors.at(1).z << std::endl;
+
+		std::cout << " best 3 indices "
+			<< bestVectors.at(2).x << ", "
+			<< bestVectors.at(2).y << ", "
+			<< bestVectors.at(2).z << std::endl;
+		
+		//clear entity managers and reinitialize with triangulated vectors
+		//EntityManagers.clear();
+
+		//for (int i = 0; i < 3; i = i + 1)
+		//{
+		//	auto entityCopy = entityToOptimize; // Make a copy to avoid modifying the original
+		//	entityCopy.getPhysicalState()->setVelocity(bestVectors.at(i));
+		//	auto entityManager = OptimizationEntityManager();
+		//	entityManager.loadTargetPoint(targetPoint);
+		//	entityManager.addTargetEntity(entityCopy);
+		//	EntityManagers.push_back(entityManager);
+		//}
+		
+	}
+
+	
+}
 
 
 float OptimizationController::cleanFloat(std::string value)
