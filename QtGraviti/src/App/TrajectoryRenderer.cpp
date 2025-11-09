@@ -6,6 +6,11 @@ const double RENDER_DOWNSCALE = 10000.0f;
 //Determined by trial and error. The default sphere in QT seems to be much larger than 2 units accross
 const float downScale = 0.0205f;
 
+//Used for determining entity representations
+const std::string bodies = "Bodies";
+const std::string objects = "Objects";
+
+
 TrajectoryRenderer::TrajectoryRenderer(QObject *parent)
     : QObject(parent)
 {
@@ -154,9 +159,19 @@ QQmlListProperty<EntitySphere> TrajectoryRenderer::entitySpheres()
     return QQmlListProperty<EntitySphere>(this, &m_entitySpheres);
 }
 
+QQmlListProperty<FlatEntity> TrajectoryRenderer::flatEntities()
+{
+    return QQmlListProperty<FlatEntity>(this, &m_flatEntities);
+}
+
 int TrajectoryRenderer::entitySphereCount() const
 {
     return m_entitySpheres.size();
+}
+
+int TrajectoryRenderer::flatEntityCount() const
+{
+    return m_flatEntities.size();
 }
 
 EntitySphere* TrajectoryRenderer::entitySphereAt(int index) const
@@ -314,7 +329,8 @@ void TrajectoryRenderer::updateEntitySpheres()
     QStringList entityColors = { "#6f0000", "#006f6f", "#6f006f" };
     int colorIndex = 0;
 
-    bool createdAny = false;
+    bool createdSpheres = false;
+    bool createdFlats = false;
     //If we go over the whole list, and don't find the entity, reset the posotion so that control can be returned to the keyboard.
     bool camEntityFound = false;
 
@@ -343,49 +359,102 @@ void TrajectoryRenderer::updateEntitySpheres()
 
         QVector3D qscale(rad, rad, rad);
 
-        // Try to find existing sphere by name
-        EntitySphere* found = nullptr;
-        for (auto* s : m_entitySpheres) {
-            if (s && s->entityName() == qname) { found = s; break; }
-        }
 
-        if (found) {
-            // Update position and (if changed) scale
-            found->setPosition(qpos);
-            found->setScale(qscale);
-            // Update texture if needed
-            const auto texturePath = QString::fromStdString(entity.getTexturePath());
-            if (!texturePath.isEmpty()) {
-                found->setMaterialColor("#ffffff");
-                found->setTexturePath(texturePath);
-            }
-            // Update opacity based on alive state
-            found->setOpacity(entity.isunAlive() ? 0.5f : 1.0f);
-        } else {
-            // Create new sphere for this entity
-            QString materialColor = entityColors[colorIndex % entityColors.size()];
-            colorIndex++;
-            const auto texturePath = QString::fromStdString(entity.getTexturePath());
-            if (!texturePath.isEmpty()) {
-                materialColor = "#ffffff";
+
+        //Since textures are registered through the qrc, we can use its prefix to 
+        //separate bodies from satellites
+        if (entity.getTexturePath().find(bodies) != std::string::npos)
+        {
+            // Try to find existing sphere by name
+            EntitySphere* found = nullptr;
+            for (auto* s : m_entitySpheres) {
+                if (s && s->entityName() == qname) { found = s; break; }
             }
 
-            auto* sphere = new EntitySphere(
-                qpos,
-                qscale,
-                qname,
-                statePtr ? statePtr->getTimestamp() : entity.getOrigin().getTimestamp(),
-                materialColor,
-                texturePath,
-                entity.isunAlive() ? 0.5f : 1.0f,
-                this
-            );
-            m_entitySpheres.append(sphere);
-            createdAny = true;
+            if (found) {
+                // Update position and (if changed) scale
+                found->setPosition(qpos);
+                found->setScale(qscale);
+                // Update texture if needed
+                const auto texturePath = QString::fromStdString(entity.getTexturePath());
+                if (!texturePath.isEmpty()) {
+                    found->setMaterialColor("#ffffff");
+                    found->setTexturePath(texturePath);
+                }
+                // Update opacity based on alive state
+                found->setOpacity(entity.isunAlive() ? 0.5f : 1.0f);
+            }
+            else {
+                // Create new sphere for this entity
+                QString materialColor = entityColors[colorIndex % entityColors.size()];
+                colorIndex++;
+                const auto texturePath = QString::fromStdString(entity.getTexturePath());
+                if (!texturePath.isEmpty()) {
+                    materialColor = "#ffffff";
+                }
+
+                auto* sphere = new EntitySphere(
+                    qpos,
+                    qscale,
+                    qname,
+                    statePtr ? statePtr->getTimestamp() : entity.getOrigin().getTimestamp(),
+                    materialColor,
+                    texturePath,
+                    entity.isunAlive() ? 0.5f : 1.0f,
+                    this
+                );
+                m_entitySpheres.append(sphere);
+                createdSpheres = true;
+            }
         }
+        else if (entity.getTexturePath().find(objects) != std::string::npos)
+        {
+            // Try to find existing texture by name
+            FlatEntity* found = nullptr;
+            for (auto* s : m_flatEntities) {
+                if (s && s->entityName() == qname) { found = s; break; }
+            }
+
+            if (found) {
+                // Update position and (if changed) scale
+                found->setPosition(qpos);
+                found->setScale(qscale);
+                // Update texture if needed
+                const auto texturePath = QString::fromStdString(entity.getTexturePath());
+                if (!texturePath.isEmpty()) {
+                    found->setTexturePath(texturePath);
+                }
+                // Update opacity based on alive state
+                found->setOpacity(entity.isunAlive() ? 0.5f : 1.0f);
+                emit flatEntitiesChanged();
+            }
+            else {
+                // Create new texture for this entity
+                const auto texturePath = QString::fromStdString(entity.getTexturePath());
+
+                auto* flat = new FlatEntity(
+                    qpos,
+                    qscale,
+                    texturePath,
+                    qname,
+                    entity.isunAlive() ? 0.5f : 1.0f,
+                    this
+                );
+                m_flatEntities.append(flat);
+                //createdSpheres = true; - TODO
+                emit flatEntitiesChanged();
+            }
+        }
+        else //No texture path - TODO
+        {
+
+        }
+
+
+
     }
 
-    if (createdAny) {
+    if (createdSpheres) {
         emit entitySpheresChanged();
     }
 
@@ -441,3 +510,60 @@ void EntitySphere::setOpacity(qreal opacity)
 
 
 
+FlatEntity::FlatEntity(const QVector3D& position, const QVector3D& scale,
+    QString texturePath, const QString& entityName, const qreal opacity, QObject* parent)
+    : QObject(parent)
+    , m_position(position)
+    , m_scale(scale)
+    , m_path(texturePath)
+    , m_entityName(entityName)
+    , m_opacity(opacity)
+{
+}
+
+
+QVector3D FlatEntity::position() const
+{
+    return m_position;
+}
+
+QVector3D FlatEntity::scale() const
+{
+    return m_scale;
+}
+
+QString FlatEntity::entityName() const
+{
+    return m_entityName;
+}
+
+QString FlatEntity::texturePath() const
+{
+    return m_path;
+}
+
+qreal FlatEntity::opacity() const
+{
+    return m_opacity;
+}
+
+void FlatEntity::setPosition(QVector3D newPos)
+{
+    m_position = newPos;
+    emit positionChanged();
+}
+void FlatEntity::setScale(QVector3D newScale)
+{
+    m_scale = newScale;
+    emit scaleChanged();
+}
+void FlatEntity::setTexturePath(QString newPath)
+{
+    m_path = newPath;
+    emit texturePathChanged();
+}
+void FlatEntity::setOpacity(float opacity)
+{
+    m_opacity = opacity;
+    emit opacityChaged();
+}

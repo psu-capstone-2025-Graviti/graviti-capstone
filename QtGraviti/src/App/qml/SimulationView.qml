@@ -40,7 +40,7 @@ Item {
             antialiasingQuality: SceneEnvironment.High
             antialiasingMode: SceneEnvironment.MSAA
             backgroundMode: SceneEnvironment.SkyBox
-            lightProbe: Texture { source: "qrc:/content/images/HubbleDeepField.jpg"}
+            lightProbe: Texture { source: "qrc:/Bodies/content/images/HubbleDeepField.jpg"}
         }
 
         Node {
@@ -162,6 +162,47 @@ Item {
                 }
             }
 
+            //Flat EntitiesSpheres
+            Node {
+                id: flatEntitiesContainer
+                property var entityDataList: []
+                Repeater3D {
+                    //id: entitySphereComponent
+                    model : trajectoryRenderer.flatEntities
+                    Model {
+                        source: "#Rectangle"
+                        x: modelData.position.x
+                        y: modelData.position.y
+                        z: modelData.position.z
+
+                        eulerRotation.x: 0
+                        eulerRotation.y: 0
+                        eulerRotation.z: 0
+
+
+                        // Scale from trajectoryRenderer
+                        scale: Qt.vector3d(modelData.scale.x, modelData.scale.y, modelData.scale.z)
+
+                        // Material with texture, transparency and double-sided rendering (unlit via PrincipledMaterial.NoLighting)
+                        materials: [
+                            PrincipledMaterial {
+                                id: flatMat
+                                lighting: PrincipledMaterial.NoLighting
+                                baseColorMap: modelData.texturePath && modelData.texturePath !== "" ? textureMap : null
+                                alphaMode: PrincipledMaterial.Blend
+                                cullMode: Material.NoCulling
+                                opacity: modelData.opacity
+
+
+                                property Texture textureMap: Texture {
+                                    source: modelData.texturePath || ""
+                                }
+                            }
+                        ]
+                    }
+                }
+
+            }
         }
     }
 

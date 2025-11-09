@@ -2,3 +2,8 @@ HubbleDeepField.jpg - By NASA and the European Space Agency. Edited by Noodle sn
 Blue_Marble_2002.jpg - By NASA’s Terra satellite for the MODIS imageries, combined by Meow. Credit: NASA Goddard Space Flight Center Image by Reto Stöckli (land surface, shallow water, clouds). Enhancements by Robert Simmon (ocean color, compositing, 3D globes, animation). Data and technical support: MODIS Land Group; MODIS Science Data Support Team; MODIS Atmosphere Group; MODIS Ocean Group Additional data: USGS EROS Data Center (topography); USGS Terrestrial Remote Sensing Flagstaff Field Center (Antarctica); Defense Meteorological Satellite Program (city lights). - NASA Visible Earth: Blue Marble: Land Surface, Shallow Water, and Shaded Topography, Public Domain, https://commons.wikimedia.org/w/index.php?curid=50497070
 MoonNASA.jpg - https://svs.gsfc.nasa.gov/4720/
 Mars.png - https://commons.wikimedia.org/wiki/File:Tianwen-1_Mars_Global_Color_Orthomosaic_(HX1_GRAS_MoRIC_DOM_076m_Global_00N00E_A).png
+GDAL_Satellite.svg - By GDAL Team - File:GDALLogoColor.svg, CC BY-SA 3.0, https://commons.wikimedia.org/w/index.php?curid=9457393
+NightEarth.tif - By NASA - https://visibleearth.nasa.gov/images/55167/earths-city-lights, Public Domain, https://commons.wikimedia.org/w/index.php?curid=88538877
+GSAT_Satellite.png - By Indian Space Research Organisation (GODL-India), GODL-India, https://commons.wikimedia.org/w/index.php?curid=85863563
+Shuttle.gif - Public Domain, https://commons.wikimedia.org/w/index.php?curid=312940
+Noun_Satellite.svg - By Jose Luis Algara - Noun Project - https://thenounproject.com/icon/3485, CC0, https://commons.wikimedia.org/w/index.php?curid=67123100
