@@ -1,0 +1,26 @@
+[
+  {
+    "name": "Earth",
+    "positionX": "0.000000",
+    "positionY": "0.000000",
+    "positionZ": "0.000000",
+    "velocityX": "0.000000",
+    "velocityY": "0.000000",
+    "velocityZ": "0.000000",
+    "mass": "5973600000000000000000000",
+    "radius": "6371000.000000",
+    "texturePath": "qrc:/Bodies/content/images/Blue_Marble_2002.png"
+  },
+  {
+    "name": "Satellite",
+    "positionX": "0.000000",
+    "positionY": "0.000000",
+    "positionZ": "6571000.000000",
+    "velocityX": "7800.000000",
+    "velocityY": "0.000000",
+    "velocityZ": "0.000000",
+    "mass": "10.000000",
+    "radius": "1000.000000",
+    "texturePath": "qrc:/Objects/content/images/Noun_Satellite.svg"
+  }
+]

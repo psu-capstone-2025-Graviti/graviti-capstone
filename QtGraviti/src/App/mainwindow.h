@@ -6,6 +6,7 @@
 #include <QPushButton>
 #include <QLineEdit>
 #include <QStandardItemModel>
+#include <atomic>
 
 namespace Ui {
 class MainWindow;
@@ -39,10 +40,13 @@ public:
 private:
     void updateRender(int sphereCount = 1);
     void updateEntityList();
+    void updateFollowCombo();
     Ui::MainWindow *ui;
     SimulationController* m_controller;
     TrajectoryRenderer* m_renderer;
     QStandardItemModel* m_entityModel;
+    std::atomic<bool> m_updateScheduled;
+    bool m_isRunning = false;
 };
 
 #endif // MAINWINDOW_H

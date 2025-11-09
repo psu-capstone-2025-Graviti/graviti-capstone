@@ -21,13 +21,32 @@ SimulationController::~SimulationController()
 {
 }
 
-void SimulationController::startSimulation(int numSteps, float tickDuration)
+void SimulationController::startSimulation(int numSteps, float tickDuration, int simulationScalar)
 {
-	m_env.run(numSteps, tickDuration);
+	//m_env.run(numSteps, tickDuration);
+	m_env.setTimestepSize(tickDuration);
+	m_env.setSimulationScalar(simulationScalar);
+	m_env.run();
+}
+
+void SimulationController::setUpdateFunction(std::function<void()> updatefunc)
+{
+	m_env.setUpdateFunction(updatefunc);
+}
+
+void SimulationController::pauseSimulation()
+{
+	m_env.pause();
+}
+
+void SimulationController::resumeSimulation()
+{
+	m_env.run();
 }
 
 void SimulationController::resetSimulation()
 {
+	m_env.pause();
 	m_env.resetSimulation();
 }
 void SimulationController::clearEntities()
@@ -73,7 +92,7 @@ void SimulationController::createEntity(const std::string& name, float posX, flo
 	entityState.setVelocity(Y, velY);
 	entityState.setVelocity(Z, velZ);
 	entityState.setMass(mass);
-	entityState.setRadius(0.2f); // Default radius
+	//entityState.setRadius(1.0f);
 
 	newEntity.setOrigin(entityState);
 	entityManager->addEntity(newEntity);

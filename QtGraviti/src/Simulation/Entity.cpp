@@ -28,7 +28,9 @@ Entity::Entity(std::shared_ptr<IPhysicsEngine>& engine)
     m_timestep(0.0f),
     m_file(nullptr),
     m_origin(),
-    m_origin_set(false)
+    m_origin_set(false),
+    m_destroyed(false),
+    m_tobedestroyed(false) //We need to delay entity destruction to gurantee that simulations are consistent
 {
     m_engine = engine;
 
@@ -85,6 +87,8 @@ PhysicalState Entity::getOrigin() const
 void Entity::resetToOrigin()
 {
     setOrigin(m_origin);
+    m_tobedestroyed = false;
+    m_destroyed = false;
 }
 
 PhysicalState* Entity::getPhysicalState()
@@ -102,6 +106,11 @@ bool Entity::Simulate(float duration)
     if (!m_origin_set)
     {
         setOrigin(m_current_state);
+    }
+
+    if (m_destroyed)
+    {
+        return true; //Don't update a destroyed entity
     }
     setTimestep(duration);
     // Store current state in past trajectory before simulation
@@ -206,3 +215,21 @@ std::string Entity::getTexturePath() const
 //{
 //    return m_fi_repr;
 //}
+
+void Entity::setEntityForDistruction()
+{
+    m_tobedestroyed = true;
+}
+
+void Entity::updateEntityDistruction()
+{
+    if (m_tobedestroyed)
+    {
+        m_destroyed = true;
+    }
+}
+
+bool Entity::isunAlive()
+{
+    return m_destroyed;
+}

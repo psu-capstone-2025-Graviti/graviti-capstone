@@ -3,6 +3,7 @@
 #include "TrajectoryRenderer.h"
 #include "controllers/SimulationControl.h"
 #include "controllers/EntityListController.h"
+#include "GravitiLib/EntityManager.h"
 #include <QQuickWidget>
 #include <QUrl>
 #include <QDebug>
@@ -11,6 +12,7 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QAction>
+#include <QQuickItem>
 
 MainWindow::MainWindow(TrajectoryRenderer* trajectoryRenderer, SimulationController* controller, QWidget *parent)
     : QMainWindow(parent)
@@ -18,6 +20,7 @@ MainWindow::MainWindow(TrajectoryRenderer* trajectoryRenderer, SimulationControl
     , m_controller(controller)
     , m_renderer(trajectoryRenderer)
     , m_entityModel(nullptr)
+    , m_updateScheduled(false)
 {
     ui->setupUi(this);
 
@@ -28,6 +31,7 @@ MainWindow::MainWindow(TrajectoryRenderer* trajectoryRenderer, SimulationControl
     if (controller) {
         ui->quickWidget->rootContext()->setContextProperty("simController", controller);
     }
+    ui->quickWidget->rootContext()->setContextProperty("followEntityName", QString(""));
 
     //Set 3D view to the main qml file
     ui->quickWidget->setSource(QUrl("qrc:/sources/src/App/qml/main.qml"));
@@ -51,6 +55,14 @@ MainWindow::MainWindow(TrajectoryRenderer* trajectoryRenderer, SimulationControl
 
     updateEntityList();
     updateRender();
+
+    // Populate follow combo and connect selection
+    updateFollowCombo();
+    connect(ui->followCombo, &QComboBox::currentTextChanged, this, [this](const QString& text) {
+        const QString value = (text == "None") ? QString("") : text;
+        m_renderer->lockCameraEntity(value.toStdString());
+        m_renderer->updateEntitySpheres();
+    });
 }
 
 MainWindow::~MainWindow()
@@ -65,8 +77,9 @@ QQmlContext* MainWindow::rootContext()
 
 void MainWindow::updateRender(int sphereCount)
 {
-    m_renderer->convertTrajectoriesToSpheres(sphereCount, 0.01f);
-    m_renderer->addEntityOrigins(0.2f);
+    //m_renderer->convertTrajectoriesToSpheres(sphereCount, 0.01f);
+    //m_renderer->addEntityOrigins(0.2f);
+    m_renderer->updateEntitySpheres();
 }
 
 void MainWindow::updateEntityList()
@@ -75,6 +88,7 @@ void MainWindow::updateEntityList()
         return;
     }
     EntityListController::updateEntityList(m_entityModel);
+    updateFollowCombo();
 }
 
 void MainWindow::refreshEntityList()
@@ -88,14 +102,37 @@ void MainWindow::onStartSimulationClicked()
         return;
     }
 
-    // Get values from the line edit fields
-    int numSteps = ui->lineEdit_10->text().toInt();
-    float tickDuration = ui->lineEdit_9->text().toFloat();
-    int spheresPerEntity = ui->lineEdit_11->text().toInt();
+    if (!m_isRunning) {
+        // Get values from the line edit fields
+        int numSteps = ui->lineEdit_10->text().toInt();
+        float tickDuration = ui->lineEdit_9->text().toFloat();
+        int spheresPerEntity = ui->lineEdit_11->text().toInt();
+        int simScalar = ui->lineEdit_12->text().toInt();
 
-    // Call the simulation with the parameters
-    m_controller->startSimulation(numSteps, tickDuration);
-    updateRender(spheresPerEntity);
+        // Ensure that dependency injection update function is stored
+        m_controller->setUpdateFunction([this, spheresPerEntity] {
+            if (m_updateScheduled.load())
+            {
+                return;
+            }
+            m_updateScheduled.store(true);
+            QMetaObject::invokeMethod(this, [this, spheresPerEntity] {
+                updateRender(spheresPerEntity);
+                updateEntityList();
+                m_updateScheduled.store(false);
+            }, Qt::QueuedConnection);
+        });
+
+        // Start (or resume) simulation
+        m_isRunning = true;
+        m_controller->startSimulation(numSteps, tickDuration, simScalar);
+        ui->pushButton->setText("Pause Simulation");
+    } else {
+        // Pause simulation
+        m_controller->pauseSimulation();
+        m_isRunning = false;
+        ui->pushButton->setText("Resume Simulation");
+    }
 
 }
 
@@ -107,16 +144,40 @@ void MainWindow::onResetSimulationClicked()
     m_controller->resetSimulation();
     updateRender();
     updateEntityList();
+    m_isRunning = false;
+    ui->pushButton->setText("Start Simulation");
 }
 
 void MainWindow::onClearEntitiesClicked()
 {
-    if (!m_controller) {
-        return;
-    }
     m_controller->clearEntities();
-    updateRender();
-    updateEntityList();
+    if (m_renderer) {
+        m_renderer->clearEntitySpheres();
+    }
+    onResetSimulationClicked();
+    // Reset follow selection
+    updateFollowCombo();
+    // Do not change running state; just refresh
+}
+
+void MainWindow::updateFollowCombo()
+{
+    QString previous = ui->followCombo->currentText();
+    ui->followCombo->clear();
+    ui->followCombo->addItem("None");
+
+    auto manager = EntityManager::getInstance();
+    auto entities = manager->getAllEntities();
+    if (entities) {
+        for (auto& e : *entities) {
+            ui->followCombo->addItem(QString::fromStdString(e.getEntityName()));
+        }
+    }
+
+    int index = ui->followCombo->findText(previous);
+    if (index >= 0 && previous != "None") {
+        ui->followCombo->setCurrentIndex(index);
+    }
 }
 
 void MainWindow::onAddEntityClicked()

@@ -4,10 +4,17 @@
         <file>src/App/qml/main.qml</file>
         <file>src/App/qml/SimulationView.qml</file>
     </qresource>
-    <qresource prefix="/">
+    <qresource prefix="/Bodies">
         <file>content/images/HubbleDeepField.jpg</file>
         <file>content/images/Blue_Marble_2002.png</file>
         <file>content/images/MoonNASA.jpg</file>
         <file>content/images/Mars.png</file>
+        <file>content/images/NightEarth.tif</file>
+    </qresource>
+    <qresource prefix="/Objects">
+        <file>content/images/GDAL_Satellite.svg</file>
+        <file>content/images/GSAT_Satellite.png</file>
+        <file>content/images/Noun_Satellite.svg</file>
+        <file>content/images/Shuttle.gif</file>
     </qresource>
 </RCC>

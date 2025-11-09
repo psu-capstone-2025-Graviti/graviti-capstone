@@ -54,7 +54,17 @@ public:
 
 	//void setFlatIconRepr(std::shared_ptr< FlatIcon > flatIcon);
 	//std::shared_ptr< FlatIcon > setFlatIconRepr();
+
+	void setEntityForDistruction();
+
+	void updateEntityDistruction();
+
+	bool isunAlive();
+
 private:
+	bool m_destroyed;
+	bool m_tobedestroyed;
+
 	std::ofstream* m_file;
 	std::string m_entity_name;
 

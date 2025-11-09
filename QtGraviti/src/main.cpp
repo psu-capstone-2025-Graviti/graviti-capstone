@@ -20,11 +20,14 @@ int main(int argc, char* argv[])
     qmlRegisterType<TrajectoryRenderer>("GravitiLib", 1, 0, "TrajectoryRenderer");
     qmlRegisterType<TrajectorySphere>("GravitiLib", 1, 0, "TrajectorySphere");
     qmlRegisterType<EntitySphere>("GravitiLib", 1, 0, "EntitySphere");
+    qmlRegisterType<FlatEntity>("GravitiLib", 1, 0, "FlatEntity");
 
     // Run batch simulation
     SimulationController controller;
     //controller.initializeThreeBody();
-    controller.initialize_json_body("EntityJsons/test1.json");
+
+    controller.initialize_json_body("EntityJsons/LEO.json");
+
     //controller.startSimulation(10000, 0.01);
     // csvs written to C:\Users\shado\source\repos\PSU-Graviti\QtGraviti\out\build\debug
 
