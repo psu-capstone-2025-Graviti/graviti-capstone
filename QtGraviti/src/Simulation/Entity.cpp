@@ -4,6 +4,21 @@
 #include <string>
 
 
+Entity::Entity()
+    : m_current_state(),
+    m_entity_name("TEST"),
+    m_future_trajectory(),
+    m_past_trajectory(),
+    m_entityid(0),
+    m_timestep(0.0f),
+    m_file(nullptr),
+    m_origin(),
+    m_origin_set(false)
+{
+	//if entity not specified, no physics engine; assume inherit from another entity
+    m_engine = NULL;
+}
+
 Entity::Entity(std::shared_ptr<IPhysicsEngine>& engine)
     : m_current_state(),
     m_entity_name("TEST"),
@@ -23,10 +38,10 @@ Entity::Entity(std::shared_ptr<IPhysicsEngine>& engine)
 
 Entity::~Entity()
 {
-    if (m_file) {
+    /*if (m_file) {
         m_file->close();
         delete m_file;
-    }
+    }*/
 }
 
 void Entity::setEntityName(std::string entity_name)
@@ -169,12 +184,13 @@ void Entity::saveCurrentStateToCSV(void)
     if (!m_file) {
         m_file = new std::ofstream(filename);
         if (m_file->is_open()) {
-            *m_file << "x,y,z\n";
+            *m_file << "time,x,y,z\n";
         }
     }
 
     if (m_file && m_file->is_open()) {
-        *m_file << getPhysicalState()->getPosition(X) << ","
+		*m_file << getPhysicalState()->getTimestamp() << ","
+                << getPhysicalState()->getPosition(X) << ","
                 << getPhysicalState()->getPosition(Y) << ","
                 << getPhysicalState()->getPosition(Z) << "\n";
         m_file->flush();

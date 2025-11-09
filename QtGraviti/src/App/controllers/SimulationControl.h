@@ -25,6 +25,8 @@ public:
     void initializeThreeBody();
 
     void startSimulation(int numSteps, float tickDuration, int simulationScalar = 1);
+	Entity optimizeTrajectory(Entity Projectile, Vec3 targetPosition, int numSteps, float tickDuration);
+
     void resetSimulation();
     void clearEntities();
     void createEntity(const std::string& name, float posX, float posY, float posZ,

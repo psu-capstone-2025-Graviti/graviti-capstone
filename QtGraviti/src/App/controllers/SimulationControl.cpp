@@ -6,6 +6,7 @@
 #include "rapidjson/filereadstream.h"
 #include "rapidjson/filewritestream.h"
 #include "rapidjson/writer.h"
+#include "OptimizationController.h"
 
 
 SimulationController::SimulationController(QObject* parent)
@@ -54,6 +55,26 @@ void SimulationController::clearEntities()
 	entityManager->clearEntities();
 }
 
+Entity SimulationController::optimizeTrajectory(Entity projectile, Vec3 targetPosition, int numSteps, float tickDuration)
+{
+	auto entitiesPtr = EntityManager::getInstance()->getAllEntities();
+	const std::vector<Entity>& Entities = *entitiesPtr;
+
+	OptimizationController optimizer;
+	optimizer.LoadEntities(Entities);
+	optimizer.LoadProjectile(projectile);
+	optimizer.LoadTarget(targetPosition);
+
+	int numberofIterations =1;
+
+	optimizer.optimize(numSteps, tickDuration, numberofIterations);
+
+	return optimizer.getBestEntity();
+
+
+	// Placeholder for trajectory optimization logic
+}
+
 void SimulationController::createEntity(const std::string& name, float posX, float posY, float posZ, 
                                      float velX, float velY, float velZ, float mass)
 {
@@ -76,6 +97,7 @@ void SimulationController::createEntity(const std::string& name, float posX, flo
 	newEntity.setOrigin(entityState);
 	entityManager->addEntity(newEntity);
 }
+
 
 
 void SimulationController::initialize_json_body(std::string filepathjsonPath)
@@ -164,6 +186,8 @@ void SimulationController::initializeThreeBody()
 	moon2.setOrigin(moon2State);
 	entityManager->addEntity(moon2);
 }
+
+
 
 void SimulationController::saveEntitiesAsJson(std::string filepathjsonPath)
 {

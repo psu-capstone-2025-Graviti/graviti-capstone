@@ -161,6 +161,7 @@ void PhysicalState::setTimestamp(const float timestamp)
 
 void PhysicalState::integrate(float timestep)
 {
+	auto oldtime = getTimestamp();
 	auto oldPosition = getPosition();
     auto vel = getVelocity();
     auto acc = getAcceleration();
@@ -172,6 +173,7 @@ void PhysicalState::integrate(float timestep)
     setVelocity({vel.x + acc.x * timestep,
 				 vel.y + acc.y * timestep,
 		         vel.z + acc.z * timestep });
+    setTimestamp(oldtime + timestep);
 
 }
 
@@ -190,13 +192,13 @@ void PhysicalState::writepositionCSV(const std::string& name)
 
         if (!file_opened) {
             file.open(filename, std::ios::out);
-            file << "x,y,z\n";
+            file << "time,x,y,z\n";
         }
         else {
             file.open(filename, std::ios::app);
             file_opened = true;
         }
-        file << m_position.x << "," << m_position.y << "," << m_position.z << "\n";
+        file << m_timestamp <<"," << m_position.x << "," << m_position.y << "," << m_position.z << "\n";
         file.close();
 
     

@@ -68,6 +68,8 @@ void NBodyPhysics::updatePosition(float duration, Entity& callingEntity)
         return;
     }
 
+	auto oldtime = callingEntity.getPhysicalState()->getTimestamp();
+
     auto state = callingEntity.getPhysicalState();
     auto oldPosition = state->getPosition();
     auto vel = state->getVelocity();
@@ -87,6 +89,7 @@ void NBodyPhysics::updatePosition(float duration, Entity& callingEntity)
                          vel.y + acc.y * duration,
                          vel.z + acc.z * duration });
 
-    
+	state->setTimestamp(oldtime + duration);
+
 }
 
