@@ -41,6 +41,7 @@ private:
     void updateRender(int sphereCount = 1);
     void updateEntityList();
     void updateFollowCombo();
+    void updateParentCombo();
     Ui::MainWindow *ui;
     SimulationController* m_controller;
     TrajectoryRenderer* m_renderer;

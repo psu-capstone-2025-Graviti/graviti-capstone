@@ -14,6 +14,8 @@
 #include <QAction>
 #include <QQuickItem>
 
+const float PI = 3.14159265358979323846;
+
 MainWindow::MainWindow(TrajectoryRenderer* trajectoryRenderer, SimulationController* controller, QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -89,6 +91,7 @@ void MainWindow::updateEntityList()
     }
     EntityListController::updateEntityList(m_entityModel);
     updateFollowCombo();
+    updateParentCombo();
 }
 
 void MainWindow::refreshEntityList()
@@ -180,44 +183,127 @@ void MainWindow::updateFollowCombo()
     }
 }
 
+void MainWindow::updateParentCombo()
+{
+    QString previous = ui->comboBox->currentText();
+    ui->comboBox->clear();
+
+    auto manager = EntityManager::getInstance();
+    auto entities = manager->getAllEntities();
+    if (entities) {
+        for (auto& e : *entities) {
+            ui->comboBox->addItem(QString::fromStdString(e.getEntityName()));
+        }
+    }
+
+    int index = ui->comboBox->findText(previous);
+    if (index >= 0) {
+        ui->comboBox->setCurrentIndex(index);
+    }
+}
+
 void MainWindow::onAddEntityClicked()
 {
     if (!m_controller) {
         return;
     }
 
-    // Get values from the form fields
-    QString name = ui->lineEdit->text();
-    if (name.isEmpty()) {
-        // Could add error handling here
-        return;
+    // Determine which Add Entity tab is active
+    int addTabIndex = ui->tabWidget_2->currentIndex();
+    if (addTabIndex == 0) {
+        // Absolute Position tab
+        QString name = ui->lineEdit->text();
+        if (name.isEmpty()) {
+            return;
+        }
+
+        float posX = ui->lineEdit_5->text().toFloat();
+        float posY = ui->lineEdit_4->text().toFloat();
+        float posZ = ui->lineEdit_6->text().toFloat();
+
+        float velX = ui->lineEdit_7->text().toFloat();
+        float velY = ui->lineEdit_3->text().toFloat();
+        float velZ = ui->lineEdit_2->text().toFloat();
+
+        float mass = ui->lineEdit_8->text().toFloat();
+
+        m_controller->createEntity(name.toStdString(), posX, posY, posZ, velX, velY, velZ, mass);
+
+        // Clear absolute fields
+        ui->lineEdit->clear();
+        ui->lineEdit_5->clear();
+        ui->lineEdit_4->clear();
+        ui->lineEdit_6->clear();
+        ui->lineEdit_7->clear();
+        ui->lineEdit_3->clear();
+        ui->lineEdit_2->clear();
+        ui->lineEdit_8->clear();
+    } else {
+        // Relative Position tab
+        QString name = ui->lineEdit_16->text();
+        if (name.isEmpty()) {
+            return;
+        }
+
+        QString parentName = ui->comboBox->currentText();
+        auto manager = EntityManager::getInstance();
+        auto entities = manager->getAllEntities();
+        if (!entities || entities->empty()) {
+            return;
+        }
+
+        // Match names
+        Entity* parentEntityPtr = nullptr;
+        for (auto& e : *entities) {
+            if (QString::fromStdString(e.getEntityName()) == parentName) {
+                parentEntityPtr = &e;
+                break;
+            }
+        }
+        if (!parentEntityPtr) {
+            return;
+        }
+
+        auto parentState = parentEntityPtr->getPhysicalState();
+        Vec3 parentPos = parentState->getPosition();
+        Vec3 parentVel = parentState->getVelocity();
+        float parentMass = parentState->getMass();
+
+        float altitude = ui->lineEdit_13->text().toFloat();
+        float inclinationDeg = ui->lineEdit_14->text().toFloat();
+        float velocityValue = ui->lineEdit_15->text().toFloat();
+
+        float r = altitude;
+
+        // Build inclined orbit geometry:
+        // Start radius along +Y, rotate around X by inclination
+        float rad = inclinationDeg * (PI / 180.0f);
+        float cosI = std::cos(rad);
+        float sinI = std::sin(rad);
+
+        Vec3 rRel = { 0.0f, r * cosI, r * sinI };
+        Vec3 vRel = { velocityValue, 0.0f, 0.0f };
+
+        float posX = parentPos.x + rRel.x;
+        float posY = parentPos.y + rRel.y;
+        float posZ = parentPos.z + rRel.z;
+
+        float velX = parentVel.x + vRel.x;
+        float velY = parentVel.y + vRel.y;
+        float velZ = parentVel.z + vRel.z;
+
+        // TODO - add mass field to relative tab
+        float mass = 1.0e10f;
+
+        m_controller->createEntity(name.toStdString(), posX, posY, posZ, velX, velY, velZ, mass);
+
+        // Clear relative fields
+        ui->lineEdit_16->clear();
+        ui->lineEdit_13->clear();
+        ui->lineEdit_14->clear();
+        ui->lineEdit_15->clear();
     }
 
-    // Get position values
-    float posX = ui->lineEdit_5->text().toFloat();
-    float posY = ui->lineEdit_4->text().toFloat();
-    float posZ = ui->lineEdit_6->text().toFloat();
-
-    // Get velocity values
-    float velX = ui->lineEdit_7->text().toFloat();
-    float velY = ui->lineEdit_3->text().toFloat();
-    float velZ = ui->lineEdit_2->text().toFloat();
-
-    // Get mass value
-    float mass = ui->lineEdit_8->text().toFloat();
-
-    // Add the entity through the controller
-    m_controller->createEntity(name.toStdString(), posX, posY, posZ, velX, velY, velZ, mass);
-
-    // Clear the form fields after adding
-    ui->lineEdit->clear();
-    ui->lineEdit_5->clear();
-    ui->lineEdit_4->clear();
-    ui->lineEdit_6->clear();
-    ui->lineEdit_7->clear();
-    ui->lineEdit_3->clear();
-    ui->lineEdit_2->clear();
-    ui->lineEdit_8->clear();
     updateRender();
     updateEntityList();
 }
