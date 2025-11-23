@@ -42,6 +42,7 @@ public:
     int trajectorySphereCount() const;
     int entitySphereCount() const;
     int flatEntityCount() const;
+
     TrajectorySphere* trajectorySphereAt(int index) const;
     EntitySphere* entitySphereAt(int index) const;
 
@@ -50,7 +51,6 @@ public:
     void addEntityOrigins(float originScale);
 
     void lockCameraEntity(std::string EntityName);
-    void clearCameraEntity();
     QVector3D camPosition();
 
     // Create a sphere per entity if missing; otherwise update its position/scale
@@ -69,11 +69,14 @@ private:
     QList<TrajectorySphere*> m_trajectorySpheres;
     QList<EntitySphere*> m_entitySpheres;
     QList<FlatEntity*> m_flatEntities;
-
-    void resetSpheres();
-
     std::string locked_entity;
     QVector3D m_camPosition;
+    bool resetCameraOnce = false;
+
+
+    void resetSpheres();
+    void clearCameraEntity();
+
 };
 
 class FlatEntity : public QObject

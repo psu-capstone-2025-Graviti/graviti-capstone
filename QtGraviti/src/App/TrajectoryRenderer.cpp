@@ -299,11 +299,16 @@ void TrajectoryRenderer::lockCameraEntity(std::string EntityName)
     {
         locked_entity = EntityName;
     }
+    if (EntityName == "" || EntityName == "None")
+    {
+        clearCameraEntity();
+    }
 }
 
 void TrajectoryRenderer::clearCameraEntity()
 {
     locked_entity = "";
+    resetCameraOnce = true;
 }
 
 QVector3D TrajectoryRenderer::camPosition()
@@ -458,8 +463,10 @@ void TrajectoryRenderer::updateEntitySpheres()
         emit entitySpheresChanged();
     }
 
-    if (!camEntityFound)
+
+    if (!camEntityFound && resetCameraOnce)
     {
+        resetCameraOnce = false;
         m_camPosition = QVector3D(0, 0, 0);
     }
 
