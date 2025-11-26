@@ -283,19 +283,19 @@ void MainWindow::onAddOptimizedEntityClicked()
 
 
     Vec3 targetPosition = { targetX, targetY, targetZ };
-    int timeSteps = 5000;
-    float timeStepSize = 0.1f;
 
-    auto newEntity=m_controller->optimizeTrajectory(projectile, initialPosition, steps, tick, numIter);
+    Entity OptEnt =m_controller->optimizeTrajectory(projectile, targetPosition, steps, tick, numIter);
+
+
     // Add the entity through the controller
-    m_controller->createEntity(newEntity.getEntityName(), 
-        newEntity.getPhysicalState()->getPosition().x, 
-        newEntity.getPhysicalState()->getPosition().y, 
-        newEntity.getPhysicalState()->getPosition().z, 
-        newEntity.getPhysicalState()->getVelocity().x, 
-        newEntity.getPhysicalState()->getVelocity().y, 
-        newEntity.getPhysicalState()->getVelocity().z, 
-        newEntity.getPhysicalState()->getMass());
+    m_controller->createEntity(OptEnt.getEntityName(),
+        OptEnt.getPhysicalState()->getPosition().x,
+        OptEnt.getPhysicalState()->getPosition().y,
+        OptEnt.getPhysicalState()->getPosition().z,
+        OptEnt.getPhysicalState()->getVelocity().x,
+        OptEnt.getPhysicalState()->getVelocity().y,
+        OptEnt.getPhysicalState()->getVelocity().z,
+        OptEnt.getPhysicalState()->getMass());
     // Clear the form fields after adding
     ui->optimizedName->clear();
     ui->optimizedPosX->clear();

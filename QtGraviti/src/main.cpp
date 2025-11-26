@@ -26,7 +26,7 @@ int main(int argc, char* argv[])
     SimulationController controller;
     //controller.initializeThreeBody();
 
-    controller.initialize_json_body("EntityJsons/LEO.json");
+    //controller.initialize_json_body("EntityJsons/LEO.json");
 
     //controller.startSimulation(10000, 0.01);
     // csvs written to C:\Users\shado\source\repos\PSU-Graviti\QtGraviti\out\build\debug
