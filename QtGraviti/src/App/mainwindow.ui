@@ -79,10 +79,10 @@
      <property name="sizeConstraint">
       <enum>QLayout::SizeConstraint::SetNoConstraint</enum>
      </property>
-     <item>
+     <item alignment="Qt::AlignmentFlag::AlignHCenter">
       <widget class="QTabWidget" name="tabWidget">
        <property name="currentIndex">
-        <number>4</number>
+        <number>3</number>
        </property>
        <widget class="QWidget" name="viewentitiesTab">
         <property name="sizePolicy">
@@ -426,136 +426,6 @@
         <attribute name="title">
          <string>AddOptimizedEntity</string>
         </attribute>
-        <widget class="QWidget" name="layoutWidget">
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>40</y>
-           <width>473</width>
-           <height>156</height>
-          </rect>
-         </property>
-         <layout class="QFormLayout" name="formLayout_7">
-          <item row="0" column="0">
-           <widget class="QLabel" name="label_35">
-            <property name="text">
-             <string>Name</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QLineEdit" name="optimizedName"/>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="label_36">
-            <property name="text">
-             <string>Position</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="label_40">
-            <property name="text">
-             <string>Velocity</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QFrame" name="frame_12">
-            <property name="frameShape">
-             <enum>QFrame::Shape::StyledPanel</enum>
-            </property>
-            <property name="frameShadow">
-             <enum>QFrame::Shadow::Raised</enum>
-            </property>
-            <layout class="QHBoxLayout" name="horizontalLayout_9">
-             <item>
-              <widget class="QLabel" name="label_41">
-               <property name="text">
-                <string>vX</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="optimizedVelX"/>
-             </item>
-             <item>
-              <widget class="QLabel" name="label_42">
-               <property name="text">
-                <string>vY</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="optimizedVelY"/>
-             </item>
-             <item>
-              <widget class="QLabel" name="label_43">
-               <property name="text">
-                <string>vZ</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="optimizedVelZ"/>
-             </item>
-            </layout>
-           </widget>
-          </item>
-          <item row="3" column="0">
-           <widget class="QLabel" name="label_44">
-            <property name="text">
-             <string>Mass (kG)</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="1">
-           <widget class="QLineEdit" name="optimizedMass"/>
-          </item>
-          <item row="1" column="1">
-           <widget class="QFrame" name="frame_11">
-            <property name="frameShape">
-             <enum>QFrame::Shape::StyledPanel</enum>
-            </property>
-            <property name="frameShadow">
-             <enum>QFrame::Shadow::Raised</enum>
-            </property>
-            <layout class="QHBoxLayout" name="horizontalLayout_8">
-             <item>
-              <widget class="QLabel" name="label_37">
-               <property name="text">
-                <string>X</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="optimizedPosX"/>
-             </item>
-             <item>
-              <widget class="QLabel" name="label_38">
-               <property name="text">
-                <string>Y</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="optimizedPosY"/>
-             </item>
-             <item>
-              <widget class="QLabel" name="label_39">
-               <property name="text">
-                <string>Z</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="lineEdit_13"/>
-             </item>
-            </layout>
-           </widget>
-          </item>
-         </layout>
-        </widget>
         <widget class="QPushButton" name="AddOptimizedEntity">
          <property name="geometry">
           <rect>
@@ -574,7 +444,7 @@
           <rect>
            <x>112</x>
            <y>220</y>
-           <width>371</width>
+           <width>396</width>
            <height>44</height>
           </rect>
          </property>
@@ -633,9 +503,9 @@
         <widget class="QWidget" name="layoutWidget_2">
          <property name="geometry">
           <rect>
-           <x>230</x>
-           <y>280</y>
-           <width>243</width>
+           <x>10</x>
+           <y>350</y>
+           <width>227</width>
            <height>138</height>
           </rect>
          </property>
@@ -702,6 +572,140 @@
              <string>2000</string>
             </property>
            </widget>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="layoutWidget">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>40</y>
+           <width>475</width>
+           <height>158</height>
+          </rect>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_7">
+          <item>
+           <layout class="QFormLayout" name="formLayout_7">
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_35">
+              <property name="text">
+               <string>Name</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QLineEdit" name="optimizedName"/>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="label_36">
+              <property name="text">
+               <string>Position</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="label_40">
+              <property name="text">
+               <string>Velocity</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QFrame" name="frame_12">
+              <property name="frameShape">
+               <enum>QFrame::Shape::StyledPanel</enum>
+              </property>
+              <property name="frameShadow">
+               <enum>QFrame::Shadow::Raised</enum>
+              </property>
+              <layout class="QHBoxLayout" name="horizontalLayout_9">
+               <item>
+                <widget class="QLabel" name="label_41">
+                 <property name="text">
+                  <string>vX</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="optimizedVelX"/>
+               </item>
+               <item>
+                <widget class="QLabel" name="label_42">
+                 <property name="text">
+                  <string>vY</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="optimizedVelY"/>
+               </item>
+               <item>
+                <widget class="QLabel" name="label_43">
+                 <property name="text">
+                  <string>vZ</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="optimizedVelZ"/>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item row="3" column="0">
+             <widget class="QLabel" name="label_44">
+              <property name="text">
+               <string>Mass (kG)</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="1">
+             <widget class="QLineEdit" name="optimizedMass"/>
+            </item>
+            <item row="1" column="1">
+             <widget class="QFrame" name="frame_11">
+              <property name="frameShape">
+               <enum>QFrame::Shape::StyledPanel</enum>
+              </property>
+              <property name="frameShadow">
+               <enum>QFrame::Shadow::Raised</enum>
+              </property>
+              <layout class="QHBoxLayout" name="horizontalLayout_8">
+               <item>
+                <widget class="QLabel" name="label_37">
+                 <property name="text">
+                  <string>X</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="optimizedPosX"/>
+               </item>
+               <item>
+                <widget class="QLabel" name="label_38">
+                 <property name="text">
+                  <string>Y</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="optimizedPosY"/>
+               </item>
+               <item>
+                <widget class="QLabel" name="label_39">
+                 <property name="text">
+                  <string>Z</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="optimizedPosZ"/>
+               </item>
+              </layout>
+             </widget>
+            </item>
+           </layout>
           </item>
          </layout>
         </widget>

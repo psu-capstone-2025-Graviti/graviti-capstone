@@ -13,6 +13,8 @@
 #include <QMessageBox>
 #include <QAction>
 #include <QQuickItem>
+#include "GravitiLib/Entity.h"
+#include "GravitiLib/NBodyEngine.h"
 
 MainWindow::MainWindow(TrajectoryRenderer* trajectoryRenderer, SimulationController* controller, QWidget *parent)
     : QMainWindow(parent)
@@ -41,6 +43,7 @@ MainWindow::MainWindow(TrajectoryRenderer* trajectoryRenderer, SimulationControl
     connect(ui->pushButton_2, &QPushButton::clicked, this, &MainWindow::onResetSimulationClicked);
     connect(ui->pushButton_3, &QPushButton::clicked, this, &MainWindow::onClearEntitiesClicked);
     connect(ui->AddEntity, &QPushButton::clicked, this, &MainWindow::onAddEntityClicked);
+    connect(ui->AddOptimizedEntity, &QPushButton::clicked, this, &MainWindow::onAddOptimizedEntityClicked);
     connect(ui->actionSave_Entities, &QAction::triggered, this, &MainWindow::onSaveEntitiesClicked);
     connect(ui->actionLoad_Entities, &QAction::triggered, this, &MainWindow::onLoadEntitiesClicked);
 
@@ -267,7 +270,7 @@ void MainWindow::onAddOptimizedEntityClicked()
 
 	Vec3 initialPosition = { posX, posY, posZ };
     Entity projectile(physicsEngine);
-    projectile.setEntityName("ToOptimize");
+    projectile.setEntityName(name.toStdString());
     auto entityState = projectile.getPhysicalState();
     entityState->setPosition(X, posX);
     entityState->setPosition(Y, posY);
@@ -304,11 +307,11 @@ void MainWindow::onAddOptimizedEntityClicked()
     ui->optimizedTargetX->clear();
     ui->optimizedTargetY->clear();
     ui->optimizedTargetZ->clear();
-    ui->OptimizedRadius->clear();
+    ui->OptimizedRadius->setText("2000");
     ui->optimizedMass->clear();
-    ui->OptimizeTick->clear();
-    ui->OptimizedSteps->clear();
-    ui->NumIter->clear();
+    ui->OptimizeTick->setText("0.01");
+    ui->OptimizedSteps->setText("10000");
+    ui->NumIter->setText("5");
     updateRender();
     updateEntityList();
 }
