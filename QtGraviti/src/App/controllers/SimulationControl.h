@@ -25,7 +25,7 @@ public:
     void initializeThreeBody();
 
     void startSimulation(int numSteps, float tickDuration, int simulationScalar = 1);
-	Entity optimizeTrajectory(Entity Projectile, Vec3 targetPosition, int numSteps, float tickDuration);
+	Entity optimizeTrajectory(Entity Projectile, Vec3 targetPosition, int numSteps, float tickDuration, int numIter);
 
     void resetSimulation();
     void clearEntities();
