@@ -32,6 +32,7 @@ private slots:
     void onAddEntityClicked();
     void onSaveEntitiesClicked();
     void onLoadEntitiesClicked();
+    void onBatchSimulationClicked();
 
 public:
     // Public method to update entity list from external calls

@@ -11,9 +11,9 @@ using namespace std::chrono;
 #define Z 2
 
 struct Vec3 {
-    float x;
-    float y;
-    float z;
+    double x;
+    double y;
+    double z;
 };
 
 class PhysicalState

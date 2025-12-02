@@ -39,7 +39,7 @@ void BatchSimEnvironment::run(const int totalTimeSteps, const float timeStep)
 		}
 		for (auto& entity : *entities) {
 			entity.TickForward();
-			entity.saveCurrentStateToCSV();
+			//entity.saveCurrentStateToCSV();
 		}
 		// Optional: Add progress output
 		if (step % 200 == 0) {

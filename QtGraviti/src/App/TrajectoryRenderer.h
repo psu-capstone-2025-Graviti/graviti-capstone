@@ -39,6 +39,8 @@ public:
     QQmlListProperty<EntitySphere> entitySpheres();
     QQmlListProperty<FlatEntity> flatEntities();
 
+    void resetSpheres(); //resets trajectory spheres
+
     int trajectorySphereCount() const;
     int entitySphereCount() const;
     int flatEntityCount() const;
@@ -74,7 +76,7 @@ private:
     bool resetCameraOnce = false;
 
 
-    void resetSpheres();
+
     void clearCameraEntity();
 
 };
@@ -140,7 +142,6 @@ public:
     QVector3D scale() const;
     QString materialColor() const;
     QString entityName() const;
-
     // Setters
     void setPosition(const QVector3D& position);
     void setScale(const QVector3D& scale);

@@ -35,6 +35,7 @@ Item {
         antialiasing: true
         environment: sceneEnvironment1
         camera: sceneCamera
+
         SceneEnvironment {
             id: sceneEnvironment1
             antialiasingQuality: SceneEnvironment.High
@@ -76,7 +77,6 @@ Item {
                         materials: [
                             PrincipledMaterial {
                                 baseColor: modelData.materialColor
-                                opacity: modelData.opacity
                             }
                         ]
                     }
@@ -206,7 +206,7 @@ Item {
         }
     }
 
-    property real cameraDistance: 350
+    property real cameraDistance: 3500
     property real cameraRotationX: 0
     property real cameraRotationY: 0
     property real zoomSpeed: 0.1

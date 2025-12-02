@@ -49,7 +49,7 @@
      <x>0</x>
      <y>0</y>
      <width>1600</width>
-     <height>24</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -240,6 +240,13 @@
              <widget class="QPushButton" name="pushButton_2">
               <property name="text">
                <string>Reset Simulation</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="batchButton">
+              <property name="text">
+               <string>Batch Simulate Future</string>
               </property>
              </widget>
             </item>

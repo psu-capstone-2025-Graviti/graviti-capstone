@@ -2,7 +2,7 @@
 
 #include <QObject>
 #include <functional>
-//#include "GravitiLib/BatchSimEnvironment.h"
+#include "GravitiLib/BatchSimEnvironment.h"
 #include "GravitiLib/RealTimeSimEnvironment.h"
 
 class SimulationController : public QObject
@@ -25,6 +25,9 @@ public:
     void initializeThreeBody();
 
     void startSimulation(int numSteps, float tickDuration, int simulationScalar = 1);
+    void bathProcessFuture(int numSteps, float tickDuration);
+    void clearFuture();
+
 	Entity optimizeTrajectory(Entity Projectile, Vec3 targetPosition, int numSteps, float tickDuration);
 
     void resetSimulation();
@@ -39,10 +42,13 @@ public:
 
 private:
 
+    // Snapshot of entity states captured before batch simulate
+    std::map<long, PhysicalState> m_batchStates;
+    bool m_hasBatchSnapshot = false;
 
     float cleanFloat(std::string value);
 
-    //BatchSimEnvironment m_env;
+    BatchSimEnvironment m_batchenv;
     RealTimeSimEnvironment m_env;
 
 };

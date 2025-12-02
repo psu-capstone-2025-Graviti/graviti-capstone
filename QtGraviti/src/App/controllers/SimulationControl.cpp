@@ -13,7 +13,6 @@ SimulationController::SimulationController(QObject* parent)
     : QObject(parent),
 	m_env()
 {
-    //m_entityList = new EntityListGUI(); //new? shared ptr?
 
 }
 
@@ -32,6 +31,41 @@ void SimulationController::startSimulation(int numSteps, float tickDuration, int
 void SimulationController::setUpdateFunction(std::function<void()> updatefunc)
 {
 	m_env.setUpdateFunction(updatefunc);
+}
+
+void SimulationController::bathProcessFuture(int numSteps, float tickDuration)
+{
+	auto manager = EntityManager::getInstance();
+	auto entities = manager->getAllEntities();
+
+	if (!m_hasBatchSnapshot) {
+		m_batchStates.clear();
+		for (auto& e : *entities) {
+			PhysicalState ps = *e.getPhysicalState();
+			m_batchStates.insert(std::pair<long, PhysicalState>(e.getEntityID(), ps));
+		}
+		m_hasBatchSnapshot = true;
+	}
+
+	m_batchenv.run(numSteps, tickDuration);
+}
+
+void SimulationController::clearFuture()
+{
+	if (m_hasBatchSnapshot)
+	{
+		auto manager = EntityManager::getInstance();
+		auto entities = manager->getAllEntities();
+		for (auto& entity : *entities) {
+			long id = entity.getEntityID();
+			auto val = m_batchStates.find(id);
+			if (val != m_batchStates.end())
+			{
+				*entity.getPhysicalState() = val->second;
+			}
+		}
+		m_hasBatchSnapshot = false;
+	}
 }
 
 void SimulationController::pauseSimulation()
