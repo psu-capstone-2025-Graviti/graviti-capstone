@@ -22,7 +22,7 @@ SimulationController::~SimulationController()
 
 void SimulationController::startSimulation(int numSteps, float tickDuration, int simulationScalar)
 {
-	//m_env.run(numSteps, tickDuration);
+	//TODO - numSteps no longer needed
 	m_env.setTimestepSize(tickDuration);
 	m_env.setSimulationScalar(simulationScalar);
 	m_env.run();
@@ -50,7 +50,7 @@ void SimulationController::bathProcessFuture(int numSteps, float tickDuration)
 	m_batchenv.run(numSteps, tickDuration);
 }
 
-void SimulationController::clearFuture()
+void SimulationController::resetBatch()
 {
 	if (m_hasBatchSnapshot)
 	{

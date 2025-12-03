@@ -107,7 +107,7 @@ void MainWindow::onStartSimulationClicked()
         int simScalar = ui->lineEdit_12->text().toInt();
 
         //Clear future trajectories when starting real time
-        m_controller->clearFuture();
+        m_controller->resetBatch();
         m_renderer->resetSpheres();
         updateRender(spheresPerEntity);
         updateEntityList();

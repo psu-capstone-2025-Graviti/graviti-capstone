@@ -26,7 +26,7 @@ public:
 
     void startSimulation(int numSteps, float tickDuration, int simulationScalar = 1);
     void bathProcessFuture(int numSteps, float tickDuration);
-    void clearFuture();
+    void resetBatch();
 
 	Entity optimizeTrajectory(Entity Projectile, Vec3 targetPosition, int numSteps, float tickDuration);
 
