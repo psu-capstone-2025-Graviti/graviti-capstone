@@ -4,11 +4,36 @@
 #include "GravitiLib/EntityManager.h"
 #include <QStandardItem>
 #include <QTreeView>
+#include <QDirIterator>
+
+static std::vector<std::string> textures;
 
 void EntityListController::setupEntityList(QStandardItemModel* model)
 {
     model->clear();
     model->setHorizontalHeaderLabels(QStringList() << "Property" << "Value");
+}
+
+std::vector<std::string> EntityListController::getTextureList()
+{
+    if (textures.size() == 0)
+    {
+        QDirIterator it1(":/Bodies/content/images", QDirIterator::Subdirectories);
+        while (it1.hasNext()) {
+            std::string s;
+            s.append("qrc");
+            s.append(it1.next().toStdString());
+            textures.push_back(s);
+        }
+        QDirIterator it2(":/Objects/content/images", QDirIterator::Subdirectories);
+        while (it2.hasNext()) {
+            std::string s;
+            s.append("qrc");
+            s.append(it2.next().toStdString());
+            textures.push_back(s);
+        }
+    }
+    return textures;
 }
 
 void EntityListController::updateEntityList(QStandardItemModel* model)
