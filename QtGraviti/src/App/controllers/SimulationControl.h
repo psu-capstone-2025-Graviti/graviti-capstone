@@ -33,7 +33,7 @@ public:
     void resetSimulation();
     void clearEntities();
     void createEntity(const std::string& name, float posX, float posY, float posZ,
-                   float velX, float velY, float velZ, float mass);
+                   float velX, float velY, float velZ, float mass, float radius = 1.0f, std::string tex = "");
 
     void setUpdateFunction(std::function<void()> updateFunc);
 

@@ -43,6 +43,7 @@ private:
     void updateEntityList();
     void updateFollowCombo();
     void updateParentCombo();
+    void updateTextureCombos();
     Ui::MainWindow *ui;
     SimulationController* m_controller;
     TrajectoryRenderer* m_renderer;

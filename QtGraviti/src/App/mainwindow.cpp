@@ -50,6 +50,7 @@ MainWindow::MainWindow(TrajectoryRenderer* trajectoryRenderer, SimulationControl
 
     //Call first update
     EntityListController::setupEntityList(m_entityModel);
+    updateTextureCombos();
 
     updateEntityList();
     updateRender();
@@ -91,6 +92,27 @@ void MainWindow::updateEntityList()
 void MainWindow::refreshEntityList()
 {
     updateEntityList();
+}
+
+void MainWindow::updateTextureCombos()
+{
+    const std::vector<std::string> textures = EntityListController::getTextureList();
+
+    // We have to update both combo boxes, a better design would share the combo box
+    ui->EntityTextureCombo->clear();
+    ui->EntityTextureCombo->addItem("None");
+
+    ui->comboBox_2->clear();
+    ui->comboBox_2->addItem("None");
+
+    for (const auto& texture : textures) {
+        const QString qTex = QString::fromStdString(texture);
+        ui->EntityTextureCombo->addItem(qTex);
+        ui->comboBox_2->addItem(qTex);
+    }
+
+    ui->EntityTextureCombo->setCurrentIndex(0);
+    ui->comboBox_2->setCurrentIndex(0);
 }
 
 void MainWindow::onStartSimulationClicked()
@@ -248,7 +270,12 @@ void MainWindow::onAddEntityClicked()
 
         float mass = ui->lineEdit_8->text().toFloat();
 
-        m_controller->createEntity(name.toStdString(), posX, posY, posZ, velX, velY, velZ, mass);
+        float rad = ui->lineEdit_17->text().toFloat();
+
+        QString texSel = ui->EntityTextureCombo->currentText();
+        std::string texPath = (texSel == "None") ? "" : texSel.toStdString();
+
+        m_controller->createEntity(name.toStdString(), posX, posY, posZ, velX, velY, velZ, mass, rad, texPath);
 
         // Clear absolute fields
         ui->lineEdit->clear();
@@ -259,6 +286,7 @@ void MainWindow::onAddEntityClicked()
         ui->lineEdit_3->clear();
         ui->lineEdit_2->clear();
         ui->lineEdit_8->clear();
+        ui->lineEdit_17->clear();
     } else {
         // Relative Position tab
         QString name = ui->lineEdit_16->text();
@@ -293,6 +321,7 @@ void MainWindow::onAddEntityClicked()
         float altitude = ui->lineEdit_13->text().toFloat();
         float inclinationDeg = ui->lineEdit_14->text().toFloat();
         float velocityValue = ui->lineEdit_15->text().toFloat();
+        float radius = ui->lineEdit_18->text().toFloat();
 
         float r = altitude;
 
@@ -316,13 +345,17 @@ void MainWindow::onAddEntityClicked()
         // TODO - add mass field to relative tab
         float mass = 1.0e10f;
 
-        m_controller->createEntity(name.toStdString(), posX, posY, posZ, velX, velY, velZ, mass);
+        QString texSelRel = ui->comboBox_2->currentText();
+        std::string texPathRel = (texSelRel == "None") ? "" : texSelRel.toStdString();
+
+        m_controller->createEntity(name.toStdString(), posX, posY, posZ, velX, velY, velZ, mass, radius, texPathRel);
 
         // Clear relative fields
         ui->lineEdit_16->clear();
         ui->lineEdit_13->clear();
         ui->lineEdit_14->clear();
         ui->lineEdit_15->clear();
+        ui->lineEdit_18->clear();
     }
 
     updateRender();

@@ -110,26 +110,56 @@ Entity SimulationController::optimizeTrajectory(Entity projectile, Vec3 targetPo
 }
 
 void SimulationController::createEntity(const std::string& name, float posX, float posY, float posZ, 
-                                     float velX, float velY, float velZ, float mass)
+                                     float velX, float velY, float velZ, float mass, float radius, std::string tex)
 {
 	auto entityManager = EntityManager::getInstance();
 
-	std::shared_ptr<IPhysicsEngine> physicsEngine = std::make_shared<NBodyPhysics>();
-	Entity newEntity(physicsEngine);
-	newEntity.setEntityName(name);
+	auto entities = entityManager->getAllEntities();
+	bool found = false;
+	for (auto& entity : *entities)
+	{
+		if (entity.getEntityName() == name)
+		{
+			found = true;
+			//We found the entity, update the current state
+			auto curState = entity.getPhysicalState();
 
-	PhysicalState entityState;
-	entityState.setPosition(X, posX);
-	entityState.setPosition(Y, posY);
-	entityState.setPosition(Z, posZ);
-	entityState.setVelocity(X, velX);
-	entityState.setVelocity(Y, velY);
-	entityState.setVelocity(Z, velZ);
-	entityState.setMass(mass);
-	//entityState.setRadius(1.0f);
+			if (posX != 0) curState->setPosition(X, posX);
+			if (posY != 0) curState->setPosition(Y, posY);
+			if (posZ != 0) curState->setPosition(Z, posZ);
 
-	newEntity.setOrigin(entityState);
-	entityManager->addEntity(newEntity);
+			if (velX != 0) curState->setVelocity(X, posX);
+			if (velY != 0) curState->setVelocity(Y, posY);
+			if (velZ != 0) curState->setVelocity(Z, posZ);
+
+			if (radius != 0) curState->setRadius(radius);
+			if (mass != 0) curState->setMass(mass);
+
+			entity.setOrigin(*curState);
+			entity.setTexturePath(tex);
+		}
+	}
+	if (!found)
+	{
+		//create new entity becuase name is new
+		std::shared_ptr<IPhysicsEngine> physicsEngine = std::make_shared<NBodyPhysics>();
+		Entity newEntity(physicsEngine);
+		newEntity.setEntityName(name);
+
+		PhysicalState entityState;
+		entityState.setPosition(X, posX);
+		entityState.setPosition(Y, posY);
+		entityState.setPosition(Z, posZ);
+		entityState.setVelocity(X, velX);
+		entityState.setVelocity(Y, velY);
+		entityState.setVelocity(Z, velZ);
+		entityState.setMass(mass);
+		entityState.setRadius(radius);
+
+		newEntity.setOrigin(entityState);
+		newEntity.setTexturePath(tex);
+		entityManager->addEntity(newEntity);
+	}
 }
 
 
