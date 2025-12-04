@@ -1,6 +1,7 @@
 import QtQuick 2.9
 import QtQuick.Window 2.2
 import QtQuick3D
+import QtQuick.Controls 2.15
 import GravitiLib 1.0
 
 Item {
@@ -9,6 +10,8 @@ Item {
     height: 720
     focus: true
     antialiasing: true
+    property url trajectorySphereModelSource: "#Sphere"
+		property real sliderScale: 1
     
 
     
@@ -68,12 +71,16 @@ Item {
                 Repeater3D {
                     model: trajectorySphereContainer.sphereDataList
                     Model {
-                        source: "#Sphere"
+                        source: root.trajectorySphereModelSource
                         x: modelData.position.x
                         y: modelData.position.y
                         z: modelData.position.z
 
-                        scale: Qt.vector3d(modelData.scale.x, modelData.scale.y, modelData.scale.z)
+                        scale: Qt.vector3d(
+	                        modelData.scale.x * root.sliderScale,
+	                        modelData.scale.y * root.sliderScale,
+	                        modelData.scale.z * root.sliderScale
+                        )
                         materials: [
                             PrincipledMaterial {
                                 baseColor: modelData.materialColor
@@ -221,6 +228,37 @@ Item {
     property real cameraOffsetY: 0
     property real cameraOffsetZ: 0
 
+
+    // Simple overlay UI to switch trajectory sphere model
+    ComboBox {
+        id: modelPicker
+        anchors.left: parent.left
+        anchors.bottom: parent.bottom
+        anchors.margins: 8
+        z: 9999
+        model: ["#Sphere", "#Cube", "#Rectangle", "#Cone", "#Cylinder"]
+
+        currentIndex: 0
+        onCurrentTextChanged: {
+            root.trajectorySphereModelSource = currentText
+        }
+        ToolTip.visible: hovered
+        ToolTip.text: "Trajectory model"
+    }
+
+    Slider {
+	    id: trajectoryScaleSlider
+	    anchors.left: modelPicker.right
+	    anchors.leftMargin: 8
+	    anchors.bottom: parent.bottom
+	    anchors.bottomMargin: 8
+        z: 9999
+	    width: 240
+	    from: 1
+	    to: 100
+	    value: 1
+	    onValueChanged: root.sliderScale = value
+    }
 
 
     //KEYBOARD INPUT FOR CAMERA
