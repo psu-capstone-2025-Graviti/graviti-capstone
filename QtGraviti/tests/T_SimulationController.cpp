@@ -191,3 +191,38 @@ TEST_F(SimControllerTest, BatchClearSimulation)
 	EXPECT_EQ(e.getPhysicalState()->getPosition().y, originBefore.getPosition().y);
 	EXPECT_EQ(e.getPhysicalState()->getPosition().z, originBefore.getPosition().z);
 }
+
+TEST_F(SimControllerTest, UpdateEntityData)
+{
+	m_mangager->clearEntities(); //Clear before adding
+
+	controller->createEntity("TestEntity", 1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f);
+	auto entities = m_mangager->getAllEntities();
+	ASSERT_FALSE(entities->empty());
+	Entity& e = entities->back();
+	PhysicalState origin = e.getOrigin();
+	EXPECT_EQ(e.getEntityName(), "TestEntity");
+	EXPECT_FLOAT_EQ(origin.getPosition().x, 1.0f);
+	EXPECT_FLOAT_EQ(origin.getPosition().y, 2.0f);
+	EXPECT_FLOAT_EQ(origin.getPosition().z, 3.0f);
+	EXPECT_FLOAT_EQ(origin.getVelocity().x, 4.0f);
+	EXPECT_FLOAT_EQ(origin.getVelocity().y, 5.0f);
+	EXPECT_FLOAT_EQ(origin.getVelocity().z, 6.0f);
+	EXPECT_FLOAT_EQ(origin.getMass(), 7.0f);
+	EXPECT_FLOAT_EQ(origin.getRadius(), 1.0f);
+
+	controller->createEntity("TestEntity", 8.0f, 9.0f, 10.0f, 11.0f, 12.0f, 13.0f, 0.0f, 2.0f);
+	ASSERT_FALSE(entities->empty());
+	Entity& f = entities->back();
+	PhysicalState origin2 = f.getOrigin();
+	EXPECT_EQ(f.getEntityName(), "TestEntity");
+	EXPECT_FLOAT_EQ(origin2.getPosition().x, 8.0f);
+	EXPECT_FLOAT_EQ(origin2.getPosition().y, 9.0f);
+	EXPECT_FLOAT_EQ(origin2.getPosition().z, 10.0f);
+	EXPECT_FLOAT_EQ(origin2.getVelocity().x, 11.0f);
+	EXPECT_FLOAT_EQ(origin2.getVelocity().y, 12.0f);
+	EXPECT_FLOAT_EQ(origin2.getVelocity().z, 13.0f);
+	EXPECT_FLOAT_EQ(origin2.getMass(), 7.0f); //Position info should have updated, but mass shouldnt have
+	EXPECT_FLOAT_EQ(origin2.getRadius(), 2.0f); //Radius now 2
+
+}

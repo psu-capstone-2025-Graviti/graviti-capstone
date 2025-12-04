@@ -128,9 +128,9 @@ void SimulationController::createEntity(const std::string& name, float posX, flo
 			if (posY != 0) curState->setPosition(Y, posY);
 			if (posZ != 0) curState->setPosition(Z, posZ);
 
-			if (velX != 0) curState->setVelocity(X, posX);
-			if (velY != 0) curState->setVelocity(Y, posY);
-			if (velZ != 0) curState->setVelocity(Z, posZ);
+			if (velX != 0) curState->setVelocity(X, velX);
+			if (velY != 0) curState->setVelocity(Y, velY);
+			if (velZ != 0) curState->setVelocity(Z, velZ);
 
 			if (radius != 0) curState->setRadius(radius);
 			if (mass != 0) curState->setMass(mass);
