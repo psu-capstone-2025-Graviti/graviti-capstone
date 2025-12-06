@@ -25,10 +25,12 @@ public:
     void initializeThreeBody();
 
     void startSimulation(int numSteps, float tickDuration, int simulationScalar = 1);
+
     void bathProcessFuture(int numSteps, float tickDuration);
     void resetBatch();
 
-	Entity optimizeTrajectory(Entity Projectile, Vec3 targetPosition, int numSteps, float tickDuration);
+	Entity optimizeTrajectory(Entity Projectile, Vec3 targetPosition, int numSteps, float tickDuration, int numIter);
+
 
     void resetSimulation();
     void clearEntities();

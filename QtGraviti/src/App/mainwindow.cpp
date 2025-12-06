@@ -13,6 +13,8 @@
 #include <QMessageBox>
 #include <QAction>
 #include <QQuickItem>
+#include "GravitiLib/Entity.h"
+#include "GravitiLib/NBodyEngine.h"
 
 const float PI = 3.14159265358979323846;
 
@@ -38,6 +40,7 @@ MainWindow::MainWindow(TrajectoryRenderer* trajectoryRenderer, SimulationControl
     connect(ui->pushButton_2, &QPushButton::clicked, this, &MainWindow::onResetSimulationClicked);
     connect(ui->pushButton_3, &QPushButton::clicked, this, &MainWindow::onClearEntitiesClicked);
     connect(ui->AddEntity, &QPushButton::clicked, this, &MainWindow::onAddEntityClicked);
+    connect(ui->AddOptimizedEntity, &QPushButton::clicked, this, &MainWindow::onAddOptimizedEntityClicked);
     connect(ui->actionSave_Entities, &QAction::triggered, this, &MainWindow::onSaveEntitiesClicked);
     connect(ui->actionLoad_Entities, &QAction::triggered, this, &MainWindow::onLoadEntitiesClicked);
     connect(ui->batchButton, &QPushButton::clicked, this, &MainWindow::onBatchSimulationClicked);
@@ -360,6 +363,97 @@ void MainWindow::onAddEntityClicked()
         ui->lineEdit_18->clear();
     }
 
+    updateRender();
+    updateEntityList();
+}
+
+void MainWindow::onAddOptimizedEntityClicked()
+{
+    if (!m_controller) {
+        return;
+    }
+
+    // Get values from the form fields
+    QString name = ui->optimizedName->text();
+    if (name.isEmpty()) {
+        // Could add error handling here
+        return;
+    }
+
+    // Get position values
+    float posX = ui->optimizedPosX->text().toFloat();
+    float posY = ui->optimizedPosY->text().toFloat();
+    float posZ = ui->optimizedPosZ->text().toFloat();
+
+    // Get velocity values
+    float velX = ui->optimizedVelX->text().toFloat();
+    float velY = ui->optimizedVelY->text().toFloat();
+    float velZ = ui->optimizedVelZ->text().toFloat();
+
+	// get target position values
+    float targetX = ui->optimizedTargetX->text().toFloat();
+    float targetY = ui->optimizedTargetY->text().toFloat();
+    float targetZ = ui->optimizedTargetZ->text().toFloat();
+
+    // Get mass value
+    
+    float radius = ui->OptimizedRadius->text().toFloat();
+
+    float mass = ui->optimizedMass->text().toFloat();
+
+
+    float tick = ui->OptimizeTick->text().toFloat();
+
+    float steps = ui->OptimizedSteps->text().toFloat();
+
+    float numIter = ui->NumIter->text().toFloat();
+
+    std::shared_ptr<IPhysicsEngine> physicsEngine = std::make_shared<NBodyPhysics>();
+
+	Vec3 initialPosition = { posX, posY, posZ };
+    Entity projectile(physicsEngine);
+    projectile.setEntityName(name.toStdString());
+    auto entityState = projectile.getPhysicalState();
+    entityState->setPosition(X, posX);
+    entityState->setPosition(Y, posY);
+    entityState->setPosition(Z, posZ);
+    entityState->setVelocity(X, velX);
+    entityState->setVelocity(Y, velY);
+    entityState->setVelocity(Z, velZ);
+    entityState->setMass(mass);
+    entityState->setRadius(radius);
+
+
+    Vec3 targetPosition = { targetX, targetY, targetZ };
+
+    Entity OptEnt =m_controller->optimizeTrajectory(projectile, targetPosition, steps, tick, numIter);
+
+
+    // Add the entity through the controller
+    m_controller->createEntity(OptEnt.getEntityName(),
+        OptEnt.getPhysicalState()->getPosition().x,
+        OptEnt.getPhysicalState()->getPosition().y,
+        OptEnt.getPhysicalState()->getPosition().z,
+        OptEnt.getPhysicalState()->getVelocity().x,
+        OptEnt.getPhysicalState()->getVelocity().y,
+        OptEnt.getPhysicalState()->getVelocity().z,
+        OptEnt.getPhysicalState()->getMass());
+    // Clear the form fields after adding
+    ui->optimizedName->clear();
+    ui->optimizedPosX->clear();
+    ui->optimizedPosY->clear();
+    ui->optimizedPosZ->clear();
+    ui->optimizedVelX->clear();
+    ui->optimizedVelY->clear();
+    ui->optimizedVelZ->clear();
+    ui->optimizedTargetX->clear();
+    ui->optimizedTargetY->clear();
+    ui->optimizedTargetZ->clear();
+    ui->OptimizedRadius->setText("2000");
+    ui->optimizedMass->clear();
+    ui->OptimizeTick->setText("0.01");
+    ui->OptimizedSteps->setText("10000");
+    ui->NumIter->setText("5");
     updateRender();
     updateEntityList();
 }

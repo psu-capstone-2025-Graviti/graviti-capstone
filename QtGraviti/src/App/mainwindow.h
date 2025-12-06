@@ -30,6 +30,8 @@ private slots:
     void onResetSimulationClicked();
     void onClearEntitiesClicked();
     void onAddEntityClicked();
+    void onAddOptimizedEntityClicked();
+
     void onSaveEntitiesClicked();
     void onLoadEntitiesClicked();
     void onBatchSimulationClicked();
