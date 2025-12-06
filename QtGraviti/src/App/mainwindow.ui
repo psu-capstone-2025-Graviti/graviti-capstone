@@ -43,36 +43,6 @@
    </layout>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <widget class="QMenuBar" name="menubar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>1600</width>
-     <height>24</height>
-    </rect>
-   </property>
-   <widget class="QMenu" name="menuFile">
-    <property name="title">
-     <string>Save</string>
-    </property>
-    <addaction name="actionSave_Entities"/>
-   </widget>
-   <widget class="QMenu" name="menuLoad">
-    <property name="title">
-     <string>Load</string>
-    </property>
-    <addaction name="actionLoad_Entities"/>
-   </widget>
-   <widget class="QMenu" name="menuPreferences">
-    <property name="title">
-     <string>Preferences</string>
-    </property>
-   </widget>
-   <addaction name="menuFile"/>
-   <addaction name="menuLoad"/>
-   <addaction name="menuPreferences"/>
-  </widget>
   <widget class="QDockWidget" name="dockWidget_2">
    <property name="sizePolicy">
     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -105,12 +75,18 @@
       <verstretch>0</verstretch>
      </sizepolicy>
     </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the simulation control dock.&lt;br/&gt;It can be licked and dragged to either side of the window.&lt;/p&gt;&lt;p&gt;More information on each tab is visible by mousing over blank space in each tab.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
     <layout class="QVBoxLayout" name="verticalLayout">
      <property name="sizeConstraint">
       <enum>QLayout::SizeConstraint::SetNoConstraint</enum>
      </property>
      <item>
       <widget class="QTabWidget" name="tabWidget">
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
        <property name="currentIndex">
         <number>0</number>
        </property>
@@ -120,6 +96,9 @@
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
+        </property>
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This tab lists all the entities currently in the simulation.&lt;br/&gt;Each entity has an entry in the list and it will shows its current position, velocity, mass, radius, and texture path.&lt;br/&gt;All values are base SI units (meters, kilograms, m/s)&lt;br/&gt;Texture paths are built in textures defined in the QRC.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <attribute name="title">
          <string>Entities</string>
@@ -136,6 +115,9 @@
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
+        </property>
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This tab provides simulation controls. Users can start, stop, reset, and clear the simulation, as well as simulation constant values which define the resolution and length of the simulation.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <attribute name="title">
          <string>Sim Controls</string>
@@ -170,6 +152,9 @@
                  </item>
                  <item row="0" column="1">
                   <widget class="QLineEdit" name="lineEdit_9">
+                   <property name="toolTip">
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Tick Duration for both batch and real time simulations.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   </property>
                    <property name="text">
                     <string>0.01</string>
                    </property>
@@ -184,6 +169,9 @@
                  </item>
                  <item row="1" column="1">
                   <widget class="QLineEdit" name="lineEdit_10">
+                   <property name="toolTip">
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Numer of calculation steps in the batch simulation. Total simulation time will be Number of Steps * Tick Duration&lt;br/&gt;So 60, 1 second ticks will be 1 minute of simulation. &lt;br/&gt;3600, 1 second ticks will be 1 hour of simulation.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   </property>
                    <property name="text">
                     <string>10000</string>
                    </property>
@@ -212,6 +200,9 @@
                  </item>
                  <item row="2" column="1">
                   <widget class="QLineEdit" name="lineEdit_11">
+                   <property name="toolTip">
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Maximum number of objects used to render trajectories (per entity)&lt;br/&gt;Be careful with this, as there is no limit when large numbers of entities are in the simulation.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   </property>
                    <property name="text">
                     <string>250</string>
                    </property>
@@ -219,6 +210,9 @@
                  </item>
                  <item row="3" column="1">
                   <widget class="QLineEdit" name="lineEdit_12">
+                   <property name="toolTip">
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Number defining the timescale of the Real Time Simulation.&lt;br/&gt;1 = Real Time&lt;/p&gt;&lt;p&gt;2 = Twice as fast as real time&lt;/p&gt;&lt;p&gt;10 = 10 times faster than real time&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   </property>
                    <property name="text">
                     <string>1</string>
                    </property>
@@ -231,6 +225,9 @@
             </item>
             <item>
              <widget class="QPushButton" name="pushButton_3">
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Removes all Entities from the simulation.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
               <property name="text">
                <string>Reset Entities</string>
               </property>
@@ -238,6 +235,9 @@
             </item>
             <item>
              <widget class="QPushButton" name="pushButton_2">
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Resets Entities back to their origins (where they started during the simulation)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
               <property name="text">
                <string>Reset Simulation</string>
               </property>
@@ -245,6 +245,9 @@
             </item>
             <item>
              <widget class="QPushButton" name="batchButton">
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Runs a batch simulation of the future trajectory and renders the trajectory using the model selected in the QML dropdown menu (defaults to spheres)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
               <property name="text">
                <string>Batch Simulate Future</string>
               </property>
@@ -252,6 +255,9 @@
             </item>
             <item>
              <widget class="QPushButton" name="pushButton">
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Starts, Pauses, or Resumes the Real Time Simulation. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
               <property name="text">
                <string>Start Simulation</string>
               </property>
@@ -263,6 +269,9 @@
         </layout>
        </widget>
        <widget class="QWidget" name="renderingTab">
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This tab is used to change variables and settings related to rendering functionality inside the C++ portion of the code.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
         <attribute name="title">
          <string>Render Controls</string>
         </attribute>
@@ -304,6 +313,9 @@
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The Add Entities tab allows users to add entities to the simulation.&lt;/p&gt;&lt;p&gt;For well defined behavior, entities should only be added when the simulation is both paused and reset.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
         <attribute name="title">
          <string>AddEntities</string>
         </attribute>
@@ -328,7 +340,11 @@
                 </widget>
                </item>
                <item row="0" column="1">
-                <widget class="QLineEdit" name="lineEdit"/>
+                <widget class="QLineEdit" name="lineEdit">
+                 <property name="toolTip">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Entity Name - This is the unique name of the entity.&lt;br/&gt;If you add an entity with the same name as an already existing entity it will update/replace the entity rather than adding a duplicate.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                </widget>
                </item>
                <item row="1" column="0">
                 <widget class="QLabel" name="label">
@@ -339,6 +355,9 @@
                </item>
                <item row="1" column="1">
                 <widget class="QFrame" name="frame">
+                 <property name="toolTip">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Position in X, Y, Z coordiates in Meters&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
                  <property name="frameShape">
                   <enum>QFrame::Shape::StyledPanel</enum>
                  </property>
@@ -388,6 +407,9 @@
                </item>
                <item row="2" column="1">
                 <widget class="QFrame" name="frame_2">
+                 <property name="toolTip">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Velocity in X, Y, Z coordiates in Meters per Second&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
                  <property name="frameShape">
                   <enum>QFrame::Shape::StyledPanel</enum>
                  </property>
@@ -436,7 +458,11 @@
                 </widget>
                </item>
                <item row="3" column="1">
-                <widget class="QLineEdit" name="lineEdit_8"/>
+                <widget class="QLineEdit" name="lineEdit_8">
+                 <property name="toolTip">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Mass in Kilograms&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                </widget>
                </item>
                <item row="4" column="0">
                 <widget class="QLabel" name="label_18">
@@ -446,10 +472,18 @@
                 </widget>
                </item>
                <item row="4" column="1">
-                <widget class="QComboBox" name="EntityTextureCombo"/>
+                <widget class="QComboBox" name="EntityTextureCombo">
+                 <property name="toolTip">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Texture path for entities.&lt;br/&gt;Textures with the prefix &amp;quot;Bodies&amp;quot; will be spherical entities&lt;/p&gt;&lt;p&gt;Textures with the prefix &amp;quot;Objects&amp;quot; will be flat 2D entities&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                </widget>
                </item>
                <item row="5" column="1">
-                <widget class="QLineEdit" name="lineEdit_17"/>
+                <widget class="QLineEdit" name="lineEdit_17">
+                 <property name="toolTip">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Radius of the entity in Meters. Affects both Flat and Spherical Entities.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                </widget>
                </item>
                <item row="5" column="0">
                 <widget class="QLabel" name="label_17">
@@ -477,7 +511,11 @@
                 </widget>
                </item>
                <item row="1" column="1">
-                <widget class="QComboBox" name="comboBox"/>
+                <widget class="QComboBox" name="comboBox">
+                 <property name="toolTip">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Parent Entity. New Entity will be added at a relative position and velocity to this entity.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                </widget>
                </item>
                <item row="2" column="0">
                 <widget class="QLabel" name="label_20">
@@ -487,7 +525,11 @@
                 </widget>
                </item>
                <item row="2" column="1">
-                <widget class="QLineEdit" name="lineEdit_13"/>
+                <widget class="QLineEdit" name="lineEdit_13">
+                 <property name="toolTip">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Distance from the center of the entity that the new entity will be placed.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                </widget>
                </item>
                <item row="3" column="0">
                 <widget class="QLabel" name="label_21">
@@ -497,7 +539,11 @@
                 </widget>
                </item>
                <item row="3" column="1">
-                <widget class="QLineEdit" name="lineEdit_14"/>
+                <widget class="QLineEdit" name="lineEdit_14">
+                 <property name="toolTip">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Angle at which the resulting orbit will be included from the X Z plane.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                </widget>
                </item>
                <item row="4" column="0">
                 <widget class="QLabel" name="label_22">
@@ -507,7 +553,11 @@
                 </widget>
                </item>
                <item row="4" column="1">
-                <widget class="QLineEdit" name="lineEdit_15"/>
+                <widget class="QLineEdit" name="lineEdit_15">
+                 <property name="toolTip">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Magnitude of the velocity vector. Analogous to Orbital Velocity.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                </widget>
                </item>
                <item row="5" column="0">
                 <widget class="QLabel" name="label_23">
@@ -517,7 +567,11 @@
                 </widget>
                </item>
                <item row="5" column="1">
-                <widget class="QComboBox" name="comboBox_2"/>
+                <widget class="QComboBox" name="comboBox_2">
+                 <property name="toolTip">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Texture path for entities.&lt;br/&gt;Textures with the prefix &amp;quot;Bodies&amp;quot; will be spherical entities&lt;/p&gt;&lt;p&gt;Textures with the prefix &amp;quot;Objects&amp;quot; will be flat 2D entities&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                </widget>
                </item>
                <item row="0" column="0">
                 <widget class="QLabel" name="label_24">
@@ -527,7 +581,11 @@
                 </widget>
                </item>
                <item row="0" column="1">
-                <widget class="QLineEdit" name="lineEdit_16"/>
+                <widget class="QLineEdit" name="lineEdit_16">
+                 <property name="toolTip">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Entity Name - This is the unique name of the entity.&lt;br/&gt;If you add an entity with the same name as an already existing entity it will update/replace the entity rather than adding a duplicate.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                </widget>
                </item>
                <item row="6" column="0">
                 <widget class="QLabel" name="label_25">
@@ -537,7 +595,11 @@
                 </widget>
                </item>
                <item row="6" column="1">
-                <widget class="QLineEdit" name="lineEdit_18"/>
+                <widget class="QLineEdit" name="lineEdit_18">
+                 <property name="toolTip">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Radius of the entity in Meters. Affects both Flat and Spherical Entities.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                </widget>
                </item>
               </layout>
              </item>
@@ -559,6 +621,37 @@
     </layout>
    </widget>
   </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1600</width>
+     <height>24</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>Save</string>
+    </property>
+    <addaction name="actionSave_Entities"/>
+   </widget>
+   <widget class="QMenu" name="menuLoad">
+    <property name="title">
+     <string>Load</string>
+    </property>
+    <addaction name="actionLoad_Entities"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionShow_Help"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuLoad"/>
+   <addaction name="menuHelp"/>
+  </widget>
   <action name="actionLoad_Entities">
    <property name="text">
     <string>Load Entities</string>
@@ -567,6 +660,11 @@
   <action name="actionSave_Entities">
    <property name="text">
     <string>Save Entities</string>
+   </property>
+  </action>
+  <action name="actionShow_Help">
+   <property name="text">
+    <string>Show Help</string>
    </property>
   </action>
  </widget>

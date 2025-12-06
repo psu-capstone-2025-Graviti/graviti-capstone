@@ -41,7 +41,9 @@ MainWindow::MainWindow(TrajectoryRenderer* trajectoryRenderer, SimulationControl
     connect(ui->actionSave_Entities, &QAction::triggered, this, &MainWindow::onSaveEntitiesClicked);
     connect(ui->actionLoad_Entities, &QAction::triggered, this, &MainWindow::onLoadEntitiesClicked);
     connect(ui->batchButton, &QPushButton::clicked, this, &MainWindow::onBatchSimulationClicked);
-
+    connect(ui->actionShow_Help, &QAction::triggered, this, [this](bool) {
+        QMessageBox::information(this, "Help Information", "Additional information for each menu is visible by mousing over UI componenets");
+    });
 
     //Setup entity list model
     m_entityModel = new QStandardItemModel(this);
