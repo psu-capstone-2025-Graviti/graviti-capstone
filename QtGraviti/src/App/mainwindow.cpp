@@ -82,6 +82,7 @@ QQmlContext* MainWindow::rootContext()
 void MainWindow::updateRender(int sphereCount)
 {
     m_renderer->updateEntitySpheres();
+    m_renderer->addEntityOrigins(0.2);
 }
 
 void MainWindow::updateEntityList()
@@ -328,27 +329,25 @@ void MainWindow::onAddEntityClicked()
         float velocityValue = ui->lineEdit_15->text().toFloat();
         float radius = ui->lineEdit_18->text().toFloat();
 
-        float r = altitude;
+        altitude += parentState->getRadius();
 
-        // Build inclined orbit geometry:
-        // Start radius along +Y, rotate around X by inclination
+        // Build inclined vector
         float rad = inclinationDeg * (PI / 180.0f);
         float cosI = std::cos(rad);
         float sinI = std::sin(rad);
 
-        Vec3 rRel = { 0.0f, r * cosI, r * sinI };
-        Vec3 vRel = { velocityValue, 0.0f, 0.0f };
+        Vec3 relative_vel = { 0.0f, (velocityValue * sinI), 0 - velocityValue * cosI };
+        Vec3 relative_pos = { altitude, 0.0f, 0.0f };
 
-        float posX = parentPos.x + rRel.x;
-        float posY = parentPos.y + rRel.y;
-        float posZ = parentPos.z + rRel.z;
+        float posX = parentPos.x + relative_pos.x;
+        float posY = parentPos.y + relative_pos.y;
+        float posZ = parentPos.z + relative_pos.z;
 
-        float velX = parentVel.x + vRel.x;
-        float velY = parentVel.y + vRel.y;
-        float velZ = parentVel.z + vRel.z;
+        float velX = parentVel.x + relative_vel.x;
+        float velY = parentVel.y + relative_vel.y;
+        float velZ = parentVel.z + relative_vel.z;
 
-        // TODO - add mass field to relative tab
-        float mass = 1.0e10f;
+        float mass = 1.0f;
 
         QString texSelRel = ui->comboBox_2->currentText();
         std::string texPathRel = (texSelRel == "None") ? "" : texSelRel.toStdString();
@@ -489,8 +488,8 @@ void MainWindow::onLoadEntitiesClicked()
         try {
             m_controller->clearEntities();
             m_controller->initialize_json_body(fileName.toStdString());
-            updateEntityList();
             updateRender();
+            updateEntityList();
             QMessageBox::information(this, "Success", "Entities loaded successfully from " + fileName);
         } catch (const std::exception& e) {
             QMessageBox::critical(this, "Error", "Failed to load entities: " + QString::fromStdString(e.what()));

@@ -189,31 +189,26 @@ void SimulationController::initialize_json_body(std::string filepathjsonPath)
 
 	for (auto itr = d.Begin(); itr != d.End(); ++itr) {
 
-
-		physicsEngine = std::make_shared<NBodyPhysics>();
-		Entity jsonEntity = Entity(physicsEngine);
-		PhysicalState jsonEntityState;
 		auto obj = itr->GetObject();
-		jsonEntity.setEntityName(obj["name"].GetString());
+		std::string name = obj["name"].GetString();
+		float posX = cleanFloat(obj["positionX"].GetString());
+		float posY = cleanFloat(obj["positionY"].GetString());
+		float posZ = cleanFloat(obj["positionZ"].GetString());
+		float velX = cleanFloat(obj["velocityX"].GetString());
+		float velY = cleanFloat(obj["velocityY"].GetString());
+		float velZ = cleanFloat(obj["velocityZ"].GetString());
 
-
-		jsonEntityState.setPosition(X, cleanFloat(obj["positionX"].GetString()));
-		jsonEntityState.setPosition(Y, cleanFloat(obj["positionY"].GetString()));
-		jsonEntityState.setPosition(Z, cleanFloat(obj["positionZ"].GetString()));
-
-		jsonEntityState.setVelocity(X, cleanFloat(obj["velocityX"].GetString()));
-		jsonEntityState.setVelocity(Y, cleanFloat(obj["velocityY"].GetString()));
-		jsonEntityState.setVelocity(Z, cleanFloat(obj["velocityZ"].GetString()));
-		jsonEntityState.setMass(cleanFloat(obj["mass"].GetString()));
-		jsonEntityState.setRadius(cleanFloat(obj["radius"].GetString()));
+		float mass = cleanFloat(obj["mass"].GetString());
+		float radius = cleanFloat(obj["radius"].GetString());
 
 		// Set texture path if it exists in JSON
+		std::string tex = "";
 		if (obj.HasMember("texturePath") && obj["texturePath"].IsString()) {
-			jsonEntity.setTexturePath(obj["texturePath"].GetString());
+			tex = obj["texturePath"].GetString();
 		}
 
-		jsonEntity.setOrigin(jsonEntityState);
-		entityManager->addEntity(jsonEntity);
+		createEntity(name, posX, posY, posZ, velX, velY, velZ, mass, radius, tex);
+
 	}
 }
 

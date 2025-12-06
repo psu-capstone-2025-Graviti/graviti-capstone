@@ -368,7 +368,45 @@ void TrajectoryRenderer::updateEntitySpheres()
 
         //Since textures are registered through the qrc, we can use its prefix to 
         //separate bodies from satellites
-        if (entity.getTexturePath().find(bodies) != std::string::npos)
+        std::string path = entity.getTexturePath();
+        if (path.find(objects) != std::string::npos)
+        {
+            // Try to find existing texture by name
+            FlatEntity* found = nullptr;
+            for (auto* s : m_flatEntities) {
+                if (s && s->entityName() == qname) { found = s; break; }
+            }
+
+            if (found) {
+                // Update position and (if changed) scale
+                found->setPosition(qpos);
+                found->setScale(qscale);
+                // Update texture if needed
+                const auto texturePath = QString::fromStdString(entity.getTexturePath());
+                if (!texturePath.isEmpty()) {
+                    found->setTexturePath(texturePath);
+                }
+                // Update opacity based on alive state
+                found->setOpacity(entity.isunAlive() ? 0.5f : 1.0f);
+                emit flatEntitiesChanged();
+            }
+            else {
+                // Create new texture for this entity
+                const auto texturePath = QString::fromStdString(entity.getTexturePath());
+
+                auto* flat = new FlatEntity(
+                    qpos,
+                    qscale,
+                    texturePath,
+                    qname,
+                    entity.isunAlive() ? 0.5f : 1.0f,
+                    this
+                );
+                m_flatEntities.append(flat);
+                createdFlats = true;
+            }
+        }
+        else
         {
             // Try to find existing sphere by name
             EntitySphere* found = nullptr;
@@ -412,48 +450,6 @@ void TrajectoryRenderer::updateEntitySpheres()
                 createdSpheres = true;
             }
         }
-        else if (entity.getTexturePath().find(objects) != std::string::npos)
-        {
-            // Try to find existing texture by name
-            FlatEntity* found = nullptr;
-            for (auto* s : m_flatEntities) {
-                if (s && s->entityName() == qname) { found = s; break; }
-            }
-
-            if (found) {
-                // Update position and (if changed) scale
-                found->setPosition(qpos);
-                found->setScale(qscale);
-                // Update texture if needed
-                const auto texturePath = QString::fromStdString(entity.getTexturePath());
-                if (!texturePath.isEmpty()) {
-                    found->setTexturePath(texturePath);
-                }
-                // Update opacity based on alive state
-                found->setOpacity(entity.isunAlive() ? 0.5f : 1.0f);
-                emit flatEntitiesChanged();
-            }
-            else {
-                // Create new texture for this entity
-                const auto texturePath = QString::fromStdString(entity.getTexturePath());
-
-                auto* flat = new FlatEntity(
-                    qpos,
-                    qscale,
-                    texturePath,
-                    qname,
-                    entity.isunAlive() ? 0.5f : 1.0f,
-                    this
-                );
-                m_flatEntities.append(flat);
-                //createdSpheres = true; - TODO
-                emit flatEntitiesChanged();
-            }
-        }
-        else //No texture path - TODO
-        {
-
-        }
 
 
 
@@ -463,6 +459,9 @@ void TrajectoryRenderer::updateEntitySpheres()
         emit entitySpheresChanged();
     }
 
+    if (createdFlats) {
+        emit flatEntitiesChanged();
+    }
 
     if (!camEntityFound && resetCameraOnce)
     {
