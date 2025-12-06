@@ -152,29 +152,29 @@ TEST(OptimizationControllerTest, TestGenerateDefaultAxes) {
     defaultEntity.getPhysicalState()->setVelocity({ 1.0f, 2.0f, 3.0f });
     std::vector<Vec3> generatedAxes = controller.GenerateDefaultAxes(defaultEntity);
     
-    EXPECT_EQ(generatedAxes.at(0).x, 1);
-    EXPECT_EQ(generatedAxes.at(0).y, 2);
-    EXPECT_EQ(generatedAxes.at(0).z, 3);
+    EXPECT_FLOAT_EQ(generatedAxes.at(0).x, 1);
+    EXPECT_FLOAT_EQ(generatedAxes.at(0).y, 2);
+    EXPECT_FLOAT_EQ(generatedAxes.at(0).z, 3);
 
-    EXPECT_EQ(generatedAxes.at(1).x, -1);
-    EXPECT_EQ(generatedAxes.at(1).y, -2);
-    EXPECT_EQ(generatedAxes.at(1).z, -3);
+    EXPECT_FLOAT_EQ(generatedAxes.at(1).x, -1);
+    EXPECT_FLOAT_EQ(generatedAxes.at(1).y, -2);
+    EXPECT_FLOAT_EQ(generatedAxes.at(1).z, -3);
 
-    EXPECT_EQ(generatedAxes.at(2).x, 3);
-    EXPECT_EQ(generatedAxes.at(2).y, 2);
-    EXPECT_EQ(generatedAxes.at(2).z, -1);
+    EXPECT_FLOAT_EQ(generatedAxes.at(2).x, 3);
+    EXPECT_FLOAT_EQ(generatedAxes.at(2).y, 2);
+    EXPECT_FLOAT_EQ(generatedAxes.at(2).z, -1);
 
-    EXPECT_EQ(generatedAxes.at(3).x, -3);
-    EXPECT_EQ(generatedAxes.at(3).y, -2);
-    EXPECT_EQ(generatedAxes.at(3).z, 1);
+    EXPECT_FLOAT_EQ(generatedAxes.at(3).x, -3);
+    EXPECT_FLOAT_EQ(generatedAxes.at(3).y, -2);
+    EXPECT_FLOAT_EQ(generatedAxes.at(3).z, 1);
 
-    EXPECT_EQ(generatedAxes.at(4).x, 1);
-    EXPECT_EQ(generatedAxes.at(4).y, -3);
-    EXPECT_EQ(generatedAxes.at(4).z, 2);
+    EXPECT_FLOAT_EQ(generatedAxes.at(4).x, 1);
+    EXPECT_FLOAT_EQ(generatedAxes.at(4).y, -3);
+    EXPECT_FLOAT_EQ(generatedAxes.at(4).z, 2);
 
-    EXPECT_EQ(generatedAxes.at(5).x, -1);
-    EXPECT_EQ(generatedAxes.at(5).y, 3);
-    EXPECT_EQ(generatedAxes.at(5).z, -2);
+    EXPECT_FLOAT_EQ(generatedAxes.at(5).x, -1);
+    EXPECT_FLOAT_EQ(generatedAxes.at(5).y, 3);
+    EXPECT_FLOAT_EQ(generatedAxes.at(5).z, -2);
 
     
 }
