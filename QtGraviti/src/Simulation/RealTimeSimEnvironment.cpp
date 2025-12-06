@@ -131,6 +131,7 @@ void RealTimeSimEnvironment::step_simulation(double simTime)
 			// Handle simulation error if needed
 			std::cout << "Simulation failed for entity: " << entity.getEntityID() << std::endl;
 		}
+		entity.setTickDuration(simTime);
 	}
 	for (auto& entity : *entities) {
 		entity.TickForward();

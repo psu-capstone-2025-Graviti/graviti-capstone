@@ -8,7 +8,7 @@
 class NBodyPhysics : public IPhysicsEngine
 {
 private:
-	float G = 6.67430e-11f; // Gravitational constant in km^3 kg^-1 s^-2
+	float G = 6.67430e-11f; // Gravitational constant in m^3 kg^-1 s^-2
 public:
 	void calculateForces(float duration, Entity& callingEntity);
 	void updatePosition(float duration, Entity& callingEntity);

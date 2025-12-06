@@ -13,7 +13,6 @@ SimulationController::SimulationController(QObject* parent)
     : QObject(parent),
 	m_env()
 {
-    //m_entityList = new EntityListGUI(); //new? shared ptr?
 
 }
 
@@ -23,7 +22,7 @@ SimulationController::~SimulationController()
 
 void SimulationController::startSimulation(int numSteps, float tickDuration, int simulationScalar)
 {
-	//m_env.run(numSteps, tickDuration);
+	//TODO - numSteps no longer needed
 	m_env.setTimestepSize(tickDuration);
 	m_env.setSimulationScalar(simulationScalar);
 	m_env.run();
@@ -32,6 +31,41 @@ void SimulationController::startSimulation(int numSteps, float tickDuration, int
 void SimulationController::setUpdateFunction(std::function<void()> updatefunc)
 {
 	m_env.setUpdateFunction(updatefunc);
+}
+
+void SimulationController::bathProcessFuture(int numSteps, float tickDuration)
+{
+	auto manager = EntityManager::getInstance();
+	auto entities = manager->getAllEntities();
+
+	if (!m_hasBatchSnapshot) {
+		m_batchStates.clear();
+		for (auto& e : *entities) {
+			PhysicalState ps = *e.getPhysicalState();
+			m_batchStates.insert(std::pair<long, PhysicalState>(e.getEntityID(), ps));
+		}
+		m_hasBatchSnapshot = true;
+	}
+
+	m_batchenv.run(numSteps, tickDuration);
+}
+
+void SimulationController::resetBatch()
+{
+	if (m_hasBatchSnapshot)
+	{
+		auto manager = EntityManager::getInstance();
+		auto entities = manager->getAllEntities();
+		for (auto& entity : *entities) {
+			long id = entity.getEntityID();
+			auto val = m_batchStates.find(id);
+			if (val != m_batchStates.end())
+			{
+				*entity.getPhysicalState() = val->second;
+			}
+		}
+		m_hasBatchSnapshot = false;
+	}
 }
 
 void SimulationController::pauseSimulation()
@@ -76,26 +110,56 @@ Entity SimulationController::optimizeTrajectory(Entity projectile, Vec3 targetPo
 }
 
 void SimulationController::createEntity(const std::string& name, float posX, float posY, float posZ, 
-                                     float velX, float velY, float velZ, float mass)
+                                     float velX, float velY, float velZ, float mass, float radius, std::string tex)
 {
 	auto entityManager = EntityManager::getInstance();
 
-	std::shared_ptr<IPhysicsEngine> physicsEngine = std::make_shared<NBodyPhysics>();
-	Entity newEntity(physicsEngine);
-	newEntity.setEntityName(name);
+	auto entities = entityManager->getAllEntities();
+	bool found = false;
+	for (auto& entity : *entities)
+	{
+		if (entity.getEntityName() == name)
+		{
+			found = true;
+			//We found the entity, update the current state
+			auto curState = entity.getPhysicalState();
 
-	PhysicalState entityState;
-	entityState.setPosition(X, posX);
-	entityState.setPosition(Y, posY);
-	entityState.setPosition(Z, posZ);
-	entityState.setVelocity(X, velX);
-	entityState.setVelocity(Y, velY);
-	entityState.setVelocity(Z, velZ);
-	entityState.setMass(mass);
-	//entityState.setRadius(1.0f);
+			if (posX != 0) curState->setPosition(X, posX);
+			if (posY != 0) curState->setPosition(Y, posY);
+			if (posZ != 0) curState->setPosition(Z, posZ);
 
-	newEntity.setOrigin(entityState);
-	entityManager->addEntity(newEntity);
+			if (velX != 0) curState->setVelocity(X, velX);
+			if (velY != 0) curState->setVelocity(Y, velY);
+			if (velZ != 0) curState->setVelocity(Z, velZ);
+
+			if (radius != 0) curState->setRadius(radius);
+			if (mass != 0) curState->setMass(mass);
+
+			entity.setOrigin(*curState);
+			entity.setTexturePath(tex);
+		}
+	}
+	if (!found)
+	{
+		//create new entity becuase name is new
+		std::shared_ptr<IPhysicsEngine> physicsEngine = std::make_shared<NBodyPhysics>();
+		Entity newEntity(physicsEngine);
+		newEntity.setEntityName(name);
+
+		PhysicalState entityState;
+		entityState.setPosition(X, posX);
+		entityState.setPosition(Y, posY);
+		entityState.setPosition(Z, posZ);
+		entityState.setVelocity(X, velX);
+		entityState.setVelocity(Y, velY);
+		entityState.setVelocity(Z, velZ);
+		entityState.setMass(mass);
+		entityState.setRadius(radius);
+
+		newEntity.setOrigin(entityState);
+		newEntity.setTexturePath(tex);
+		entityManager->addEntity(newEntity);
+	}
 }
 
 
@@ -125,31 +189,26 @@ void SimulationController::initialize_json_body(std::string filepathjsonPath)
 
 	for (auto itr = d.Begin(); itr != d.End(); ++itr) {
 
-
-		physicsEngine = std::make_shared<NBodyPhysics>();
-		Entity jsonEntity = Entity(physicsEngine);
-		PhysicalState jsonEntityState;
 		auto obj = itr->GetObject();
-		jsonEntity.setEntityName(obj["name"].GetString());
+		std::string name = obj["name"].GetString();
+		float posX = cleanFloat(obj["positionX"].GetString());
+		float posY = cleanFloat(obj["positionY"].GetString());
+		float posZ = cleanFloat(obj["positionZ"].GetString());
+		float velX = cleanFloat(obj["velocityX"].GetString());
+		float velY = cleanFloat(obj["velocityY"].GetString());
+		float velZ = cleanFloat(obj["velocityZ"].GetString());
 
-
-		jsonEntityState.setPosition(X, cleanFloat(obj["positionX"].GetString()));
-		jsonEntityState.setPosition(Y, cleanFloat(obj["positionY"].GetString()));
-		jsonEntityState.setPosition(Z, cleanFloat(obj["positionZ"].GetString()));
-
-		jsonEntityState.setVelocity(X, cleanFloat(obj["velocityX"].GetString()));
-		jsonEntityState.setVelocity(Y, cleanFloat(obj["velocityY"].GetString()));
-		jsonEntityState.setVelocity(Z, cleanFloat(obj["velocityZ"].GetString()));
-		jsonEntityState.setMass(cleanFloat(obj["mass"].GetString()));
-		jsonEntityState.setRadius(cleanFloat(obj["radius"].GetString()));
+		float mass = cleanFloat(obj["mass"].GetString());
+		float radius = cleanFloat(obj["radius"].GetString());
 
 		// Set texture path if it exists in JSON
+		std::string tex = "";
 		if (obj.HasMember("texturePath") && obj["texturePath"].IsString()) {
-			jsonEntity.setTexturePath(obj["texturePath"].GetString());
+			tex = obj["texturePath"].GetString();
 		}
 
-		jsonEntity.setOrigin(jsonEntityState);
-		entityManager->addEntity(jsonEntity);
+		createEntity(name, posX, posY, posZ, velX, velY, velZ, mass, radius, tex);
+
 	}
 }
 

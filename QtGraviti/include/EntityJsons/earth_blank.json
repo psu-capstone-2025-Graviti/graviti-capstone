@@ -1,0 +1,14 @@
+[
+  {
+    "name": "Earth",
+    "positionX": "0.000000",
+    "positionY": "0.000000",
+    "positionZ": "0.000000",
+    "velocityX": "0.000000",
+    "velocityY": "0.000000",
+    "velocityZ": "0.000000",
+    "mass": "5973600000000000000000000",
+    "radius": "6371000.000000",
+    "texturePath": "qrc:/Bodies/content/images/Blue_Marble_2002.png"
+  }
+]
