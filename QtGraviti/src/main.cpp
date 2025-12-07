@@ -49,7 +49,8 @@ int main(int argc, char* argv[])
     Vec3 targetPosition = { 100.0f, 100.0f, 100.0f };
     int timeSteps = 5000;
     float timeStepSize = 0.1f;
-    Entity OptEnt = controller.optimizeTrajectory(test, targetPosition, timeSteps, timeStepSize);
+	int numiter = 5;
+    Entity OptEnt = controller.optimizeTrajectory(test, targetPosition, timeSteps, timeStepSize, numiter);
     std::cout << "Optimized Entity Position: (" 
               << OptEnt.getPhysicalState()->getPosition().x << ", "
               << OptEnt.getPhysicalState()->getPosition().y << ", "
