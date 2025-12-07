@@ -436,7 +436,8 @@ void MainWindow::onAddOptimizedEntityClicked()
         OptEnt.getPhysicalState()->getVelocity().x,
         OptEnt.getPhysicalState()->getVelocity().y,
         OptEnt.getPhysicalState()->getVelocity().z,
-        OptEnt.getPhysicalState()->getMass());
+        OptEnt.getPhysicalState()->getMass(),
+        OptEnt.getPhysicalState()->getRadius());
     // Clear the form fields after adding
     ui->optimizedName->clear();
     ui->optimizedPosX->clear();

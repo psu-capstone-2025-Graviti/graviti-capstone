@@ -35,7 +35,7 @@ private:
     //OptimizationEntityManager* entity_manager;
     long int m_nextID;
     double ShortestMagnitude = 0;
-    Vec3 minimumDistancePoint;
+    Vec3 minimumDistancePoint = { 999999999999999,999999999999999,999999999999999 };
 
     std::vector<Entity> entities;
 

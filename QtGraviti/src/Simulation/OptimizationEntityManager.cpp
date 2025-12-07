@@ -106,6 +106,7 @@ double OptimizationEntityManager::calculateDistance(Vec3 a, Vec3 b)
 
 Vec3 OptimizationEntityManager::DetermineMinimumDistancePoint()
 {
+	Vec3 minimumDistancePoint = { 999999999999999,999999999999999,999999999999999 };
 	std::vector<PhysicalState> history = targetEntity.getPastTrajectory();
 	for (auto& state : history)
 	{
