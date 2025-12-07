@@ -7,3 +7,4 @@ NightEarth.tif - By NASA - https://visibleearth.nasa.gov/images/55167/earths-cit
 GSAT_Satellite.png - By Indian Space Research Organisation (GODL-India), GODL-India, https://commons.wikimedia.org/w/index.php?curid=85863563
 Shuttle.gif - Public Domain, https://commons.wikimedia.org/w/index.php?curid=312940
 Noun_Satellite.svg - By Jose Luis Algara - Noun Project - https://thenounproject.com/icon/3485, CC0, https://commons.wikimedia.org/w/index.php?curid=67123100
+ISS.svg - By NASA - 2022 ISS Calendar.pdf, Public Domain, https://commons.wikimedia.org/w/index.php?curid=115586593

@@ -188,7 +188,7 @@ Item {
 
 
                         // Scale from trajectoryRenderer
-                        scale: Qt.vector3d(modelData.scale.x, modelData.scale.y, modelData.scale.z)
+                        scale: Qt.vector3d(modelData.scale.x * sliderScale, modelData.scale.y * sliderScale, modelData.scale.z * sliderScale)
 
                         // Material with texture, transparency and double-sided rendering (unlit via PrincipledMaterial.NoLighting)
                         materials: [
@@ -255,7 +255,7 @@ Item {
         z: 9999
 	    width: 240
 	    from: 1
-	    to: 100
+	    to: 1000
 	    value: 1
 	    onValueChanged: root.sliderScale = value
     }
