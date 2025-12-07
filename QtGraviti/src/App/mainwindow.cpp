@@ -257,6 +257,12 @@ void MainWindow::onAddEntityClicked()
         return;
     }
 
+    if (m_isRunning)
+    {
+        QMessageBox::warning(this, "Error", "Simulation must not be running to add entities.");
+        return;
+    }
+
     // Determine which Add Entity tab is active
     int addTabIndex = ui->tabWidget_2->currentIndex();
     if (addTabIndex == 0) {
